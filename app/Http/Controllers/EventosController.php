@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Evento;
+use App\Pigmalion\BusquedasHelper;
+use App\Pigmalion\Countries;
+use App\Pigmalion\SEO;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use App\Models\Evento;
-use App\Pigmalion\SEO;
-use App\Pigmalion\BusquedasHelper;
-use Carbon\Carbon;
-use App\Pigmalion\Countries;
-use Illuminate\Support\Facades\Log;
+
 class EventosController extends Controller
 {
     public static $ITEMS_POR_PAGINA = 12;
@@ -34,15 +34,17 @@ class EventosController extends Controller
         $orderSql = "(COALESCE(fecha_inicio, published_at, '1970-01-01') >= ?) DESC, (CASE WHEN COALESCE(fecha_inicio, published_at, '1970-01-01') >= ? THEN COALESCE(fecha_inicio, published_at, '1970-01-01') END) ASC, (CASE WHEN COALESCE(fecha_inicio, published_at, '1970-01-01') < ? THEN COALESCE(fecha_inicio, published_at, '1970-01-01') END) DESC";
 
         // Construir la consulta paso a paso
-        $query = Evento::select("titulo", "slug", "descripcion", "imagen", "imagenes", "pais", "fecha_inicio", "fecha_fin", "fechas_evento", "hora_inicio", "categoria", "updated_at", "published_at", "visibilidad");
+        $query = Evento::select('titulo', 'slug', 'descripcion', 'imagen', 'imagenes', 'pais', 'fecha_inicio', 'fecha_fin', 'fechas_evento', 'hora_inicio', 'categoria', 'updated_at', 'published_at', 'visibilidad');
 
-        if($buscar)
+        if ($buscar) {
             $query->buscar($buscar);
-        else
+        } else {
             $query->orderByRaw($orderSql, [$now, $now, $now]);
+        }
 
-        if (!$esEditor)
+        if (! $esEditor) {
             $query->publicado();
+        }
 
         // paginar
         $resultados = $query
@@ -51,30 +53,35 @@ class EventosController extends Controller
         // appends para mantener filtros en links de paginación
         $appends = [];
         // if ($categoria) $appends['categoria'] = $categoria;
-        if ($buscar) $appends['buscar'] = $buscar;
-        if (!empty($appends)) $resultados->appends($appends);
+        if ($buscar) {
+            $appends['buscar'] = $buscar;
+        }
+        if (! empty($appends)) {
+            $resultados->appends($appends);
+        }
 
         $categorias = Evento::selectRaw('categoria as nombre, count(*) as total')
             ->groupBy('categoria')
             ->get();
 
-        if ($buscar)
+        if ($buscar) {
             BusquedasHelper::formatearResultados($resultados, $buscar, false);
+        }
 
         foreach ($resultados as $idx => $evento) {
-            //echo $evento->pais."<br>";
+            // echo $evento->pais."<br>";
             $evento->pais = Countries::getCountry($evento->pais);
         }
 
         // to-do: imprimir lista con [id_evento y pais]:
-        //dd($resultados[1]->pais);
-        //dd($resultados);
+        // dd($resultados[1]->pais);
+        // dd($resultados);
 
         return Inertia::render('Eventos/Index', [
             'filtrado' => $buscar,
-            //'categoriaActiva' => $categoria,
+            // 'categoriaActiva' => $categoria,
             'listado' => $resultados,
-            //'categorias' => $categorias
+            // 'categorias' => $categorias
         ])
             ->withViewData(SEO::get('eventos'));
     }
@@ -88,19 +95,20 @@ class EventosController extends Controller
         }
 
         $borrador = request()->has('borrador');
-        $publicado =  $evento->visibilidad == 'P';
+        $publicado = $evento->visibilidad == 'P';
         $editor = optional(auth()->user())->can('administrar social');
-        if (!$evento || (!$publicado && !$borrador && !$editor)) {
+        if (! $evento || (! $publicado && ! $borrador && ! $editor)) {
             abort(404);
         }
 
-        if($evento->pais)
+        if ($evento->pais) {
             $evento->pais = Countries::getCountry($evento->pais);
+        }
 
         return Inertia::render('Eventos/Evento', [
-            'evento' => $evento
+            'evento' => $evento,
         ])
             // https://inertiajs.com/responses
-            ->withViewData(SEO::from($evento));;
+            ->withViewData(SEO::from($evento));
     }
 }

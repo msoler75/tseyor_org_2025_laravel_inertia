@@ -2,13 +2,13 @@
 
 namespace App\Notifications;
 
+use App\Models\Equipo;
+use App\Models\Solicitud;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\Log;
-use App\Models\Equipo;
-use App\Models\Solicitud;
 
 class SolicitudEquipo extends Notification implements ShouldQueue
 {
@@ -37,10 +37,10 @@ class SolicitudEquipo extends Notification implements ShouldQueue
     public function shouldSend($notifiable, $channel)
     {
         // solo se manda la notificación si hay solicitudes pendientes
-        return(Solicitud::where('equipo_id', $this->equipo->id)
-        ->whereNull('fecha_aceptacion')
-        ->whereNull('fecha_denegacion')
-        ->exists());
+        return Solicitud::where('equipo_id', $this->equipo->id)
+            ->whereNull('fecha_aceptacion')
+            ->whereNull('fecha_denegacion')
+            ->exists();
     }
 
     /**
@@ -48,13 +48,13 @@ class SolicitudEquipo extends Notification implements ShouldQueue
      */
     public function toMail(object $notifiable): MailMessage
     {
-        $url = url('/equipos/'.$this->equipo->slug . '?solicitudes');
-        Log::channel('notificaciones')->info('[SolicitudEquipo(Ingreso)] Enviando a: ' . ($notifiable->email ?? 'sin email') . ' | Nombre: ' . $notifiable->name . ' | Equipo: ' . $this->equipo->nombre);
+        $url = url('/equipos/'.$this->equipo->slug.'?solicitudes');
+        Log::channel('notificaciones')->info('[SolicitudEquipo(Ingreso)] Enviando a: '.($notifiable->email ?? 'sin email').' | Nombre: '.$notifiable->name.' | Equipo: '.$this->equipo->nombre);
+
         return (new MailMessage)
-                    ->subject('Solicitud de ingreso a '.$this->equipo->nombre)
-                    ->line('Hay una nueva solicitud para ingresar al equipo ' . $this->equipo->nombre)
-                    ->action('Ver solicitudes', $url)
-                    ;
+            ->subject('Solicitud de ingreso a '.$this->equipo->nombre)
+            ->line('Hay una nueva solicitud para ingresar al equipo '.$this->equipo->nombre)
+            ->action('Ver solicitudes', $url);
     }
 
     /**
@@ -65,7 +65,7 @@ class SolicitudEquipo extends Notification implements ShouldQueue
     public function toArray(object $notifiable): array
     {
         return [
-            'equipo'=> ['nombre' => $this->equipo->nombre, 'slug' => $this->equipo->slug, 'id' => $this->equipo->id]
+            'equipo' => ['nombre' => $this->equipo->nombre, 'slug' => $this->equipo->slug, 'id' => $this->equipo->id],
         ];
     }
 }

@@ -2,11 +2,13 @@
 
 namespace Tests\Feature\MCP;
 
+use App\Models\Lugar;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class LugarToolTest extends McpFeatureTestCase
 {
     use DatabaseTransactions;
+
     public function test_info_lugar()
     {
         $result = $this->callMcpTool('info', ['entidad' => 'lugar']);
@@ -20,7 +22,7 @@ class LugarToolTest extends McpFeatureTestCase
         $this->assertIsArray($lugar['parametros_listar']);
         $this->assertIsArray($lugar['campos']);
         $campos_esperados = [
-            'nombre', 'slug', 'descripcion', 'categoria', 'imagen', 'texto', 'libros', 'relacionados', 'visibilidad'
+            'nombre', 'slug', 'descripcion', 'categoria', 'imagen', 'texto', 'libros', 'relacionados', 'visibilidad',
         ];
         foreach ($campos_esperados as $campo) {
             $this->assertArrayHasKey($campo, $lugar['campos'], "Falta el campo '$campo'");
@@ -34,22 +36,22 @@ class LugarToolTest extends McpFeatureTestCase
     public function test_listar_lugares()
     {
         $pp = 12; // LugaresController usa paginate(12)
-        \App\Models\Lugar::withoutEvents(function () use ($pp) {
+        Lugar::withoutEvents(function () use ($pp) {
             for ($i = 0; $i < $pp + 2; $i++) {
-                \App\Models\Lugar::create([
-                    'nombre' => 'Lugar ' . $i,
-                    'slug' => 'lugar-' . $i . '-' . uniqid(),
-                    'descripcion' => 'Desc ' . $i,
+                Lugar::create([
+                    'nombre' => 'Lugar '.$i,
+                    'slug' => 'lugar-'.$i.'-'.uniqid(),
+                    'descripcion' => 'Desc '.$i,
                     'categoria' => 'parque',
-                    'imagen' => '/img/lugar' . $i . '.jpg',
-                    'texto' => 'Texto ' . $i,
+                    'imagen' => '/img/lugar'.$i.'.jpg',
+                    'texto' => 'Texto '.$i,
                     'libros' => '',
                     'relacionados' => '',
                     'visibilidad' => 'P',
                 ]);
             }
         });
-        $this->makeAllSearchable(\App\Models\Lugar::class);
+        $this->makeAllSearchable(Lugar::class);
         $result = $this->callMcpTool('listar', ['entidad' => 'lugar']);
         $this->assertIsArray($result);
         $this->assertArrayHasKey('listado', $result);
@@ -73,9 +75,9 @@ class LugarToolTest extends McpFeatureTestCase
 
     public function test_ver_lugar()
     {
-        $lugar = \App\Models\Lugar::create([
+        $lugar = Lugar::create([
             'nombre' => 'Lugar Test',
-            'slug' => 'lugar-test-' . uniqid(),
+            'slug' => 'lugar-test-'.uniqid(),
             'descripcion' => 'Desc',
             'categoria' => 'parque',
             'imagen' => '/img/lugar-test.jpg',
@@ -84,7 +86,7 @@ class LugarToolTest extends McpFeatureTestCase
             'relacionados' => '',
             'visibilidad' => 'P',
         ]);
-        $result = $this->callMcpTool('ver', ['entidad'=>'lugar', 'slug' => $lugar->slug]);
+        $result = $this->callMcpTool('ver', ['entidad' => 'lugar', 'slug' => $lugar->slug]);
         $this->assertIsArray($result);
         $this->assertArrayHasKey('lugar', $result);
         $this->assertEquals($lugar->slug, $result['lugar']['slug'] ?? $result['lugar']->slug ?? null);
@@ -96,7 +98,7 @@ class LugarToolTest extends McpFeatureTestCase
             'entidad' => 'lugar',
             'data' => [
                 'nombre' => 'Nuevo Lugar',
-                'slug' => 'nuevo-lugar-' . uniqid(),
+                'slug' => 'nuevo-lugar-'.uniqid(),
                 'descripcion' => 'Descripción de prueba',
                 'categoria' => 'parque',
                 'imagen' => '/img/nuevo-lugar.jpg',
@@ -105,7 +107,7 @@ class LugarToolTest extends McpFeatureTestCase
                 'relacionados' => '',
                 'visibilidad' => 'P',
             ],
-            'token' => config('mcp-server.tokens.admin')
+            'token' => config('mcp-server.tokens.admin'),
         ];
         $this->callMcpTool('crear', $params);
         $this->assertDatabaseHas('lugares', ['slug' => $params['data']['slug']]);
@@ -113,9 +115,9 @@ class LugarToolTest extends McpFeatureTestCase
 
     public function test_editar_lugar()
     {
-        $lugar = \App\Models\Lugar::create([
+        $lugar = Lugar::create([
             'nombre' => 'Editar Lugar',
-            'slug' => 'editar-lugar-' . uniqid(),
+            'slug' => 'editar-lugar-'.uniqid(),
             'descripcion' => 'Desc',
             'categoria' => 'parque',
             'imagen' => '/img/editar-lugar.jpg',
@@ -129,9 +131,9 @@ class LugarToolTest extends McpFeatureTestCase
             'entidad' => 'lugar',
             'id' => $lugar->id,
             'data' => [
-                'descripcion' => $nuevaDescripcion
+                'descripcion' => $nuevaDescripcion,
             ],
-            'token' => config('mcp-server.tokens.admin')
+            'token' => config('mcp-server.tokens.admin'),
         ];
         $this->callMcpTool('editar', $params);
         $this->assertDatabaseHas('lugares', ['id' => $lugar->id, 'descripcion' => $nuevaDescripcion]);
@@ -139,9 +141,9 @@ class LugarToolTest extends McpFeatureTestCase
 
     public function test_eliminar_lugar()
     {
-        $lugar = \App\Models\Lugar::create([
+        $lugar = Lugar::create([
             'nombre' => 'Eliminar Lugar',
-            'slug' => 'eliminar-lugar-' . uniqid(),
+            'slug' => 'eliminar-lugar-'.uniqid(),
             'descripcion' => 'Desc',
             'categoria' => 'parque',
             'imagen' => '/img/eliminar-lugar.jpg',
@@ -154,7 +156,7 @@ class LugarToolTest extends McpFeatureTestCase
             'entidad' => 'lugar',
             'id' => $lugar->id,
             'force' => true,
-            'token' => config('mcp-server.tokens.admin')
+            'token' => config('mcp-server.tokens.admin'),
         ];
         $this->callMcpTool('eliminar', $params);
         $this->assertDatabaseMissing('lugares', ['id' => $lugar->id]);

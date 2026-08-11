@@ -6,7 +6,6 @@ use App\Models\User;
 
 class UserImport
 {
-
     public static function importar()
     {
 
@@ -16,10 +15,10 @@ class UserImport
         $usuarios = json_decode($contenido, true);
 
         foreach ($usuarios as $usuario) {
-                $nuevoUsuario = new User();
-                $nuevoUsuario->name = $usuario['name'];
+            $nuevoUsuario = new User;
+            $nuevoUsuario->name = $usuario['name'];
 
-                $nuevoUsuario->save();
+            $nuevoUsuario->save();
         }
     }
 }

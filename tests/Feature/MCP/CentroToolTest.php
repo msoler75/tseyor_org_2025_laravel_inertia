@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\MCP;
 
+use App\Http\Controllers\CentrosController;
 use App\Models\Centro;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
@@ -11,18 +12,18 @@ class CentroToolTest extends McpFeatureTestCase
 
     public function test_listar_centros()
     {
-        $pp = \App\Http\Controllers\CentrosController::$ITEMS_POR_PAGINA;
+        $pp = CentrosController::$ITEMS_POR_PAGINA;
         // withoutEvents: sin hooks de ContenidoBaseModel (slug, contenido, logs)
         // ni syncing TNT. Slug se provee explícitamente porque la DB lo requiere.
         Centro::withoutEvents(function () use ($pp) {
             for ($i = 0; $i < $pp + 2; $i++) {
                 Centro::create([
-                    'nombre' => 'Casa Tseyor ' . $i,
-                    'slug' => 'casa-tseyor-' . $i,
-                    'descripcion' => 'Desc ' . $i,
-                    'imagen' => '/almacen/centro' . $i . '.jpg',
+                    'nombre' => 'Casa Tseyor '.$i,
+                    'slug' => 'casa-tseyor-'.$i,
+                    'descripcion' => 'Desc '.$i,
+                    'imagen' => '/almacen/centro'.$i.'.jpg',
                     'pais' => 'ES',
-                    'poblacion' => 'Ciudad ' . $i,
+                    'poblacion' => 'Ciudad '.$i,
                     'contacto_id' => null,
                 ]);
             }
@@ -48,7 +49,7 @@ class CentroToolTest extends McpFeatureTestCase
         $nombres = array_map(function ($c) {
             return is_array($c) ? ($c['nombre'] ?? null) : ($c->nombre ?? null);
         }, $result['listado']['data']);
-        $this->assertContains('Casa Tseyor ' . $pp, $nombres);
+        $this->assertContains('Casa Tseyor '.$pp, $nombres);
         // buscar un centro que no existe
         $result = $this->callMcpTool('listar', ['entidad' => 'centro', 'buscar' => 'Inexistente']);
         $this->assertIsArray($result);
@@ -60,7 +61,7 @@ class CentroToolTest extends McpFeatureTestCase
     {
         $centro = Centro::create([
             'nombre' => 'Centro Test',
-            'slug' => 'centro-test-' . uniqid(),
+            'slug' => 'centro-test-'.uniqid(),
             'descripcion' => 'Desc',
             'imagen' => '/almacen/centro-test.jpg',
             'pais' => 'ES',
@@ -79,14 +80,14 @@ class CentroToolTest extends McpFeatureTestCase
             'entidad' => 'centro',
             'data' => [
                 'nombre' => 'Nuevo Centro',
-                'slug' => 'nuevo-centro-' . uniqid(),
+                'slug' => 'nuevo-centro-'.uniqid(),
                 'descripcion' => 'Descripción de prueba',
                 'imagen' => '/almacen/nuevo-centro.jpg',
                 'pais' => 'ES',
                 'poblacion' => 'Ciudad Nueva',
                 'contacto_id' => null,
             ],
-            'token' => config('mcp-server.tokens.admin')
+            'token' => config('mcp-server.tokens.admin'),
         ];
         $this->callMcpTool('crear', $params);
         $this->assertDatabaseHas('centros', ['slug' => $params['data']['slug']]);
@@ -96,7 +97,7 @@ class CentroToolTest extends McpFeatureTestCase
     {
         $centro = Centro::create([
             'nombre' => 'Editar Centro',
-            'slug' => 'editar-centro-' . uniqid(),
+            'slug' => 'editar-centro-'.uniqid(),
             'descripcion' => 'Desc',
             'imagen' => '/almacen/editar-centro.jpg',
             'pais' => 'ES',
@@ -108,9 +109,9 @@ class CentroToolTest extends McpFeatureTestCase
             'entidad' => 'centro',
             'id' => $centro->id,
             'data' => [
-                'descripcion' => $nuevaDescripcion
+                'descripcion' => $nuevaDescripcion,
             ],
-            'token' => config('mcp-server.tokens.admin')
+            'token' => config('mcp-server.tokens.admin'),
         ];
         $this->callMcpTool('editar', $params);
         $this->assertDatabaseHas('centros', ['id' => $centro->id, 'descripcion' => $nuevaDescripcion]);
@@ -120,7 +121,7 @@ class CentroToolTest extends McpFeatureTestCase
     {
         $centro = Centro::create([
             'nombre' => 'Eliminar Centro',
-            'slug' => 'eliminar-centro-' . uniqid(),
+            'slug' => 'eliminar-centro-'.uniqid(),
             'descripcion' => 'Desc',
             'imagen' => '/almacen/eliminar-centro.jpg',
             'pais' => 'ES',
@@ -131,7 +132,7 @@ class CentroToolTest extends McpFeatureTestCase
             'entidad' => 'centro',
             'id' => $centro->id,
             'force' => true,
-            'token' => config('mcp-server.tokens.admin')
+            'token' => config('mcp-server.tokens.admin'),
         ];
         $this->callMcpTool('eliminar', $params);
         $this->assertDatabaseMissing('centros', ['id' => $centro->id]);
@@ -150,7 +151,7 @@ class CentroToolTest extends McpFeatureTestCase
         $this->assertIsArray($centro['parametros_listar']);
         $this->assertIsArray($centro['campos']);
         $campos_esperados = [
-            'nombre', 'slug', 'imagen', 'descripcion', 'entradas', 'libros', 'poblacion', 'pais', 'contacto_id'
+            'nombre', 'slug', 'imagen', 'descripcion', 'entradas', 'libros', 'poblacion', 'pais', 'contacto_id',
         ];
         foreach ($campos_esperados as $campo) {
             $this->assertArrayHasKey($campo, $centro['campos'], "Falta el campo '$campo'");

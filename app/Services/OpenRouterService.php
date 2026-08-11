@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Log;
 class OpenRouterService
 {
     protected string $apiKey;
+
     protected string $baseUrl = 'https://openrouter.ai/api/v1';
 
     public function __construct()
@@ -61,11 +62,11 @@ PROMPT;
 
         try {
             $response = Http::withoutVerifying()->withHeaders([
-                'Authorization' => 'Bearer ' . $this->apiKey,
+                'Authorization' => 'Bearer '.$this->apiKey,
                 'Content-Type' => 'application/json',
                 'HTTP-Referer' => config('app.url', 'https://tseyor.org'),
                 'X-Title' => 'Tseyor Maintenance Parser',
-            ])->post($this->baseUrl . '/chat/completions', [
+            ])->post($this->baseUrl.'/chat/completions', [
                 'model' => config('services.openrouter_model', 'openai/gpt-4o-mini'),
                 'messages' => [
                     ['role' => 'system', 'content' => 'Eres un parser que extrae datos estructurados de correos de DreamHost. Responde SOLO con JSON válido, sin markdown ni explicaciones.'],
@@ -75,12 +76,12 @@ PROMPT;
                 'max_tokens' => 500,
             ]);
 
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 Log::error('[OpenRouter] Error en la API', [
                     'status' => $response->status(),
                     'body' => $response->body(),
                 ]);
-                throw new \RuntimeException('Error al llamar a OpenRouter: ' . $response->status());
+                throw new \RuntimeException('Error al llamar a OpenRouter: '.$response->status());
             }
 
             $data = $response->json();
@@ -93,7 +94,7 @@ PROMPT;
 
             if (json_last_error() !== JSON_ERROR_NONE) {
                 Log::error('[OpenRouter] JSON inválido de OpenRouter', ['content' => $content]);
-                throw new \RuntimeException('OpenRouter devolvió JSON inválido: ' . json_last_error_msg());
+                throw new \RuntimeException('OpenRouter devolvió JSON inválido: '.json_last_error_msg());
             }
 
             return array_merge([

@@ -2,10 +2,10 @@
 
 namespace App\Services;
 
+use App\Models\Comunicado;
 use App\Pigmalion\ImageHasher;
 use App\Pigmalion\Markdown;
 use App\Pigmalion\StorageItem;
-use App\Models\Comunicado;
 use Illuminate\Support\Facades\Log;
 
 /**
@@ -45,7 +45,7 @@ class ImageDeduplicationService
 
         $allPaths = array_unique(array_merge(
             Markdown::images($texto),
-            !empty($imagenField) ? [$imagenField] : []
+            ! empty($imagenField) ? [$imagenField] : []
         ));
 
         $localPaths = [];
@@ -67,7 +67,7 @@ class ImageDeduplicationService
             $attrDims = $imageAttrs[$imgPath] ?? null;
             $sti = new StorageItem($imgPath);
 
-            if (!$sti->exists()) {
+            if (! $sti->exists()) {
                 continue;
             }
 
@@ -140,7 +140,7 @@ class ImageDeduplicationService
         $comunicado->texto = $nuevoTexto;
         $comunicado->imagen = $nuevaImagen;
 
-        Log::info("ImageDeduplicationService: comunicado #{$comunicado->id} — " . count($changes) . " duplicados reemplazados");
+        Log::info("ImageDeduplicationService: comunicado #{$comunicado->id} — ".count($changes).' duplicados reemplazados');
 
         return ['texto' => $nuevoTexto, 'imagen' => $nuevaImagen, 'changes' => count($changes)];
     }
@@ -164,7 +164,7 @@ class ImageDeduplicationService
         if ($logoDir->directoryExists()) {
             foreach ($logoDir->files() as $fp) {
                 $fn = basename($fp);
-                if (preg_match('/^sello/i', $fn) && !preg_match('/\.svg$/i', $fn)) {
+                if (preg_match('/^sello/i', $fn) && ! preg_match('/\.svg$/i', $fn)) {
                     $sti = new StorageItem($fp);
                     $hash = ImageHasher::hash($sti->path);
                     if ($hash) {
@@ -219,14 +219,14 @@ class ImageDeduplicationService
 
         [$w, $h] = $dims;
 
-        if (isset($firstPageSet[$logicalPath]) && !empty(self::$logoCanonicals)) {
+        if (isset($firstPageSet[$logicalPath]) && ! empty(self::$logoCanonicals)) {
             $logo = ImageHasher::findBestColorMatch($imagePath, self::$logoCanonicals, 90);
             if ($logo !== null) {
                 return $logo;
             }
         }
 
-        if (!empty(self::$guideCanonicals)) {
+        if (! empty(self::$guideCanonicals)) {
             $candidates = [];
             foreach (self::$guideCanonicals as $gc) {
                 if (ImageHasher::similarDimensions($w, $h, $gc['width'], $gc['height'])) {
@@ -234,7 +234,7 @@ class ImageDeduplicationService
                 }
             }
 
-            if (!empty($candidates)) {
+            if (! empty($candidates)) {
                 return ImageHasher::findBestColorMatch($imagePath, $candidates, 95);
             }
         }
@@ -250,6 +250,7 @@ class ImageDeduplicationService
         foreach (Markdown::images($firstPageText) as $img) {
             $set[$img] = true;
         }
+
         return $set;
     }
 
@@ -263,8 +264,9 @@ class ImageDeduplicationService
             PREG_SET_ORDER
         );
         foreach ($matches as $m) {
-            $attrs[$m[1]] = [(int)$m[2], (int)$m[3]];
+            $attrs[$m[1]] = [(int) $m[2], (int) $m[3]];
         }
+
         return $attrs;
     }
 
@@ -272,14 +274,17 @@ class ImageDeduplicationService
     {
         if ($tipo === 'guia_con_nombre') {
             $normalized = preg_replace('#/medios/guias/con_nombre/(.*)\.jpg#i', '/medios/guias/$1.jpg', $path);
+
             return strtolower($normalized);
         }
+
         return $path;
     }
 
     private static function replaceMarkdownImage(string $texto, string $oldPath, string $newPath): string
     {
         $escaped = preg_quote($oldPath, '#');
+
         return preg_replace(
             "#!\[([^\]]*)\]\({$escaped}\)(\{[^}]*\})?#",
             "![$1]($newPath)$2",
@@ -295,6 +300,7 @@ class ImageDeduplicationService
     {
         [$w, $h] = $dims;
         $escaped = preg_quote($path, '#');
+
         return preg_replace(
             "#!\[([^\]]*)\]\({$escaped}\)(\{[^}]*\})?#",
             "![$1]($path){width=$w,height=$h}",

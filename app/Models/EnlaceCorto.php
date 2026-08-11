@@ -5,7 +5,6 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Carbon\Carbon;
 
 class EnlaceCorto extends Model
 {
@@ -69,7 +68,8 @@ class EnlaceCorto extends Model
     public function getUrlCortaAttribute(): string
     {
         $domain = config('enlaces_cortos.dominios.principal');
-        return rtrim($domain, '/') . '/' . $this->prefijo . '/' . $this->codigo;
+
+        return rtrim($domain, '/').'/'.$this->prefijo.'/'.$this->codigo;
     }
 
     /**

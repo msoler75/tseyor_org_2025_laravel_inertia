@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
-use App\Mail\FormularioContactoEmail;
 use App\Mail\FormularioContactoConfirmacionEmail;
+use App\Mail\FormularioContactoEmail;
+use Illuminate\Http\Request;
 use Illuminate\Mail\Markdown;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Mail;
 
 class ContactarController extends Controller
 {
@@ -58,17 +58,16 @@ class ContactarController extends Controller
         return redirect()->back()->with('success', 'Se ha enviado correctamente');
     }
 
-
     public function test()
     {
         $markdown = new Markdown(view(), config('mail.markdown'));
 
-         return $markdown->render('emails.formulario-contacto-confirmacion', (
-           ["nombre"=>"Juan Fernández",
-            "pais"=>"España",
-            "email"=>"jmsoler77@gmail.com",
-            "telefono"=>"77-0343234321",
-            "comentario"=>"Quiero unirme al grupo"]
+        return $markdown->render('emails.formulario-contacto-confirmacion', (
+            ['nombre' => 'Juan Fernández',
+                'pais' => 'España',
+                'email' => 'jmsoler77@gmail.com',
+                'telefono' => '77-0343234321',
+                'comentario' => 'Quiero unirme al grupo']
         ));
     }
 }

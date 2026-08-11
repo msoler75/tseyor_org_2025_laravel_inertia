@@ -2,17 +2,18 @@
 
 namespace App\Notifications;
 
-use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Notification;
-use Illuminate\Notifications\Messages\MailMessage;
 use App\Models\Inscripcion;
 use App\Models\User;
+use Illuminate\Bus\Queueable;
+use Illuminate\Notifications\Messages\MailMessage;
+use Illuminate\Notifications\Notification;
 
 class InscripcionReasignada extends Notification
 {
     use Queueable;
 
     public $inscripcion;
+
     public $nuevoTutor;
 
     public function __construct(Inscripcion $inscripcion, User $nuevoTutor)
@@ -30,11 +31,11 @@ class InscripcionReasignada extends Notification
     {
         return (new MailMessage)
             ->subject('Inscripción reasignada')
-            ->greeting('Hola ' . ($notifiable->name ?? ''))
-            ->line('La inscripción de ' . $this->inscripcion->nombre . ' ha sido reasignada a otro tutor.')
-            ->line('Nuevo tutor: ' . $this->nuevoTutor->name . ' (' . $this->nuevoTutor->email . ')')
+            ->greeting('Hola '.($notifiable->name ?? ''))
+            ->line('La inscripción de '.$this->inscripcion->nombre.' ha sido reasignada a otro tutor.')
+            ->line('Nuevo tutor: '.$this->nuevoTutor->name.' ('.$this->nuevoTutor->email.')')
             ->line('En motivo de la ley de protección de datos es necesario que borres toda información que tengas de esta persona ('.
-            $this->inscripcion->nombre .', '. $this->inscripcion->nombre.'), incluidos los correos anteriores con información de este alumno.')
+            $this->inscripcion->nombre.', '.$this->inscripcion->nombre.'), incluidos los correos anteriores con información de este alumno.')
             ->line('Si tienes alguna duda, contacta con secretaría.');
     }
 }

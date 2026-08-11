@@ -1,6 +1,7 @@
 <?php
 
-use PHPUnit\Framework\Constraint\IsFalse;
+use App\Http\Middleware\CheckIfAdmin;
+use Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull;
 
 return [
 
@@ -98,8 +99,8 @@ return [
     // The classes for the middleware to check if the visitor is an admin
     // Can be a single class or an array of classes
     'middleware_class' => [
-        App\Http\Middleware\CheckIfAdmin::class,
-        \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
+        CheckIfAdmin::class,
+        ConvertEmptyStringsToNull::class,
         // \Backpack\CRUD\app\Http\Middleware\AuthenticateSession::class,
         // Desactivado: captura al admin al construirse y guarda su password_hash en sesión,
         // rompiendo loginAs al dejar user_id del target + hash del admin.
@@ -172,8 +173,5 @@ return [
     */
 
     'token_username' => env('BACKPACK_TOKEN_USERNAME', false),
-
-
-
 
 ];

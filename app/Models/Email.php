@@ -13,9 +13,6 @@ class Email extends Model
         'from',
         'to',
         'subject',
-        'body'
+        'body',
     ];
-
-
-
 }

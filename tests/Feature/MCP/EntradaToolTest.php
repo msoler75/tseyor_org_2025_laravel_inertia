@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\MCP;
 
+use App\Http\Controllers\EntradasController;
 use App\Models\Entrada;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
@@ -11,21 +12,21 @@ class EntradaToolTest extends McpFeatureTestCase
 
     public function test_listar_entradas()
     {
-        $pp = \App\Http\Controllers\EntradasController::$ITEMS_POR_PAGINA;
+        $pp = EntradasController::$ITEMS_POR_PAGINA;
         Entrada::withoutEvents(function () use ($pp) {
             for ($i = 0; $i < $pp + 2; $i++) {
                 Entrada::create([
-                    'titulo' => 'Entrada ' . $i,
-                    'slug' => 'entrada-' . $i . '-' . uniqid(),
-                    'texto' => 'texto md ' . uniqid(),
-                    'descripcion' => 'Desc ' . $i,
+                    'titulo' => 'Entrada '.$i,
+                    'slug' => 'entrada-'.$i.'-'.uniqid(),
+                    'texto' => 'texto md '.uniqid(),
+                    'descripcion' => 'Desc '.$i,
                     'categoria' => 'general',
                     'published_at' => now()->toDateString(),
                     'visibilidad' => 'P',
                 ]);
             }
         });
-        $this->makeAllSearchable(\App\Models\Entrada::class);
+        $this->makeAllSearchable(Entrada::class);
         $result = $this->callMcpTool('listar', ['entidad' => 'entrada']);
         $this->assertIsArray($result);
         $this->assertArrayHasKey('listado', $result);
@@ -53,8 +54,8 @@ class EntradaToolTest extends McpFeatureTestCase
     {
         $entrada = Entrada::create([
             'titulo' => 'Entrada Test',
-            'slug' => 'entrada-test-' . uniqid(),
-            'texto' => 'texto md ' . uniqid(),
+            'slug' => 'entrada-test-'.uniqid(),
+            'texto' => 'texto md '.uniqid(),
             'descripcion' => 'Desc',
             'categoria' => 'general',
             'visibilidad' => 'P',
@@ -71,13 +72,13 @@ class EntradaToolTest extends McpFeatureTestCase
             'entidad' => 'entrada',
             'data' => [
                 'titulo' => 'Nueva Entrada',
-                'slug' => 'nueva-entrada-' . uniqid(),
-                'texto' => 'texto md ' . uniqid(),
+                'slug' => 'nueva-entrada-'.uniqid(),
+                'texto' => 'texto md '.uniqid(),
                 'descripcion' => 'Descripción de prueba',
                 'categoria' => 'test',
                 'visibilidad' => 'P',
             ],
-            'token' => config('mcp-server.tokens.admin')
+            'token' => config('mcp-server.tokens.admin'),
         ];
         $this->callMcpTool('crear', $params);
         $this->assertDatabaseHas('entradas', ['slug' => $params['data']['slug']]);
@@ -87,8 +88,8 @@ class EntradaToolTest extends McpFeatureTestCase
     {
         $entrada = Entrada::create([
             'titulo' => 'Editar Entrada',
-            'slug' => 'editar-entrada-' . uniqid(),
-            'texto' => 'texto md' . uniqid(),
+            'slug' => 'editar-entrada-'.uniqid(),
+            'texto' => 'texto md'.uniqid(),
             'descripcion' => 'Desc original',
             'categoria' => 'general',
             'visibilidad' => 'P',
@@ -98,9 +99,9 @@ class EntradaToolTest extends McpFeatureTestCase
             'entidad' => 'entrada',
             'id' => $entrada->id,
             'data' => [
-                'descripcion' => $nuevaDescripcion
+                'descripcion' => $nuevaDescripcion,
             ],
-            'token' => config('mcp-server.tokens.admin')
+            'token' => config('mcp-server.tokens.admin'),
         ];
         $this->callMcpTool('editar', $params);
         $this->assertDatabaseHas('entradas', ['id' => $entrada->id, 'descripcion' => $nuevaDescripcion]);
@@ -110,8 +111,8 @@ class EntradaToolTest extends McpFeatureTestCase
     {
         $entrada = Entrada::create([
             'titulo' => 'Eliminar Entrada',
-            'slug' => 'eliminar-entrada-' . uniqid(),
-            'texto' => 'texto md ' . uniqid(),
+            'slug' => 'eliminar-entrada-'.uniqid(),
+            'texto' => 'texto md '.uniqid(),
             'descripcion' => 'Desc',
             'categoria' => 'general',
             'visibilidad' => 'P',
@@ -120,7 +121,7 @@ class EntradaToolTest extends McpFeatureTestCase
             'entidad' => 'entrada',
             'id' => $entrada->id,
             'force' => true,
-            'token' => config('mcp-server.tokens.admin')
+            'token' => config('mcp-server.tokens.admin'),
         ];
         $this->callMcpTool('eliminar', $params);
         $this->assertDatabaseMissing('entradas', ['id' => $entrada->id]);
@@ -139,7 +140,7 @@ class EntradaToolTest extends McpFeatureTestCase
         $this->assertIsArray($entrada['parametros_listar']);
         $this->assertIsArray($entrada['campos']);
         $campos_esperados = [
-            'titulo', 'descripcion', 'texto', 'published_at', 'imagen', 'visibilidad'
+            'titulo', 'descripcion', 'texto', 'published_at', 'imagen', 'visibilidad',
         ];
         foreach ($campos_esperados as $campo) {
             $this->assertArrayHasKey($campo, $entrada['campos'], "Falta el campo '$campo'");

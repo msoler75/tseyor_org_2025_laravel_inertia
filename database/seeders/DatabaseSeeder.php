@@ -2,8 +2,9 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\Contacto;
+use Faker\Factory;
+use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -22,14 +23,14 @@ class DatabaseSeeder extends Seeder
 
     private function generateRandomData()
     {
-        $faker = \Faker\Factory::create();
+        $faker = Factory::create();
 
         $categorias = ['Sueños',
-        'Extrapolaciones',
-        'Seiph',
-        'Otros',
-        'Experiencia de campo (Grupal)',
-        'Rescate adimensional (Grupal)'];
+            'Extrapolaciones',
+            'Seiph',
+            'Otros',
+            'Experiencia de campo (Grupal)',
+            'Rescate adimensional (Grupal)'];
         // $categorias = ['Meditaciones', 'Cuentos', 'Clásica', 'Canciones', 'Reflexiones', 'Talleres'];
         $codigos_pais = ['ES', 'MX', 'AR', 'CO', 'PE', 'CL', 'VE', 'EC', 'GT', 'CU', 'BO', 'DO', 'HN', 'PY', 'SV', 'NI', 'CR', 'UY', 'PA'];
         /*
@@ -54,19 +55,19 @@ class DatabaseSeeder extends Seeder
             'nombre' => $faker->text(60),
             // 'categoria' => $faker->randomElement($categorias),
             // 'descripcion' => $faker->paragraph(1),
-            //'name' => $faker->userName(),
+            // 'name' => $faker->userName(),
             // 'slug' => $faker->slug(),
-            //'email' =>$faker->email(),
-            //'password'=>$faker->password(),
-            //'fecha' => $faker->dateTime(),
-            //'lugar' => $faker->text(30),
-            //'audio' => $faker->randomElement($files),
+            // 'email' =>$faker->email(),
+            // 'password'=>$faker->password(),
+            // 'fecha' => $faker->dateTime(),
+            // 'lugar' => $faker->text(30),
+            // 'audio' => $faker->randomElement($files),
             'pais' => $faker->randomElement($codigos_pais),
             // 'equipo_id' => $faker->randomElement($equipos),
             // 'texto' => $faker->paragraph(20),
             'visibilidad' => 'P',
             'imagen' => $faker->imageUrl(800, 600),
-            //'profile_photo_path' =>$faker->getImageUrl(600, 600),
+            // 'profile_photo_path' =>$faker->getImageUrl(600, 600),
             /* 'provincia' => $faker->state(),
             'direccion' => $faker->address(),
             'codigo' => $faker->postcode(),

@@ -9,10 +9,11 @@ use App\Models\ContenidoBaseModel;
  */
 trait CrudContenido
 {
-    public function getMediaFolder($model = null) : string
+    public function getMediaFolder($model = null): string
     {
-        if($model!=null)
+        if ($model != null) {
             return $model->getCarpetaMedios();
+        }
 
         // Verificar si se está editando un registro existente
         $entry = $this->crud->getCurrentEntry();
@@ -25,10 +26,8 @@ trait CrudContenido
         }
     }
 
-
-    public function getMediaTempFolder() : string
+    public function getMediaTempFolder(): string
     {
         return ContenidoBaseModel::getCarpetaMediosTemp();
     }
-
 }

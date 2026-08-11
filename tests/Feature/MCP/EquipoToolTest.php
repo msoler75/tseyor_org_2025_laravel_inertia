@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\MCP;
 
+use App\Http\Controllers\EquiposController;
 use App\Models\Equipo;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
@@ -11,21 +12,21 @@ class EquipoToolTest extends McpFeatureTestCase
 
     public function test_listar_equipos()
     {
-        $pp = \App\Http\Controllers\EquiposController::$ITEMS_POR_PAGINA;
+        $pp = EquiposController::$ITEMS_POR_PAGINA;
         // Datos base sembrados por setup-test-db.sh (equipo 1) — cuentan en las páginas
-        $base = \App\Models\Equipo::count();
+        $base = Equipo::count();
         Equipo::withoutEvents(function () use ($pp) {
             for ($i = 0; $i < $pp + 3; $i++) {
                 Equipo::create([
-                    'nombre' => 'Equipo ' . $i . ($i <($pp+2) ? ' extra' : ''),
-                    'slug' => 'equipo-' . $i . '-' . uniqid(),
-                    'descripcion' => 'Desc ' . $i,
+                    'nombre' => 'Equipo '.$i.($i < ($pp + 2) ? ' extra' : ''),
+                    'slug' => 'equipo-'.$i.'-'.uniqid(),
+                    'descripcion' => 'Desc '.$i,
                     'categoria' => 'general',
-                    'imagen' => '/almacen/equipo' . $i . '.jpg',
+                    'imagen' => '/almacen/equipo'.$i.'.jpg',
                 ]);
             }
         });
-        $this->makeAllSearchable(\App\Models\Equipo::class);
+        $this->makeAllSearchable(Equipo::class);
         $result = $this->callMcpTool('listar', ['entidad' => 'equipo']);
         $this->assertIsArray($result);
         $this->assertArrayHasKey('listado', $result);
@@ -51,7 +52,7 @@ class EquipoToolTest extends McpFeatureTestCase
     {
         $equipo = Equipo::create([
             'nombre' => 'Equipo Test',
-            'slug' => 'equipo-test-' . uniqid(),
+            'slug' => 'equipo-test-'.uniqid(),
             'descripcion' => 'Desc',
             'categoria' => 'general',
             'imagen' => '/almacen/equipo-test.jpg',
@@ -68,12 +69,12 @@ class EquipoToolTest extends McpFeatureTestCase
             'entidad' => 'equipo',
             'data' => [
                 'nombre' => 'Nuevo Equipo',
-                'slug' => 'nuevo-equipo-' . uniqid(),
+                'slug' => 'nuevo-equipo-'.uniqid(),
                 'descripcion' => 'Descripción de prueba',
                 'categoria' => 'test',
                 'imagen' => '/almacen/nuevo-equipo.jpg',
             ],
-            'token' => config('mcp-server.tokens.admin')
+            'token' => config('mcp-server.tokens.admin'),
         ];
         $this->callMcpTool('crear', $params);
         $this->assertDatabaseHas('equipos', ['slug' => $params['data']['slug']]);
@@ -83,7 +84,7 @@ class EquipoToolTest extends McpFeatureTestCase
     {
         $equipo = Equipo::create([
             'nombre' => 'Editar Equipo',
-            'slug' => 'editar-equipo-' . uniqid(),
+            'slug' => 'editar-equipo-'.uniqid(),
             'descripcion' => 'Desc',
             'categoria' => 'general',
             'imagen' => '/almacen/editar-equipo.jpg',
@@ -93,9 +94,9 @@ class EquipoToolTest extends McpFeatureTestCase
             'entidad' => 'equipo',
             'id' => $equipo->id,
             'data' => [
-                'descripcion' => $nuevaDescripcion
+                'descripcion' => $nuevaDescripcion,
             ],
-            'token' => config('mcp-server.tokens.admin')
+            'token' => config('mcp-server.tokens.admin'),
         ];
         $this->callMcpTool('editar', $params);
         $this->assertDatabaseHas('equipos', ['id' => $equipo->id, 'descripcion' => $nuevaDescripcion]);
@@ -108,7 +109,7 @@ class EquipoToolTest extends McpFeatureTestCase
         // checkDeleteable bloquea la eliminación. Verificamos ese comportamiento.
         $equipo = Equipo::create([
             'nombre' => 'Eliminar Equipo',
-            'slug' => 'eliminar-equipo-' . uniqid(),
+            'slug' => 'eliminar-equipo-'.uniqid(),
             'descripcion' => 'Desc',
             'categoria' => 'general',
             'imagen' => '/almacen/eliminar-equipo.jpg',
@@ -117,7 +118,7 @@ class EquipoToolTest extends McpFeatureTestCase
             'entidad' => 'equipo',
             'id' => $equipo->id,
             'force' => true,
-            'token' => config('mcp-server.tokens.admin')
+            'token' => config('mcp-server.tokens.admin'),
         ];
         $result = $this->callMcpTool('eliminar', $params);
         $this->assertIsArray($result);
@@ -139,7 +140,7 @@ class EquipoToolTest extends McpFeatureTestCase
         $this->assertIsArray($equipo['parametros_listar']);
         $this->assertIsArray($equipo['campos']);
         $campos_esperados = [
-            'nombre', 'slug', 'descripcion', 'imagen', 'categoria', 'group_id', 'anuncio', 'reuniones', 'informacion', 'oculto', 'ocultarCarpetas', 'ocultarArchivos', 'ocultarMiembros', 'ocultarSolicitudes'
+            'nombre', 'slug', 'descripcion', 'imagen', 'categoria', 'group_id', 'anuncio', 'reuniones', 'informacion', 'oculto', 'ocultarCarpetas', 'ocultarArchivos', 'ocultarMiembros', 'ocultarSolicitudes',
         ];
         foreach ($campos_esperados as $campo) {
             $this->assertArrayHasKey($campo, $equipo['campos'], "Falta el campo '$campo'");

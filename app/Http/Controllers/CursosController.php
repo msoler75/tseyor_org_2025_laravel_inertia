@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Inertia\Inertia;
 use App\Models\Libro;
 use App\Pigmalion\SEO;
+use Inertia\Inertia;
 
 class CursosController extends Controller
 {
@@ -116,7 +115,7 @@ class CursosController extends Controller
 
         // Libro3d y la plantilla esperan un objeto con .slug, .imagen, .portada, .titulo.
         // Si no existe en BD, usamos un respaldo para no romper la página.
-        if (!$libro) {
+        if (! $libro) {
             $libro = (object) [
                 'slug' => 'curso-holistico-tseyor',
                 'imagen' => '/almacen/medios/paginas/curso.png',
@@ -124,7 +123,7 @@ class CursosController extends Controller
                 'titulo' => 'Curso Holístico Tseyor',
             ];
         }
-        if (!$libroGuias) {
+        if (! $libroGuias) {
             $libroGuias = (object) [
                 'slug' => 'los-guias-estelares',
                 'imagen' => '/almacen/medios/paginas/curso.png',
@@ -138,6 +137,6 @@ class CursosController extends Controller
             'libroGuias' => $libroGuias,
             'testimonios' => $this->testimonios(),
         ])
-        ->withViewData(SEO::get('cursos'));
+            ->withViewData(SEO::get('cursos'));
     }
 }

@@ -8,14 +8,14 @@ return [
                 'name' => 'buscar',
                 'type' => 'string',
                 'required' => false,
-                'description' => 'Texto a buscar en las galerías. Ejemplo: "Convivencias"'
+                'description' => 'Texto a buscar en las galerías. Ejemplo: "Convivencias"',
             ],
             [
                 'name' => 'orden',
                 'type' => 'string',
                 'required' => false,
-                'description' => 'Orden de resultados: "recientes", "cronologico", "relevancia". Ejemplo: "recientes"'
-            ]
+                'description' => 'Orden de resultados: "recientes", "cronologico", "relevancia". Ejemplo: "recientes"',
+            ],
         ],
         'campos' => [
             'titulo' => ['type' => 'string', 'description' => 'Título de la galería'],
@@ -23,7 +23,7 @@ return [
             'descripcion' => ['type' => 'string', 'description' => 'Descripción breve'],
             'ruta' => ['type' => 'string', 'description' => 'Ruta del directorio de imágenes'],
             'imagen' => ['type' => 'string', 'description' => 'Imagen principal de la galería'],
-            'imagen_principal' => ['type' => 'string', 'description' => 'Primera imagen de los items (virtual)']
-        ]
+            'imagen_principal' => ['type' => 'string', 'description' => 'Primera imagen de los items (virtual)'],
+        ],
     ],
 ];

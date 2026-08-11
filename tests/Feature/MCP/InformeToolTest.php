@@ -2,6 +2,9 @@
 
 namespace Tests\Feature\MCP;
 
+use App\Http\Controllers\InformesController;
+use App\Models\Equipo;
+use App\Models\Informe;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class InformeToolTest extends McpFeatureTestCase
@@ -12,7 +15,7 @@ class InformeToolTest extends McpFeatureTestCase
     {
         parent::setUp();
         // Usar firstOrCreate para evitar duplicados si por alguna razón no se vacía
-        \App\Models\Equipo::firstOrCreate(
+        Equipo::firstOrCreate(
             ['id' => 1],
             ['nombre' => 'Equipo Test', 'slug' => 'equipo-test', 'oculto' => false]
         );
@@ -31,7 +34,7 @@ class InformeToolTest extends McpFeatureTestCase
         $this->assertIsArray($informe['parametros_listar']);
         $this->assertIsArray($informe['campos']);
         $campos_esperados = [
-            'titulo', 'categoria', 'equipo_id', 'descripcion', 'texto', 'audios', 'archivos', 'visibilidad'
+            'titulo', 'categoria', 'equipo_id', 'descripcion', 'texto', 'audios', 'archivos', 'visibilidad',
         ];
         foreach ($campos_esperados as $campo) {
             $this->assertArrayHasKey($campo, $informe['campos'], "Falta el campo '$campo'");
@@ -44,22 +47,22 @@ class InformeToolTest extends McpFeatureTestCase
 
     public function test_listar_informes()
     {
-        $pp = \App\Http\Controllers\InformesController::$ITEMS_POR_PAGINA;
-        \App\Models\Informe::withoutEvents(function () use ($pp) {
+        $pp = InformesController::$ITEMS_POR_PAGINA;
+        Informe::withoutEvents(function () use ($pp) {
             for ($i = 0; $i < $pp + 2; $i++) {
-                \App\Models\Informe::create([
-                    'titulo' => 'Informe ' . $i,
+                Informe::create([
+                    'titulo' => 'Informe '.$i,
                     'categoria' => 'anual',
                     'equipo_id' => 1,
-                    'descripcion' => 'Desc ' . $i,
-                    'texto' => 'Texto ' . $i,
+                    'descripcion' => 'Desc '.$i,
+                    'texto' => 'Texto '.$i,
                     'audios' => json_encode([]),
                     'archivos' => json_encode([]),
                     'visibilidad' => 'P',
                 ]);
             }
         });
-        $this->makeAllSearchable(\App\Models\Informe::class);
+        $this->makeAllSearchable(Informe::class);
         $result = $this->callMcpTool('listar', ['entidad' => 'informe']);
         $this->assertIsArray($result);
         $this->assertArrayHasKey('listado', $result);
@@ -83,7 +86,7 @@ class InformeToolTest extends McpFeatureTestCase
 
     public function test_ver_informe()
     {
-        $informe = \App\Models\Informe::create([
+        $informe = Informe::create([
             'titulo' => 'Informe Test',
             'categoria' => 'anual',
             'equipo_id' => 1,
@@ -93,7 +96,7 @@ class InformeToolTest extends McpFeatureTestCase
             'archivos' => json_encode([]),
             'visibilidad' => 'P',
         ]);
-        $result = $this->callMcpTool('ver', ['entidad'=>'informe', 'id' => $informe->id]);
+        $result = $this->callMcpTool('ver', ['entidad' => 'informe', 'id' => $informe->id]);
         $this->assertIsArray($result);
         $this->assertArrayHasKey('informe', $result);
         $this->assertEquals($informe->id, $result['informe']['id'] ?? $result['informe']->id ?? null);
@@ -113,7 +116,7 @@ class InformeToolTest extends McpFeatureTestCase
                 'archivos' => json_encode([]),
                 'visibilidad' => 'P',
             ],
-            'token' => config('mcp-server.tokens.admin')
+            'token' => config('mcp-server.tokens.admin'),
         ];
         $this->callMcpTool('crear', $params);
         $this->assertDatabaseHas('informes', ['titulo' => $params['data']['titulo']]);
@@ -121,7 +124,7 @@ class InformeToolTest extends McpFeatureTestCase
 
     public function test_editar_informe()
     {
-        $informe = \App\Models\Informe::create([
+        $informe = Informe::create([
             'titulo' => 'Editar Informe',
             'categoria' => 'anual',
             'equipo_id' => 1,
@@ -136,9 +139,9 @@ class InformeToolTest extends McpFeatureTestCase
             'entidad' => 'informe',
             'id' => $informe->id,
             'data' => [
-                'descripcion' => $nuevaDescripcion
+                'descripcion' => $nuevaDescripcion,
             ],
-            'token' => config('mcp-server.tokens.admin')
+            'token' => config('mcp-server.tokens.admin'),
         ];
         $this->callMcpTool('editar', $params);
         $this->assertDatabaseHas('informes', ['id' => $informe->id, 'descripcion' => $nuevaDescripcion]);
@@ -147,7 +150,7 @@ class InformeToolTest extends McpFeatureTestCase
     public function test_eliminar_informe()
     {
         // Un informe SIN equipo asociado sí se puede eliminar
-        $informe = \App\Models\Informe::create([
+        $informe = Informe::create([
             'titulo' => 'Eliminar Informe',
             'categoria' => 'anual',
             'equipo_id' => null,
@@ -161,13 +164,13 @@ class InformeToolTest extends McpFeatureTestCase
             'entidad' => 'informe',
             'id' => $informe->id,
             'force' => true,
-            'token' => config('mcp-server.tokens.admin')
+            'token' => config('mcp-server.tokens.admin'),
         ];
         $this->callMcpTool('eliminar', $params);
         $this->assertDatabaseMissing('informes', ['id' => $informe->id]);
 
         // Un informe asociado a un equipo NO se puede eliminar (checkDeleteable)
-        $informeConEquipo = \App\Models\Informe::create([
+        $informeConEquipo = Informe::create([
             'titulo' => 'Informe Con Equipo',
             'categoria' => 'anual',
             'equipo_id' => 1,
@@ -181,7 +184,7 @@ class InformeToolTest extends McpFeatureTestCase
             'entidad' => 'informe',
             'id' => $informeConEquipo->id,
             'force' => true,
-            'token' => config('mcp-server.tokens.admin')
+            'token' => config('mcp-server.tokens.admin'),
         ];
         $result = $this->callMcpTool('eliminar', $params2);
         $this->assertIsArray($result);

@@ -2,10 +2,10 @@
 
 namespace Tests\Unit;
 
-use Tests\TestCase;
-use Illuminate\Support\Facades\Cache;
 use App\Jobs\Middleware\EmailRateLimited;
 use App\Jobs\WriteFileTestJob;
+use Illuminate\Support\Facades\Cache;
+use Tests\TestCase;
 
 class EmailRateLimitedTest extends TestCase
 {
@@ -28,7 +28,7 @@ class EmailRateLimitedTest extends TestCase
          * de espera devuelto para `BoletinEmail` es al menos el valor base
          * esperado por la middleware (600s).
          */
-        $mw = new EmailRateLimited();
+        $mw = new EmailRateLimited;
         $wait = $mw->getWaitTime('App\\Mail\\BoletinEmail');
         // base for BoletinEmail is 600 seconds per middleware
         $this->assertGreaterThanOrEqual(600, $wait);
@@ -41,7 +41,7 @@ class EmailRateLimitedTest extends TestCase
          * que el siguiente job recibe un delay que corresponde a la siguiente
          * ventana temporal (1 * window) o al `baseWait` si es mayor.
          */
-        $mw = new EmailRateLimited();
+        $mw = new EmailRateLimited;
 
         // configure known values
         config(['mail.rate_limit.max.overall' => 50]);
@@ -67,13 +67,13 @@ class EmailRateLimitedTest extends TestCase
         $this->assertEquals($expected, $wait);
     }
 
-    public function test_recordSuccessfulSend_removes_one_pending()
+    public function test_record_successful_send_removes_one_pending()
     {
         /**
          * Descripción: Añade 3 entradas pendientes y comprueba que
          * `recordSuccessfulSend()` elimina exactamente una de ellas.
          */
-        $mw = new EmailRateLimited();
+        $mw = new EmailRateLimited;
         // Ensure clean pending store then add 3 pending entries
         Cache::forget('email_rate_limit_pending');
         $mw->addPending('App\\Mail\\BoletinEmail');
@@ -99,7 +99,7 @@ class EmailRateLimitedTest extends TestCase
          * devuelto antes de añadir la tarea coincide exactamente con la fórmula
          * esperada: slot = ceil(index / max.overall); expected = max(baseWait, (slot-1) * window).
          */
-        $mw = new EmailRateLimited();
+        $mw = new EmailRateLimited;
 
         // configure known values
         config(['mail.rate_limit.max.overall' => 50]);
@@ -125,7 +125,7 @@ class EmailRateLimitedTest extends TestCase
             $expected = max($baseWait, $calculated);
 
             $wait = $mw->getWaitTime('App\\Mail\\BoletinEmail');
-            $this->assertEquals($expected, $wait, "Failed asserting wait for queue position=" . ($pos + 1));
+            $this->assertEquals($expected, $wait, 'Failed asserting wait for queue position='.($pos + 1));
 
             // Simular encolado real: añadir la tarea como pendiente
             $mw->addPending('App\\Mail\\BoletinEmail');
@@ -140,7 +140,7 @@ class EmailRateLimitedTest extends TestCase
          * la middleware debe reencolar (release) y registrar la entrada
          * en la estructura `pending`.
          */
-        $mw = new EmailRateLimited();
+        $mw = new EmailRateLimited;
 
         // Ensure clean state and remove any existing log
         $path = storage_path('logs/test-email-job.txt');
@@ -168,8 +168,10 @@ class EmailRateLimitedTest extends TestCase
         config(['mail.rate_limit.max.overall' => $max]);
         // Simular que ya se han enviado $max emails en la ventana actual
         // Para poder simular release en test, creamos un proxy de job que implemente release()
-        $jobProxy = new class('blocked') extends WriteFileTestJob {
+        $jobProxy = new class('blocked') extends WriteFileTestJob
+        {
             public $releasedDelay = null;
+
             public function release($delay = 0)
             {
                 // Capturamos el delay para asertarlo en el test
@@ -200,7 +202,7 @@ class EmailRateLimitedTest extends TestCase
         $this->assertGreaterThan(0, $mw->getQueuedJobsCount($proxyClass));
     }
 
-    public function test_calculateDelayForIndex_returns_correct_delays_for_batch()
+    public function test_calculate_delay_for_index_returns_correct_delays_for_batch()
     {
         /**
          * Descripción: Prueba el método calculateDelayForIndex() que permite
@@ -210,7 +212,7 @@ class EmailRateLimitedTest extends TestCase
          * - Los siguientes N jobs tienen delay = 2 * window
          * - Considera correctamente los jobs ya pendientes en la cola
          */
-        $mw = new EmailRateLimited();
+        $mw = new EmailRateLimited;
 
         // Configurar valores conocidos
         config(['mail.rate_limit.max.overall' => 50]);
@@ -252,16 +254,16 @@ class EmailRateLimitedTest extends TestCase
         // El job en índice 0 del nuevo batch está en posición real 10 (10 pendientes + índice 0)
         // Por lo tanto debe estar en slot 0 (posición 10 < maxPerWindow)
         $delay = $mw->calculateDelayForIndex($jobType, 0);
-        $this->assertEquals(0, $delay, "With 10 pending, job at index 0 (real position 10) should be in slot 0");
+        $this->assertEquals(0, $delay, 'With 10 pending, job at index 0 (real position 10) should be in slot 0');
 
         // El job en índice 5 está en posición real 15 (10 pendientes + índice 5)
         // Por lo tanto debe estar en slot 1 (posición 15 / maxPerWindow = 1)
         $delay = $mw->calculateDelayForIndex($jobType, 5);
-        $this->assertEquals($window, $delay, "With 10 pending, job at index 5 (real position 15) should be in slot 1");
+        $this->assertEquals($window, $delay, 'With 10 pending, job at index 5 (real position 15) should be in slot 1');
 
         // El job en índice 20 está en posición real 30 (10 pendientes + índice 20)
         // Por lo tanto debe estar en slot 2 (posición 30 / maxPerWindow = 2)
         $delay = $mw->calculateDelayForIndex($jobType, 20);
-        $this->assertEquals(2 * $window, $delay, "With 10 pending, job at index 20 (real position 30) should be in slot 2");
+        $this->assertEquals(2 * $window, $delay, 'With 10 pending, job at index 20 (real position 30) should be in slot 2');
     }
 }

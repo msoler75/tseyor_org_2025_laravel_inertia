@@ -3,7 +3,6 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Storage;
 
 class PWALogsCommand extends Command
 {
@@ -35,12 +34,14 @@ class PWALogsCommand extends Command
             } else {
                 $this->info('No hay logs para limpiar');
             }
+
             return;
         }
 
-        if (!file_exists($logFile)) {
+        if (! file_exists($logFile)) {
             $this->warn('No existe el archivo de logs de PWA');
-            $this->info('Ruta: ' . $logFile);
+            $this->info('Ruta: '.$logFile);
+
             return;
         }
 
@@ -48,12 +49,13 @@ class PWALogsCommand extends Command
 
         if (empty($lines)) {
             $this->info('No hay logs en el archivo');
+
             return;
         }
 
-        $this->info('📄 Logs de PWA (' . count($lines) . ' entradas)');
-        $this->info('📁 Archivo: ' . $logFile);
-        $this->info('📏 Tamaño: ' . $this->formatBytes(filesize($logFile)));
+        $this->info('📄 Logs de PWA ('.count($lines).' entradas)');
+        $this->info('📁 Archivo: '.$logFile);
+        $this->info('📏 Tamaño: '.$this->formatBytes(filesize($logFile)));
         $this->info('');
 
         // Mostrar logs
@@ -76,7 +78,7 @@ class PWALogsCommand extends Command
                 $data = $matches[6];
 
                 // Color del nivel
-                $color = match($level) {
+                $color = match ($level) {
                     'ERROR' => 'red',
                     'WARN' => 'yellow',
                     'SUCCESS' => 'green',
@@ -90,7 +92,7 @@ class PWALogsCommand extends Command
                 }
 
                 if ($isPwa === 'YES') {
-                    $this->line("  <fg=magenta>PWA: Sí</>");
+                    $this->line('  <fg=magenta>PWA: Sí</>');
                 }
 
                 if ($data !== 'null') {
@@ -119,6 +121,6 @@ class PWALogsCommand extends Command
             $i++;
         }
 
-        return round($bytes, 2) . ' ' . $units[$i];
+        return round($bytes, 2).' '.$units[$i];
     }
 }

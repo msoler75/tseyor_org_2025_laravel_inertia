@@ -17,7 +17,7 @@ return [
             'anyo' => ['type' => 'int', 'description' => 'Año'],
             'semana' => ['type' => 'int', 'description' => 'Semana'],
             'tipo' => ['type' => 'string', 'description' => 'Tipo de boletín'],
-            'enviado' => ['type' => 'boolean', 'description' => 'Si el boletín ha sido enviado']
-        ]
+            'enviado' => ['type' => 'boolean', 'description' => 'Si el boletín ha sido enviado'],
+        ],
     ],
 ];

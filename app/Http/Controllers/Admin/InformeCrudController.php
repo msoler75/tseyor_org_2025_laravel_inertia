@@ -2,15 +2,24 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Illuminate\Http\Request;
-use Backpack\CRUD\app\Http\Controllers\CrudController;
-use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
-use Illuminate\Support\Facades\Storage;
-use App\Services\WordImport;
-use App\Models\Informe;
 use App\Jobs\ProcesarAudios;
-use Illuminate\Support\Facades\Log;
 use App\Models\Equipo;
+use App\Models\Informe;
+use App\Services\WordImport;
+use App\Traits\CrudContenido;
+use Backpack\CRUD\app\Http\Controllers\CrudController;
+use Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
+use Backpack\CRUD\app\Library\CrudPanel\CrudPanel;
+use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
+use Backpack\ReviseOperation\ReviseOperation;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\Rule;
+
 // use Backpack\CRUD\app\Library\Validation\Rules\ValidUploadMultiple;
 
 // esto permite testar la conversión de audio al guardar el comunicado
@@ -18,18 +27,18 @@ define('TESTAR_CONVERTIDOR_AUDIO3', false);
 
 /**
  * Class InformeCrudController
- * @package App\Http\Controllers\Admin
- * @property-read \Backpack\CRUD\app\Library\CrudPanel\CrudPanel $crud
+ *
+ * @property-read CrudPanel $crud
  */
 class InformeCrudController extends CrudController
 {
-    use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
-    use \Backpack\ReviseOperation\ReviseOperation;
-    use \App\Traits\CrudContenido;
+    use CreateOperation;
+    use CrudContenido;
+    use DeleteOperation;
+    use ListOperation;
+    use ReviseOperation;
+    use ShowOperation;
+    use UpdateOperation;
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
@@ -39,7 +48,7 @@ class InformeCrudController extends CrudController
     public function setup()
     {
         CRUD::setModel(Informe::class);
-        CRUD::setRoute(config('backpack.base.route_prefix') . '/informe');
+        CRUD::setRoute(config('backpack.base.route_prefix').'/informe');
         CRUD::setEntityNameStrings('informe', 'informes');
     }
 
@@ -47,6 +56,7 @@ class InformeCrudController extends CrudController
      * Define what happens when the List operation is loaded.
      *
      * @see  https://backpackforlaravel.com/docs/crud-operation-list-entries
+     *
      * @return void
      */
     protected function setupListOperation()
@@ -54,10 +64,9 @@ class InformeCrudController extends CrudController
         // si no tiene permisos de "administrar equipos" entonces es un simple coordinador de un equipo (o varios tal vez)
         // añadimos un filtro para mostrar solo los informes del equipo del coordinador
 
-        if (!backpack_user()->can('administrar equipos')) {
-            CRUD::addClause("whereIn", "equipo_id", backpack_user()->equiposQueCoordina->pluck('id')->toArray());
+        if (! backpack_user()->can('administrar equipos')) {
+            CRUD::addClause('whereIn', 'equipo_id', backpack_user()->equiposQueCoordina->pluck('id')->toArray());
         }
-
 
         // CRUD::setFromDb(); // set columns from db columns.
 
@@ -65,27 +74,23 @@ class InformeCrudController extends CrudController
          * Columns can be defined using the fluent syntax:
          * - CRUD::column('price')->type('number');
          */
-
-
         $this->crud->addColumn([
             'name' => 'id',
             'label' => 'id',
-            'type' => 'number'
+            'type' => 'number',
         ]);
-
 
         $this->crud->addColumn([
             'name' => 'equipoNombre',
             'label' => 'Equipo',
-            'type' => 'text'
+            'type' => 'text',
         ]);
 
         $this->crud->addColumn([
             'name' => 'titulo',
             'label' => 'Título',
-            'type' => 'text'
+            'type' => 'text',
         ]);
-
 
         $this->crud->addColumn([
             'name' => 'updated_at',
@@ -100,14 +105,13 @@ class InformeCrudController extends CrudController
             'type' => 'text',
         ]);
 
-
         $this->crud->addColumn([
             'name' => 'visibilidad',
             'label' => 'Estado',
             'type' => 'text',
             'value' => function ($entry) {
                 return $entry->visibilidad == 'P' ? '✔️ Publicado' : '⚠️ Borrador';
-            }
+            },
         ]);
 
         CRUD::addButtonFromView('top', 'import_create', 'import_create', 'end');
@@ -121,24 +125,24 @@ class InformeCrudController extends CrudController
      * Define what happens when the Create operation is loaded.
      *
      * @see https://backpackforlaravel.com/docs/crud-operation-create
+     *
      * @return void
      */
     protected function setupCreateOperation()
     {
         $this->crud->setValidation([
             'titulo' => 'required|min:8',
-            'slug' => [\Illuminate\Validation\Rule::unique('informes', 'slug')->ignore($this->crud->getCurrentEntryId())],
+            'slug' => [Rule::unique('informes', 'slug')->ignore($this->crud->getCurrentEntryId())],
             'descripcion' => 'max:400',
             // 'audios' => ValidUploadMultiple::field()->file('max:20000'),
         ]);
 
         CRUD::setFromDb(); // set fields from db columns.
 
-
         CRUD::field([
             // select_from_array
             'name' => 'categoria',
-            'label' => "Categoría",
+            'label' => 'Categoría',
             'type' => 'select_from_array',
             'options' => ['Informe' => 'Informe', 'Orden del día' => 'Orden del día', 'Acta' => 'Acta', 'Anexo' => 'Anexo', 'Acuerdo' => 'Acuerdo', 'Otros' => 'Otros'],
             'allows_null' => false,
@@ -146,7 +150,7 @@ class InformeCrudController extends CrudController
             // 'allows_multiple' => true, // OPTIONAL; needs you to cast this to array in your model;
 
             'wrapper' => [
-                'class' => 'form-group col-md-3'
+                'class' => 'form-group col-md-3',
             ],
         ])->after('titulo');
 
@@ -158,36 +162,35 @@ class InformeCrudController extends CrudController
         if ($equipo_id) {
             $equipo = Equipo::findOrFail($equipo_id);
             // comprobamos si el usuario actual es coordinador de este equipo
-            if (!$administra_equipos && !backpack_user()->equiposQueCoordina->pluck('id')->contains($equipo_id)) {
+            if (! $administra_equipos && ! backpack_user()->equiposQueCoordina->pluck('id')->contains($equipo_id)) {
                 // denegamos el acceso
                 abort(403);
             }
             CRUD::field('equipo_nombre_mostrar')->type('text')->label('Equipo')->value($equipo->nombre)->after('titulo')->attributes(['readonly' => 'readonly'])
-            ->wrapper([
-                'class' => 'form-group col-md-4'
-            ]);
+                ->wrapper([
+                    'class' => 'form-group col-md-4',
+                ]);
             CRUD::field('equipo_id')->type('hidden')->value($equipo_id);
-        } else if ($administra_equipos)
+        } elseif ($administra_equipos) {
             CRUD::field('equipo_id')->type('select')->after('titulo')->wrapper(['class' => 'form-group col-md-3']);
-        else {
+        } else {
             $equipos = backpack_user()->equiposQueCoordina;
             CRUD::field([
                 // select_from_array
                 'name' => 'equipo_id',
-                'label' => "Equipo",
+                'label' => 'Equipo',
                 'type' => 'select_from_array',
                 'options' => array_combine($equipos->pluck('id')->toArray(), $equipos->pluck('nombre')->toArray()),
                 'allows_null' => false,
                 'wrapper' => [
-                    'class' => 'form-group col-md-3'
+                    'class' => 'form-group col-md-3',
                 ],
             ])->after('titulo');
         }
 
-
         $folder = $this->getMediaFolder();
 
-        CRUD::field('descripcion')->type('textarea')->label("Descripción corta (opcional)");
+        CRUD::field('descripcion')->type('textarea')->label('Descripción corta (opcional)');
 
         CRUD::field('texto')->type('tiptap_editor')->attributes(['folder' => $folder]);
 
@@ -209,7 +212,7 @@ class InformeCrudController extends CrudController
                 'acceptedFiles' => 'audio/*',
                 'addRemoveLinks' => true,
                 'dictRemoveFileConfirmation' => '¿Quieres eliminar este archivo?',
-                'dictRemoveFile' => 'Eliminar'
+                'dictRemoveFile' => 'Eliminar',
             ],
             // 'disk' => 'public',
             /*'type' => 'upload_multple',
@@ -224,7 +227,6 @@ class InformeCrudController extends CrudController
             ] */
         ]);
 
-
         /* CRUD::field('audios')->type('upload_multiple')->attributes(['accept'=>'audio/*'])->withFiles([
             'disk' => 'public',
             'path' => 'uploads'
@@ -233,7 +235,6 @@ class InformeCrudController extends CrudController
             'disk' => 'public',
             'path' => 'uploads',
     ]); */
-
 
         CRUD::field([
             'name' => 'archivos',
@@ -252,7 +253,7 @@ class InformeCrudController extends CrudController
                 'acceptedFiles' => '.pdf,.doc,.docx,.odt,.rtf,.txt,.xls,.xlsx,.ods,.csv,.mp3,.mp4,.zip', // mp4 para vídeo
                 'addRemoveLinks' => true,
                 'dictRemoveFileConfirmation' => '¿Quieres eliminar este archivo?',
-                'dictRemoveFile' => 'Eliminar'
+                'dictRemoveFile' => 'Eliminar',
             ],
             // 'disk' => 'public',
             /*'type' => 'upload_multple',
@@ -271,18 +272,17 @@ class InformeCrudController extends CrudController
 
         CRUD::field('visibilidad')->type('visibilidad');
 
-
         Informe::saved(function ($informe) use ($folder) {
             // Aquí puedes escribir tu lógica personalizada
             // que se ejecutará después de crear o actualizar un informe.
 
-            Log::info("informe::saved");
+            Log::info('informe::saved');
 
             // AUDIOS
             if ($informe->audios) {
                 $año = $informe->created_at->year;
                 $carpetaAudios = "/almacen/medios/informes/audios/{$informe->equipo->slug}/$año/{$informe->id}";
-                Log::info("informe::saved - audios carpeta " . $carpetaAudios);
+                Log::info('informe::saved - audios carpeta '.$carpetaAudios);
                 if (TESTAR_CONVERTIDOR_AUDIO3) {
                     $p = new ProcesarAudios(Informe::class, $informe->id, $carpetaAudios);
                     $p->handle();
@@ -295,23 +295,19 @@ class InformeCrudController extends CrudController
             // throw new \Exception("hola esto es un error");
             if ($informe->archivos) {
                 $carpetaArchivos = "$folder/archivos";
-                Log::info("informe::saved - archivos carpeta " . $carpetaArchivos);
-                if ($informe->guardarArchivos($carpetaArchivos))
+                Log::info('informe::saved - archivos carpeta '.$carpetaArchivos);
+                if ($informe->guardarArchivos($carpetaArchivos)) {
                     $informe->saveQuietly();
+                }
             }
         });
     }
-
-
-
-
-
-
 
     /**
      * Define what happens when the Update operation is loaded.
      *
      * @see https://backpackforlaravel.com/docs/crud-operation-update
+     *
      * @return void
      */
     protected function setupUpdateOperation()
@@ -319,39 +315,37 @@ class InformeCrudController extends CrudController
         // si no tiene permisos de "administrar equipos" entonces es un simple coordinador de un equipo (o varios tal vez)
         // añadimos un control para asegurarnos que no puede editar un informe que de alguno de sus equipos
 
-        if (!backpack_user()->can('administrar equipos')) {
+        if (! backpack_user()->can('administrar equipos')) {
             $informe = $this->crud->getCurrentEntry();
-            if ($informe && !backpack_user()->equiposQueCoordina->contains('id', $informe->equipo_id)) {
+            if ($informe && ! backpack_user()->equiposQueCoordina->contains('id', $informe->equipo_id)) {
                 $this->crud->denyAccess(['update']);
             }
         }
 
-
         $this->setupCreateOperation();
     }
-
 
     public function show($id)
     {
         $informe = Informe::find($id);
+
         return $informe->visibilidad == 'P' ? redirect("/informes/$id") : redirect("/informes/$id?borrador");
     }
-
 
     public function importCreate(Request $request)
     {
         $contenido = Informe::create([
-            "titulo" => "Importado de " . $_FILES['file']['name'] . "_" . substr(str_shuffle('0123456789'), 0, 5),
-            "texto" => ""
+            'titulo' => 'Importado de '.$_FILES['file']['name'].'_'.substr(str_shuffle('0123456789'), 0, 5),
+            'texto' => '',
         ]);
 
         // si nos llega el campo 'equipo_id' en post
-        if($request->has('equipo_id'))
+        if ($request->has('equipo_id')) {
             $contenido->update(['equipo_id' => $request->equipo_id]);
+        }
 
         return $this->importUpdate($contenido->id);
     }
-
 
     public function importUpdate($id)
     {
@@ -359,7 +353,7 @@ class InformeCrudController extends CrudController
 
         try {
             // inicializa el importador en base a $_FILES
-            $imported = new WordImport();
+            $imported = new WordImport;
 
             // copia las imágenes desde la carpeta temporal al directorio destino, sobreescribiendo las anteriores en la carpeta
             $imported->copyImagesTo($this->getMediaFolder($contenido), true);
@@ -370,11 +364,11 @@ class InformeCrudController extends CrudController
             $contenido->save();
 
             return response()->json([
-                "id" => $contenido->id
+                'id' => $contenido->id,
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
-                "error" => $e->getMessage()
+                'error' => $e->getMessage(),
             ], 500);
         }
     }

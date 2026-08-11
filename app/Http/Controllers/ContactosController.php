@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Inertia\Inertia;
 use App\Models\Contacto;
 use App\Pigmalion\Countries;
-use GuzzleHttp\Client;
 use App\Pigmalion\SEO;
+use GuzzleHttp\Client;
+use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class ContactosController extends Controller
 {
@@ -23,16 +23,18 @@ class ContactosController extends Controller
         $query = Contacto::select(['id', 'nombre', 'slug', 'imagen', 'poblacion', 'pais', 'latitud', 'longitud'])
             ->publicado();
 
-        if ($pais)
+        if ($pais) {
             $query->where('pais', $pais);
+        }
 
-        if ($buscar)
+        if ($buscar) {
             $query->buscar($buscar);
-        else
+        } else {
             $query->latest('updated_at');
+        }
 
         // dd(Countries::getFuzzyCountries($buscar));
-        $resultados =$query->paginate(self::$ITEMS_POR_PAGINA, ['*'], 'page', $page)
+        $resultados = $query->paginate(self::$ITEMS_POR_PAGINA, ['*'], 'page', $page)
             ->appends($request->except('page'));
 
         $paises = Contacto::selectRaw('pais as codigo, count(*) as total')
@@ -42,7 +44,7 @@ class ContactosController extends Controller
 
         // Traducir el código ISO del país a su nombre correspondiente
         foreach ($paises as $idx => $paisx) {
-            $paises[$idx]["nombre"] = Countries::getCountry($paisx["codigo"]);
+            $paises[$idx]['nombre'] = Countries::getCountry($paisx['codigo']);
         }
 
         foreach ($resultados as $idx => $centro) {
@@ -55,7 +57,7 @@ class ContactosController extends Controller
             'listado' => $resultados,
             'paises' => $paises,
             'apiKey' => config('services.google_maps.apikey'),
-            'vista' => $vista
+            'vista' => $vista,
         ])
             ->withViewData(SEO::get('contactos'));
     }
@@ -69,20 +71,19 @@ class ContactosController extends Controller
         }
 
         $borrador = request()->has('borrador');
-        $publicado =  $contacto->visibilidad == 'P';
+        $publicado = $contacto->visibilidad == 'P';
         $editor = optional(auth()->user())->can('administrar directorio');
-        if (!$contacto || (!$publicado && !$borrador && !$editor)) {
+        if (! $contacto || (! $publicado && ! $borrador && ! $editor)) {
             abort(404); // Item no encontrado o no autorizado
         }
 
         $contacto->pais = Countries::getCountry($contacto->pais);
 
         return Inertia::render('Contactos/Contacto', [
-            'contacto' => $contacto
+            'contacto' => $contacto,
         ])
             ->withViewData(SEO::from($contacto));
     }
-
 
     public static function obtenerCoordenadas($direccion)
     {
@@ -91,7 +92,7 @@ class ContactosController extends Controller
             return ['latitud' => 0, 'longitud' => 0];
         }
         $apiKey = config('services.google_maps.apikey'); // Reemplaza con tu propia API key de Google Maps
-        $client = new Client();
+        $client = new Client;
         // Realizar solicitud a la API de geocodificación de Google Maps
         $response = $client->get('https://maps.googleapis.com/maps/api/geocode/json', [
             'query' => [
@@ -106,17 +107,19 @@ class ContactosController extends Controller
             $location = $data['results'][0]['geometry']['location'];
             $latitud = $location['lat'];
             $longitud = $location['lng'];
+
             return ['latitud' => $latitud, 'longitud' => $longitud];
         }
+
         return null;
     }
 
     public static function rellenarLatitudYLongitud($contacto)
     {
-        $direccion = $contacto->direccion . ", "
-            . $contacto->poblacion . ", "
-            . $contacto->provincia . ", "
-            . $contacto->pais;
+        $direccion = $contacto->direccion.', '
+            .$contacto->poblacion.', '
+            .$contacto->provincia.', '
+            .$contacto->pais;
 
         // Obtener las coordenadas de latitud y longitud
         $coordenadas = ContactosController::obtenerCoordenadas($direccion);

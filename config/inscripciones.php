@@ -13,59 +13,59 @@ return [
     'estados' => [
         'nueva' => [
             'etiqueta' => 'Nueva',
-            'descripcion' => 'Nueva'
+            'descripcion' => 'Nueva',
         ],
         'duplicada' => [
             'etiqueta' => 'Duplicada',
-            'descripcion' => 'Inscripción Duplicada'
+            'descripcion' => 'Inscripción Duplicada',
         ],
         'suspendida' => [
             'etiqueta' => 'Suspendida',
-            'descripcion' => 'Suspensión temporal o espera'
+            'descripcion' => 'Suspensión temporal o espera',
         ],
         'asignada' => [
             'etiqueta' => 'Asignada',
-            'descripcion' => 'Asignada a un tutor o responsable'
+            'descripcion' => 'Asignada a un tutor o responsable',
         ],
         'rebotada' => [
             'etiqueta' => 'Rebotada',
-            'descripcion' => 'Asignación Rebotada'
+            'descripcion' => 'Asignación Rebotada',
         ],
         'contactado' => [
             'etiqueta' => 'Contactado',
-            'descripcion' => 'Se ha contactado con el/la inscrito/a'
+            'descripcion' => 'Se ha contactado con el/la inscrito/a',
         ],
         'encurso' => [
             'etiqueta' => 'En Curso',
-            'descripcion' => 'Cursando o programado Curso Holístico'
+            'descripcion' => 'Cursando o programado Curso Holístico',
         ],
         'abandonado' => [
             'etiqueta' => 'Abandonado',
-            'descripcion' => 'Ha abandonado el curso o está ausente'
+            'descripcion' => 'Ha abandonado el curso o está ausente',
         ],
         'nocontesta' => [
             'etiqueta' => 'No Contesta',
-            'descripcion' => 'No contesta mensajes o llamadas'
+            'descripcion' => 'No contesta mensajes o llamadas',
         ],
         'finalizado' => [
             'etiqueta' => 'Curso Finalizado',
-            'descripcion' => 'Finalizado el Curso Holístico'
+            'descripcion' => 'Finalizado el Curso Holístico',
         ],
         'nointeresado' => [
             'etiqueta' => 'No Interesado',
-            'descripcion' => 'No Interesado/a'
+            'descripcion' => 'No Interesado/a',
         ],
         'caducada' => [
             'etiqueta' => 'Caducada',
-            'descripcion' => 'Inscripción Caducada'
+            'descripcion' => 'Inscripción Caducada',
         ],
         'cerrada' => [
             'etiqueta' => 'Cerrada',
-            'descripcion' => 'Inscripción Cerrada'
+            'descripcion' => 'Inscripción Cerrada',
         ],
     ],
 
-    'estados_no_elegibles' => [ 'nueva', 'rebotada', 'caducada'],
+    'estados_no_elegibles' => ['nueva', 'rebotada', 'caducada'],
 
     'caduca_meses' => 6, // Número de meses tras los cuales una inscripción se considera caducada
 
@@ -88,7 +88,7 @@ return [
         'estados_seguimiento' => ['asignada', 'contactado', 'encurso', 'suspendida'],
 
         // Estados que detienen el seguimiento automático
-        'estados_finales' => ['finalizado', 'duplicada', 'nointeresado', 'abandonado', 'nocontesta', 'caducada', 'cerrada']
+        'estados_finales' => ['finalizado', 'duplicada', 'nointeresado', 'abandonado', 'nocontesta', 'caducada', 'cerrada'],
     ],
 
     /*
@@ -107,7 +107,7 @@ return [
         'max_inscripciones_por_usuario' => 12,
 
         // Estados que cuentan como inscripciones "activas" para el límite
-        'estados_activos' => ['asignada', 'contactado', 'encurso']
+        'estados_activos' => ['asignada', 'contactado', 'encurso'],
     ],
 
     /*
@@ -126,7 +126,7 @@ return [
         'frecuencia_reporte' => 1,
 
         // Hora del día para enviar reportes (formato 24h)
-        'hora_reporte' => '09:00'
+        'hora_reporte' => '09:00',
     ],
 
     /*
@@ -147,5 +147,5 @@ return [
 
         // Días sin actualización para inscripciones en curso (borde amarillo)
         'encurso_seguimiento' => env('INSCRIPCIONES_UMBRAL_ENCURSO', 30),
-    ]
+    ],
 ];

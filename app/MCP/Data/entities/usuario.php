@@ -17,7 +17,7 @@ return [
             'roles' => ['type' => 'array', 'description' => 'Roles asignados al usuario'],
             'equipos' => ['type' => 'array', 'description' => 'Equipos a los que pertenece'],
             'created_at' => ['type' => 'string', 'description' => 'Fecha de creación'],
-            'updated_at' => ['type' => 'string', 'description' => 'Fecha de última actualización']
-        ]
+            'updated_at' => ['type' => 'string', 'description' => 'Fecha de última actualización'],
+        ],
     ],
 ];

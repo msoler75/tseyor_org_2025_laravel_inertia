@@ -1,13 +1,12 @@
 <?php
 
-
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Validator;
-use App\Models\Comunicado;
-use App\Rules\DropzoneRule;
+use App\Models\Psicografia;
 use App\Pigmalion\StorageItem;
+use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 // https://github.com/jargoud/laravel-backpack-dropzone
 
@@ -24,7 +23,7 @@ class StorePsicografiaRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array|string>
+     * @return array<string, ValidationRule|array|string>
      */
     public function rules(): array
     {
@@ -33,14 +32,13 @@ class StorePsicografiaRequest extends FormRequest
 
         $rules = [
             'titulo' => 'required|min:2',
-            'slug' => ['nullable', 'regex:/^[a-z0-9\-]+$/', \Illuminate\Validation\Rule::unique('psicografias', 'slug')->ignore($psicografiaId)],
+            'slug' => ['nullable', 'regex:/^[a-z0-9\-]+$/', Rule::unique('psicografias', 'slug')->ignore($psicografiaId)],
             'descripcion' => 'required|max:65000',
             'imagen' => 'file|mimes:jpeg,jpg,webp,png|max:4096',
         ];
 
         return $rules;
     }
-
 
     /**
      * Get the error messages for the defined validation rules.
@@ -54,7 +52,6 @@ class StorePsicografiaRequest extends FormRequest
         ];
     }
 
-
     public function withValidator($validator)
     {
         $validator->after(function ($validator) {
@@ -63,32 +60,36 @@ class StorePsicografiaRequest extends FormRequest
 
             if ($psicografiaId) {
                 // Estamos editando una psicografía existente
-                $psicografia = \App\Models\Psicografia::find($psicografiaId);
+                $psicografia = Psicografia::find($psicografiaId);
                 $imagenPrevia = $psicografia->imagen;
                 $newImagen = $_REQUEST['imagen'] ?? null;
-                $deletedImagen = isset($_REQUEST['imagen']) && $newImagen === "";
+                $deletedImagen = isset($_REQUEST['imagen']) && $newImagen === '';
 
                 if ($deletedImagen) {
                     // hemos borrado la imagen
-                    if (empty($imagen))
+                    if (empty($imagen)) {
                         $validator->errors()->add('imagen', 'Debes proporcionar un archivo de imagen.');
+                    }
                 } else {
 
                     $imagenLoc = $imagenPrevia;
 
                     $loc = null;
-                    if ($imagenLoc)
+                    if ($imagenLoc) {
                         $loc = new StorageItem($imagenLoc);
+                    }
 
                     $imagenExistente = $imagenPrevia && $loc->exists();
 
-                    if (empty($imagen) && !$imagenExistente)
+                    if (empty($imagen) && ! $imagenExistente) {
                         $validator->errors()->add('imagen', 'Debes proporcionar un archivo de imagen.');
+                    }
                 }
             } else {
                 // Estamos creando una nueva psicografia
-                if (empty($imagen))
+                if (empty($imagen)) {
                     $validator->errors()->add('imagen', 'Debes proporcionar un archivo de imagen.');
+                }
             }
         });
     }

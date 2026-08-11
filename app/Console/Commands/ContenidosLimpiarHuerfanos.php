@@ -2,33 +2,34 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
-use App\Models\Contenido;
-use App\Models\Noticia;
-use App\Models\Normativa;
-use App\Models\Comunicado;
-use App\Models\Libro;
 use App\Models\Audio;
-use App\Models\Pagina;
-use App\Models\Entrada;
-use App\Models\Evento;
-use App\Models\Psicografia;
 use App\Models\Centro;
+use App\Models\Comunicado;
 use App\Models\Contacto;
+use App\Models\Contenido;
+use App\Models\Entrada;
 use App\Models\Equipo;
+use App\Models\Evento;
 use App\Models\Experiencia;
 use App\Models\Guia;
 use App\Models\Informe;
+use App\Models\Libro;
 use App\Models\Lugar;
 use App\Models\Meditacion;
+use App\Models\Normativa;
+use App\Models\Noticia;
+use App\Models\Pagina;
+use App\Models\Psicografia;
 use App\Models\Sala;
 use App\Models\Termino;
 use App\Models\Tutorial;
 use App\Models\Video;
+use Illuminate\Console\Command;
 
 class ContenidosLimpiarHuerfanos extends Command
 {
     protected $signature = 'contenidos:huerfanos {--eliminar : Eliminar automáticamente las entradas huérfanas}';
+
     protected $description = 'Detecta, sincroniza y opcionalmente elimina entradas huérfanas en la tabla contenidos que apuntan a modelos inexistentes. También sincroniza deleted_at y visibilidad.';
 
     public function handle()
@@ -44,11 +45,11 @@ class ContenidosLimpiarHuerfanos extends Command
         $bar = $this->output->createProgressBar(count($contenidos));
         $bar->start();
 
-        foreach($contenidos as $contenido) {
+        foreach ($contenidos as $contenido) {
             $totalVerificados++;
             $esHuerfano = $this->verificarYActualizarExistenciaContenido($contenido, $actualizacionesVisibilidad, $actualizacionesDeletedAt);
 
-            if($esHuerfano) {
+            if ($esHuerfano) {
                 $huerfanas[] = $contenido;
             }
 
@@ -58,24 +59,25 @@ class ContenidosLimpiarHuerfanos extends Command
         $bar->finish();
         $this->newLine(2);
 
-        if(count($huerfanas) == 0) {
+        if (count($huerfanas) == 0) {
             $this->info('✅ No se encontraron entradas huérfanas.');
+
             return;
         }
 
-        $this->warn("⚠️  Se encontraron " . count($huerfanas) . " entradas huérfanas:");
+        $this->warn('⚠️  Se encontraron '.count($huerfanas).' entradas huérfanas:');
 
-        foreach($huerfanas as $huerfana) {
+        foreach ($huerfanas as $huerfana) {
             $this->line("  ID {$huerfana->id}: {$huerfana->titulo} ({$huerfana->coleccion}:{$huerfana->id_ref})");
         }
 
         $this->newLine();
 
         $eliminadas = 0;
-        if($this->option('eliminar')) {
-            if($this->confirm('¿Está seguro de que desea eliminar estas ' . count($huerfanas) . ' entradas huérfanas?')) {
+        if ($this->option('eliminar')) {
+            if ($this->confirm('¿Está seguro de que desea eliminar estas '.count($huerfanas).' entradas huérfanas?')) {
                 $eliminadas = 0;
-                foreach($huerfanas as $huerfana) {
+                foreach ($huerfanas as $huerfana) {
                     $huerfana->forceDelete();
                     $eliminadas++;
                 }
@@ -90,7 +92,7 @@ class ContenidosLimpiarHuerfanos extends Command
         $this->newLine();
         $this->info('📊 Resumen:');
         $this->info("   Total verificados: {$totalVerificados}");
-        $this->info("   Huérfanos encontrados: " . count($huerfanas));
+        $this->info('   Huérfanos encontrados: '.count($huerfanas));
         $this->info("   Huérfanos eliminados: {$eliminadas}");
         $this->info("   Actualizaciones de visibilidad: {$actualizacionesVisibilidad}");
         $this->info("   Actualizaciones de deleted_at: {$actualizacionesDeletedAt}");
@@ -104,7 +106,7 @@ class ContenidosLimpiarHuerfanos extends Command
     {
         $modelo = $this->obtenerModeloPorColeccion($contenido->coleccion);
 
-        if (!$modelo) {
+        if (! $modelo) {
             // Colección desconocida, asumir que existe
             return false;
         }
@@ -117,7 +119,7 @@ class ContenidosLimpiarHuerfanos extends Command
             $instancia = $modelo::withTrashed()->find($contenido->id_ref);
         }
 
-        if (!$instancia) {
+        if (! $instancia) {
             // No existe ni siquiera con soft delete, es huérfano
             return true;
         }
@@ -127,7 +129,7 @@ class ContenidosLimpiarHuerfanos extends Command
 
         // Si el modelo está soft deleted, actualizar deleted_at en Contenido
         if ($instancia->trashed()) {
-            if (!$contenido->trashed()) {
+            if (! $contenido->trashed()) {
                 $contenido->deleted_at = $instancia->deleted_at;
                 $actualizacionesDeletedAt++;
                 $actualizar = true;
@@ -186,4 +188,3 @@ class ContenidosLimpiarHuerfanos extends Command
         return $mapa[$coleccion] ?? null;
     }
 }
-

@@ -16,25 +16,27 @@ class InfoTool extends BaseTool
     {
         Log::channel('mcp')->info('[MCP] info', ['params' => $params]);
 
-        $entidades_info = include __DIR__ . '/../Data/info.php';
+        $entidades_info = include __DIR__.'/../Data/info.php';
         // determinar el modelo a partir de los parámetros
         $modelo = $params['entidad'] ?? null;
-        if (!$modelo)
-        {
-            $entidades=array_keys($entidades_info);
+        if (! $modelo) {
+            $entidades = array_keys($entidades_info);
             sort($entidades);
+
             // en este caso devuelve una lista de entidades disponibles
             return [
-                'entidades' => $entidades
+                'entidades' => $entidades,
             ];
         }
 
-        Log::channel('mcp')->info('[MCP] entidad: ' . $modelo);
+        Log::channel('mcp')->info('[MCP] entidad: '.$modelo);
 
         $toolsClass = $this->getModelToolsClass($modelo);
-        if (!class_exists($toolsClass)) return ['error' => 'Clase no encontrada: ' . $toolsClass];
+        if (! class_exists($toolsClass)) {
+            return ['error' => 'Clase no encontrada: '.$toolsClass];
+        }
 
-        $modelTools = new $toolsClass();
+        $modelTools = new $toolsClass;
         $modelNameSingle = $modelTools->getModelNameSingle();
 
         $info_entidad = $entidades_info[$modelNameSingle] ?? [];
@@ -42,7 +44,7 @@ class InfoTool extends BaseTool
         $info_entidad = array_merge($info_entidad, $modelTools->getInfo());
 
         return [
-            $modelNameSingle => $info_entidad?? []
+            $modelNameSingle => $info_entidad ?? [],
         ];
     }
 }

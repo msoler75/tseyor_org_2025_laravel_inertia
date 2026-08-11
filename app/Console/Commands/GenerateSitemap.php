@@ -2,12 +2,11 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Contenido;
+use App\Models\Pagina;
 use Illuminate\Console\Command;
 use Spatie\Sitemap\Sitemap;
 use Spatie\Sitemap\Tags\Url;
-use App\Models\Contenido;
-use App\Models\Pagina;
-
 
 class GenerateSitemap extends Command
 {
@@ -38,15 +37,15 @@ class GenerateSitemap extends Command
 
             $traducir = ['terminos' => 'glosario'];
 
-            if (!in_array($contenido->coleccion, $noindexar)) {
+            if (! in_array($contenido->coleccion, $noindexar)) {
 
-                $palabra = $traducir[$contenido->coleccion] ?? $contenido->coleccion; 
+                $palabra = $traducir[$contenido->coleccion] ?? $contenido->coleccion;
                 $contenidosMap->add(
-                    Url::create("/{$palabra}/" . ($contenido->slug_ref ? $contenido->slug_ref : $contenido->id_ref))
+                    Url::create("/{$palabra}/".($contenido->slug_ref ? $contenido->slug_ref : $contenido->id_ref))
                         ->setPriority(0.8)
                         ->setChangeFrequency(Url::CHANGE_FREQUENCY_MONTHLY)
                 );
-            
+
             }
         });
 

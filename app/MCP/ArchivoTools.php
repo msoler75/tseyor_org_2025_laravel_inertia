@@ -2,17 +2,20 @@
 
 namespace App\MCP;
 
-use App\MCP\Base\BaseModelTools;
-use App\Pigmalion\StorageItem;
-use Illuminate\Support\Facades\Log;
-use App\Models\Nodo;
-use InvalidArgumentException;
 use App\Http\Controllers\ArchivosController;
+use App\MCP\Base\BaseModelTools;
+use App\Models\Nodo;
+use App\Pigmalion\StorageItem;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Log;
+use InvalidArgumentException;
 
 class ArchivoTools extends BaseModelTools
 {
     protected ?string $modelName = 'archivo';
+
     protected ?string $modelClass = 'App\\Models\\Nodo';
+
     protected ?string $controllerClass = 'App\\Http\\Controllers\\ArchivosController';
 
     // Mapear métodos base a métodos del controlador
@@ -26,26 +29,24 @@ class ArchivoTools extends BaseModelTools
     ];
 
     protected array $required = [
-        //'crear, editar, eliminar' => 'administrar archivos' // Ya se gestiona en el controlador
+        // 'crear, editar, eliminar' => 'administrar archivos' // Ya se gestiona en el controlador
     ];
-
-
 
     public function onVer(array $params, object $baseTool)
     {
-        if (!isset($params['ruta']) && isset($params['id'])) {
+        if (! isset($params['ruta']) && isset($params['id'])) {
             $params['ruta'] = $params['id'];
         }
 
         unset($params['id']);
-        if (!isset($params['ruta'])) {
+        if (! isset($params['ruta'])) {
             throw new InvalidArgumentException('El parámetro "ruta" es obligatorio para la acción "ver".');
         }
         $ruta = ltrim($params['ruta'], '/');
         // return ['ruta'=> $ruta];
         $sti = new StorageItem($ruta);
         $nodo = Nodo::desde($ruta);
-        if (!$sti->exists()) {
+        if (! $sti->exists()) {
             return ['error' => 'Archivo no encontrado', 'code' => 404, 'sti' => $sti->getPath()];
         }
         $info = [
@@ -59,6 +60,7 @@ class ArchivoTools extends BaseModelTools
             'group_id' => $nodo ? $nodo->group_id : null,
             'oculto' => $nodo ? $nodo->oculto : null,
         ];
+
         return ['archivo' => $info];
     }
 
@@ -69,7 +71,7 @@ class ArchivoTools extends BaseModelTools
     public function onCrear(array $params, object $baseTool)
     {
         // Validación básica de parámetros
-        if (!isset($params['ruta'])) {
+        if (! isset($params['ruta'])) {
             return ['error' => 'El parámetro "ruta" es obligatorio'];
         }
         $ruta = $params['ruta'];
@@ -77,7 +79,7 @@ class ArchivoTools extends BaseModelTools
         $contenido = $data['contenido'] ?? null;
         $archivo = $data['archivo'] ?? null; // Puede ser UploadedFile o array tipo file MCP
         $contenido_base64 = $data['contenido_base64'] ?? null;
-        $esCarpeta = isset($data['es_carpeta']) ? (bool)$data['es_carpeta'] : ($contenido === null && !$archivo && !$contenido_base64);
+        $esCarpeta = isset($data['es_carpeta']) ? (bool) $data['es_carpeta'] : ($contenido === null && ! $archivo && ! $contenido_base64);
 
         $sti = new StorageItem($ruta);
 
@@ -97,6 +99,7 @@ class ArchivoTools extends BaseModelTools
                 'oculto' => $data['oculto'] ?? 0,
             ]);
             $nodo->save();
+
             return ['carpeta_creada' => $nodo->toArray()];
         } elseif ($archivo) {
             // Subida de archivo binario (ejemplo PDF)
@@ -105,23 +108,25 @@ class ArchivoTools extends BaseModelTools
             // Simular un request multipart con el archivo y la ruta destino
             $request->files->set('file', $archivo); // 'file' es el nombre esperado por uploadFile
             $request->merge([
-                'destinationPath' => $ruta
+                'destinationPath' => $ruta,
             ]);
             $response = $controller->uploadFile($request);
-            $result = $response instanceof \Illuminate\Http\JsonResponse ? $response->getData(true) : $response;
+            $result = $response instanceof JsonResponse ? $response->getData(true) : $response;
             if (is_null($result)) {
                 return ['error' => 'Error inesperado al subir el archivo binario'];
             }
             if (isset($result['data']['filePath'])) {
                 // Crear nodo manualmente si el controlador no lo hace
-                $nodo = Nodo::where('ubicacion', $ruta . '/' . basename($result['data']['filePath']))->first();
+                $nodo = Nodo::where('ubicacion', $ruta.'/'.basename($result['data']['filePath']))->first();
+
                 return [
                     'archivo_creado' => $nodo ? $nodo->toArray() : [
-                        'ubicacion' => $ruta . '/' . basename($result['data']['filePath'])
+                        'ubicacion' => $ruta.'/'.basename($result['data']['filePath']),
                     ],
-                    'url' => $result['data']['filePath']
+                    'url' => $result['data']['filePath'],
                 ];
             }
+
             // Si la respuesta es un array pero no tiene filePath, devolver el array tal cual
             return is_array($result) ? $result : ['error' => 'Respuesta inesperada del controlador al subir archivo'];
         } elseif ($contenido_base64) {
@@ -137,10 +142,11 @@ class ArchivoTools extends BaseModelTools
                 'oculto' => $data['oculto'] ?? 0,
             ]);
             $nodo->save();
+
             return ['archivo_creado' => $nodo->toArray()];
         } else {
             // Crear archivo usando StorageItem::put (texto plano)
-            Log::channel('mcp')->info("Creando archivo en ruta: $ruta, contenido: " . substr($contenido ?? '', 0, 50) . '...');
+            Log::channel('mcp')->info("Creando archivo en ruta: $ruta, contenido: ".substr($contenido ?? '', 0, 50).'...');
             $sti->put($contenido ?? '');
             $nodo = new Nodo([
                 'ubicacion' => $ruta,
@@ -151,6 +157,7 @@ class ArchivoTools extends BaseModelTools
                 'oculto' => $data['oculto'] ?? 0,
             ]);
             $nodo->save();
+
             return ['archivo_creado' => $nodo->toArray()];
         }
     }
@@ -160,7 +167,7 @@ class ArchivoTools extends BaseModelTools
 
     public function onEditar(array $params, object $baseTool)
     {
-        if (!isset($params['ruta'])) {
+        if (! isset($params['ruta'])) {
             return ['error' => 'El parámetro "ruta" es obligatorio'];
         }
         $data = $params['data'] ?? [];
@@ -183,28 +190,30 @@ class ArchivoTools extends BaseModelTools
             ]);
             $response = $controller->update($request);
         }
-        $result = $response instanceof \Illuminate\Http\JsonResponse ? $response->getData(true) : $response;
+        $result = $response instanceof JsonResponse ? $response->getData(true) : $response;
         // Si la respuesta es array y no contiene 'archivo_editado', envolverla (excepto si es error)
-        if (is_array($result) && !isset($result['archivo_editado']) && !isset($result['error'])) {
+        if (is_array($result) && ! isset($result['archivo_editado']) && ! isset($result['error'])) {
             // Añadir campos clave desde el nodo si faltan
             $nodo = Nodo::where('ubicacion', $params['ruta'])->first();
             if ($nodo) {
-                if (!isset($result['permisos'])) {
+                if (! isset($result['permisos'])) {
                     $result['permisos'] = $nodo->permisos;
                 }
-                if (!isset($result['user_id'])) {
+                if (! isset($result['user_id'])) {
                     $result['user_id'] = $nodo->user_id;
                 }
-                if (!isset($result['group_id'])) {
+                if (! isset($result['group_id'])) {
                     $result['group_id'] = $nodo->group_id;
                 }
             }
+
             return ['archivo_editado' => $result];
         }
         // Si la respuesta no tiene 'archivo_editado' ni 'error', devolver clave vacía para evitar errores en tests
-        if (is_array($result) && !isset($result['archivo_editado']) && isset($result['error'])) {
+        if (is_array($result) && ! isset($result['archivo_editado']) && isset($result['error'])) {
             return ['archivo_editado' => [], 'error' => $result['error']];
         }
+
         return $result;
     }
 
@@ -215,6 +224,7 @@ class ArchivoTools extends BaseModelTools
         if (isset($data['items'])) {
             return ['archivos' => $data['items']];
         }
+
         return $data;
     }
 
@@ -224,19 +234,19 @@ class ArchivoTools extends BaseModelTools
         $request = $baseTool->getRequest();
         $request->replace($params);
         $response = $controller->buscar($request);
-        return $response instanceof \Illuminate\Http\JsonResponse ? $response->getData(true) : $response;
+
+        return $response instanceof JsonResponse ? $response->getData(true) : $response;
     }
 
     public function onEliminar(array $params, object $baseTool)
     {
-        if (!isset($params['ruta'])) {
+        if (! isset($params['ruta'])) {
             return ['error' => 'El parámetro "ruta" es obligatorio'];
         }
         $ruta = $params['ruta'];
         $controller = app(ArchivosController::class);
         $response = $controller->delete($ruta);
-        return $response instanceof \Illuminate\Http\JsonResponse ? $response->getData(true) : $response;
+
+        return $response instanceof JsonResponse ? $response->getData(true) : $response;
     }
-
-
 }

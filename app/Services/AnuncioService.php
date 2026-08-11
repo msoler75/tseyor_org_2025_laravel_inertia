@@ -3,12 +3,13 @@
 namespace App\Services;
 
 use App\Models\Setting;
-use Illuminate\Support\Facades\Cache;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Cache;
 
 class AnuncioService
 {
     const CACHE_KEY = 'anuncio_banner_cache';
+
     const CACHE_TTL = 3600;
 
     public function clearCache(): void
@@ -33,13 +34,13 @@ class AnuncioService
 
     private function computeMantenimiento(?Setting $setting): ?array
     {
-        if (!$setting || !$setting->value) {
+        if (! $setting || ! $setting->value) {
             return null;
         }
 
         $data = json_decode($setting->value, true);
 
-        if (!$data || empty($data['inicio'])) {
+        if (! $data || empty($data['inicio'])) {
             return null;
         }
 
@@ -50,6 +51,7 @@ class AnuncioService
         if ($fin && $ahora > $fin) {
             $setting->value = '{}';
             $setting->save();
+
             return null;
         }
 

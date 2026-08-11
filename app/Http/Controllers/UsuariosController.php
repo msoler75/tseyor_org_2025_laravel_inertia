@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Inertia\Inertia;
-use App\Models\User;
+use App\Models\Comentario;
 use App\Models\Equipo;
 use App\Models\Grupo;
-use App\Models\Comentario;
+use App\Models\User;
 use App\Pigmalion\SEO;
+use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class UsuariosController extends Controller
 {
@@ -21,10 +21,11 @@ class UsuariosController extends Controller
 
         $query = User::select(['id', 'name as nombre', 'slug', 'frase', 'created_at']);
 
-        if ($buscar)
+        if ($buscar) {
             $query->buscar($buscar);
-        else
+        } else {
             $query->latest();
+        }
 
         $resultados = $query->paginate(self::$ITEMS_POR_PAGINA, ['*'], 'page', $page)
             ->appends($request->except('page'));
@@ -44,7 +45,7 @@ class UsuariosController extends Controller
             $usuario = User::with('equipos')->with('grupos')->where('slug', $id)->firstOrFail();
         }
 
-        if (!$usuario) {
+        if (! $usuario) {
             abort(404); // usuario no encontrado
         }
 
@@ -63,7 +64,7 @@ class UsuariosController extends Controller
             'usuario' => $usuario,
             'comentarios' => $comentarios,
             'equipos' => $equipos,
-            'administrar' => $administrar
+            'administrar' => $administrar,
         ])
             ->withViewData(SEO::from($usuario));
     }
@@ -73,11 +74,11 @@ class UsuariosController extends Controller
     {
         $user = User::findOrFail($id);
         $user->update($request->all());
+
         return response()->json($user, 200);
     }
 
-
-    ///////////////////////////////////////////////////////////////////////////////////////////////////
+    // /////////////////////////////////////////////////////////////////////////////////////////////////
     // JSON
 
     /**
@@ -92,8 +93,9 @@ class UsuariosController extends Controller
             ->take(10)->get()->toArray();*/
 
         $resultados = User::search($buscar)->take(10)->get()->toArray();
-        foreach ($resultados as $idx => $u)
+        foreach ($resultados as $idx => $u) {
             $resultados[$idx]['nombre'] = $u['name'];
+        }
 
         return response()->json($resultados, 200);
     }
@@ -105,6 +107,7 @@ class UsuariosController extends Controller
     {
         $user = auth()->user();
         $permisos = $user ? $user->getAllPermissions()->pluck('name') : [];
+
         return response()->json($permisos, 200);
     }
 
@@ -114,6 +117,7 @@ class UsuariosController extends Controller
     public function grupos()
     {
         $grupos = Grupo::get();
+
         return response()->json($grupos, 200);
     }
 }

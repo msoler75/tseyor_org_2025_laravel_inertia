@@ -2,36 +2,44 @@
 
 namespace Tests\Unit;
 
-use App\Models\Equipo;
-use App\Models\Nodo;
+use App\Http\Middleware\VerifyCsrfToken;
 use App\Models\Acl;
-use App\Models\User;
+use App\Models\Equipo;
 use App\Models\Grupo;
-use Illuminate\Support\Str;
+use App\Models\Nodo;
 use App\Pigmalion\StorageItem;
-use Illuminate\Foundation\Testing\WithoutMiddleware;
 use App\Policies\NodoPolicy;
+use Illuminate\Foundation\Testing\WithoutMiddleware;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class EquipoTest extends BaseTest
 {
     // use WithoutMiddleware;
 
-    protected $equipo, $carpetaEquipo, $coordinador, $miembro, $otroUsuario;
+    protected $equipo;
+
+    protected $carpetaEquipo;
+
+    protected $coordinador;
+
+    protected $miembro;
+
+    protected $otroUsuario;
 
     protected function setUp(): void
     {
 
         parent::setUp();
 
-        $admin = $this->getUser("admin");
+        $admin = $this->getUser('admin');
         $this->actingAs($admin);
 
-        $this->coordinador = $this->getUser("Coordinador");
-        $this->miembro = $this->getUser("MiembroEquipo");
-        $this->otroUsuario = $this->getUser("A_OtroUsuario");
+        $this->coordinador = $this->getUser('Coordinador');
+        $this->miembro = $this->getUser('MiembroEquipo');
+        $this->otroUsuario = $this->getUser('A_OtroUsuario');
 
-        $nombre = "Patamala";
+        $nombre = 'Patamala';
         $slug = Str::slug($nombre);
         $this->carpetaEquipo = "/archivos/equipos/$slug";
         $this->limpiarDatos($nombre);
@@ -39,17 +47,17 @@ class EquipoTest extends BaseTest
         // borramos carpeta del equipo si acaso existe
         $dir = new StorageItem($this->carpetaEquipo);
         // si la carpeta tiene archivos, los eliminamos
-        if ($dir->exists())
+        if ($dir->exists()) {
             $dir->deleteDirectory();
-        //@rmdir($dir->path);
+        }
+        // @rmdir($dir->path);
 
         $exists = file_exists($dir->path);
         $this->assertFalse($exists);
 
         // $token = csrf_token();
 
-        $this->withoutMiddleware(\App\Http\Middleware\VerifyCsrfToken::class);
-
+        $this->withoutMiddleware(VerifyCsrfToken::class);
 
         $response = $this->post('/admin/equipo', [
             // '_token' => $token,
@@ -63,8 +71,8 @@ class EquipoTest extends BaseTest
             'reuniones' => '',
             'informacion' => '',
             'grupo' => '',
-            'CoordinadoresJSON' => json_encode([["value" => $this->coordinador->id, "label" => "Coordinador"]]),
-            'MiembrosJSON' => json_encode([["value" => $this->miembro->id, "label" => "Miembro"]]),
+            'CoordinadoresJSON' => json_encode([['value' => $this->coordinador->id, 'label' => 'Coordinador']]),
+            'MiembrosJSON' => json_encode([['value' => $this->miembro->id, 'label' => 'Miembro']]),
             'ocultarMiembros' => '0',
             'ocultarCarpetas' => '0',
             'ocultarArchivos' => '0',
@@ -73,16 +81,17 @@ class EquipoTest extends BaseTest
         $this->equipo = Equipo::with('grupo')->where('nombre', $nombre)->first();
 
         $nodo = Nodo::desde($this->carpetaEquipo);
-        $nodo->update(['permisos'=>'1750']);
+        $nodo->update(['permisos' => '1750']);
     }
 
-    protected function limpiarDatos($nombre)  {
+    protected function limpiarDatos($nombre)
+    {
         $slug = Str::slug($nombre);
 
-        Nodo::where("ubicacion", 'like', $this->carpetaEquipo . "%")->forceDelete();
+        Nodo::where('ubicacion', 'like', $this->carpetaEquipo.'%')->forceDelete();
         $equipo = Equipo::where('nombre', $nombre)->first();
-        if($equipo) {
-           $equipo->delete(); // para que se active el evento deleted
+        if ($equipo) {
+            $equipo->delete(); // para que se active el evento deleted
         }
         Grupo::where('nombre', $nombre)->forceDelete();
         Grupo::where('slug', $slug)->forceDelete();
@@ -90,7 +99,8 @@ class EquipoTest extends BaseTest
         Acl::where('user_id', $this->miembro->id)->forceDelete();
     }
 
-    public function test_equipo_limpiar() {
+    public function test_equipo_limpiar()
+    {
         $this->limpiarDatos($this->equipo->nombre);
         $this->assertTrue(true);
     }
@@ -101,14 +111,13 @@ class EquipoTest extends BaseTest
         // $response->assertStatus(302);
         $dir = new StorageItem($this->carpetaEquipo);
         // comprueba que se ha creado la carpeta del equipo
-        Log::info("Test path mkdir: " . $dir->path);
+        Log::info('Test path mkdir: '.$dir->path);
         $exists = file_exists($dir->path);
         $this->assertTrue($exists);
 
         // comprueba que se ha creado el equipo
         $this->assertNotNull($this->equipo);
         // $this->assertEquals($nombre, $this->equipo->nombre);
-
 
         // verifica que se ha creado el grupo
         $grupo = Grupo::where('nombre', $this->equipo->slug)->first();
@@ -141,15 +150,13 @@ class EquipoTest extends BaseTest
         $this->assertNotNull($encontrado);
         $this->assertEquals($this->miembro->id, $encontrado->id);
 
-
-        Log::info("grupos de coordinador", $this->coordinador->grupos()->get()->toArray());
+        Log::info('grupos de coordinador', $this->coordinador->grupos()->get()->toArray());
         $this->assertTrue($this->coordinador->enGrupo($grupo->id));
         $this->assertTrue($this->miembro->enGrupo($grupo->id));
         // comprobar el rol de cada usuario en el equipo (pivot)
 
-
         // comprobamos permisos básicos de acceso a la carpeta del equipo
-        $nodoPolicy = new NodoPolicy();
+        $nodoPolicy = new NodoPolicy;
         $nodo = Nodo::desde($this->carpetaEquipo);
         $this->assertNotNull($nodo);
         $this->assertEquals($this->carpetaEquipo, $nodo->ubicacion);
@@ -175,15 +182,13 @@ class EquipoTest extends BaseTest
         $this->assertEquals('leer,escribir,ejecutar', $acl->verbos);
     }
 
-
-
-    function test_equipo_agrega_coordinador()
+    public function test_equipo_agrega_coordinador()
     {
         // miembro no es coordinador
         $this->assertFalse($this->equipo->coordinadores()->where('users.id', $this->miembro->id)->exists());
 
         // comprobamos permisos básicos de acceso a la carpeta del equipo
-        $nodoPolicy = new NodoPolicy();
+        $nodoPolicy = new NodoPolicy;
         $nodo = Nodo::desde($this->carpetaEquipo);
         $this->assertNotNull($nodo);
         $this->assertEquals($this->carpetaEquipo, $nodo->ubicacion);
@@ -215,11 +220,10 @@ class EquipoTest extends BaseTest
         $this->assertFalse($nodoPolicy->escribir($this->miembro, $nodo));
     }
 
-
     /**
      * El último coordinador del equipo se degrada a simple miembro. Se elige a un nuevo coordinador
      */
-    function test_equipo_cambia_coordinador_degradacion()
+    public function test_equipo_cambia_coordinador_degradacion()
     {
         // miembro no es coordinador
         $this->assertFalse($this->equipo->coordinadores()->where('users.id', $this->miembro->id)->exists());
@@ -236,11 +240,10 @@ class EquipoTest extends BaseTest
         $this->assertTrue($this->equipo->coordinadores()->where('users.id', $this->miembro->id)->exists());
     }
 
-
     /**
      * El ultimo coordinador del equipo se retira del equipo. Se debe asignar un nuevo coordinador
      */
-    function test_equipo_cambia_coordinador_baja()
+    public function test_equipo_cambia_coordinador_baja()
     {
         // miembro no es coordinador
         $this->assertFalse($this->equipo->coordinadores()->where('users.id', $this->miembro->id)->exists());
@@ -257,12 +260,10 @@ class EquipoTest extends BaseTest
         $this->assertTrue($this->equipo->coordinadores()->where('users.id', $this->miembro->id)->exists());
     }
 
-
-
     /**
      * Elige como nuevo coordinador al más antigup
      */
-    function test_equipo_cambia_coordinador_antiguo()
+    public function test_equipo_cambia_coordinador_antiguo()
     {
         // miembro no es coordinador
         $this->assertFalse($this->equipo->coordinadores()->where('users.id', $this->miembro->id)->exists());

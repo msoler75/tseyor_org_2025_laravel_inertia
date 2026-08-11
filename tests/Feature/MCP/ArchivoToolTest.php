@@ -2,10 +2,12 @@
 
 namespace Tests\Feature\MCP;
 
-use Tests\Feature\MCP\McpFeatureTestCase;
-use Illuminate\Support\Facades\Storage;
+use App\Models\Grupo;
+use App\Models\Nodo;
+use App\Models\User;
 use App\Pigmalion\StorageItem;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\Storage;
 
 class ArchivoToolTest extends McpFeatureTestCase
 {
@@ -18,10 +20,10 @@ class ArchivoToolTest extends McpFeatureTestCase
     // El usuario admin (id=1, sembrado por setup-test-db.sh) se autentica para
     // que los métodos de ArchivosController (rename/update/delete) que exigen
     // auth()->user() funcionen, igual que en el flujo HTTP real con sesión.
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
-        $admin = \App\Models\User::find(1);
+        $admin = User::find(1);
         if ($admin) {
             $this->actingAs($admin);
         }
@@ -35,8 +37,8 @@ class ArchivoToolTest extends McpFeatureTestCase
     public function test_listar_archivos()
     {
         $carpeta = '/archivos/listarprueba';
-        $archivo1 = $carpeta . '/a.txt';
-        $archivo2 = $carpeta . '/b.txt';
+        $archivo1 = $carpeta.'/a.txt';
+        $archivo2 = $carpeta.'/b.txt';
         $this->limpiarArchivosOCarpetas([$archivo1, $archivo2, $carpeta]);
         StorageItem::ensureDirExists($carpeta);
         (new StorageItem($archivo1))->put('uno');
@@ -47,14 +49,17 @@ class ArchivoToolTest extends McpFeatureTestCase
         $this->assertArrayHasKey('archivos', $result);
         $archivos = array_column($result['archivos'], 'ruta');
         // Normalizar rutas quitando barra inicial
-        $archivosNorm = array_map(function($r) { return ltrim($r, '/'); }, $archivos);
+        $archivosNorm = array_map(function ($r) {
+            return ltrim($r, '/');
+        }, $archivos);
         $archivo1Norm = ltrim($archivo1, '/');
         $archivo2Norm = ltrim($archivo2, '/');
         $this->assertContains($archivo1Norm, $archivosNorm, 'No se listó el archivo 1');
         $this->assertContains($archivo2Norm, $archivosNorm, 'No se listó el archivo 2');
     }
 
-    public function test_info_archivo() {
+    public function test_info_archivo()
+    {
         $ruta = '/archivos/infofile.txt';
         $this->limpiarArchivosOCarpetas([$ruta]);
         (new StorageItem($ruta))->put('info');
@@ -79,21 +84,21 @@ class ArchivoToolTest extends McpFeatureTestCase
         $ruta = '/archivos/buscar.txt';
         $this->limpiarArchivosOCarpetas([$ruta]);
         // Eliminar el nodo si existe antes de crearlo
-        \App\Models\Nodo::where('ubicacion', $ruta)->forceDelete();
+        Nodo::where('ubicacion', $ruta)->forceDelete();
         // Eliminar todos los nodos que tengan esa ruta (exacta o como prefijo)
-        \App\Models\Nodo::withTrashed()
+        Nodo::withTrashed()
             ->where('ubicacion', $ruta)
-            ->orWhere('ubicacion', 'like', $ruta . '/%')
+            ->orWhere('ubicacion', 'like', $ruta.'/%')
             ->forceDelete();
         // Limpiar también todos los archivos y nodos de la carpeta 'archivos' para evitar residuos
-        \App\Models\Nodo::withTrashed()
+        Nodo::withTrashed()
             ->where('ubicacion', 'like', '/archivos/%')
             ->orWhere('ubicacion', 'like', 'archivos/%')
             ->forceDelete();
         (new StorageItem($ruta))->put('conseguido');
         // Crear el nodo correspondiente para que la búsqueda lo encuentre, con permisos y grupo del usuario anónimo
-        $anon = \App\Models\User::where('email', 'anonimo@tseyor.org')->first();
-        \App\Models\Nodo::updateOrCreate(
+        $anon = User::where('email', 'anonimo@tseyor.org')->first();
+        Nodo::updateOrCreate(
             ['ubicacion' => $ruta],
             [
                 'user_id' => $anon ? $anon->id : 1,
@@ -106,23 +111,26 @@ class ArchivoToolTest extends McpFeatureTestCase
         sleep(1); // Espera para asegurar indexación y sincronización
         $result = $this->callMcpTool('buscar', ['entidad' => 'archivo', 'nombre' => 'buscar.txt']);
         // DEBUG: Escribir la respuesta en un archivo temporal
-        //fwrite(STDERR,  json_encode($result, JSON_PRETTY_PRINT));
+        // fwrite(STDERR,  json_encode($result, JSON_PRETTY_PRINT));
         $this->assertIsArray($result, 'La respuesta de MCP no es un array');
         $this->assertArrayHasKey('resultados', $result);
         // Normalizar rutas para la comparación
-        $archivos = array_map(function($r) { return '/' . ltrim($r, '/'); }, array_column($result['resultados'], 'ruta'));
+        $archivos = array_map(function ($r) {
+            return '/'.ltrim($r, '/');
+        }, array_column($result['resultados'], 'ruta'));
         $this->assertContains($ruta, $archivos, 'No se encontró el archivo buscado');
     }
 
-    public function test_crear_y_eliminar_archivo() {
+    public function test_crear_y_eliminar_archivo()
+    {
         $ruta = '/archivos/testfile.txt';
         $this->limpiarArchivosOCarpetas([$ruta]);
         $contenido = 'Contenido de prueba';
         $crear = $this->callMcpTool('crear', [
             'entidad' => 'archivo',
             'ruta' => $ruta,
-            'data' => [ 'contenido' => $contenido, 'permisos'=>'775'],
-            'token' => config('mcp-server.tokens.admin')
+            'data' => ['contenido' => $contenido, 'permisos' => '775'],
+            'token' => config('mcp-server.tokens.admin'),
         ]);
         $this->assertIsArray($crear);
         $this->assertTrue(isset($crear['archivo_creado']) || isset($crear['archivo']), 'No se creó el archivo');
@@ -130,7 +138,7 @@ class ArchivoToolTest extends McpFeatureTestCase
         $eliminar = $this->callMcpTool('eliminar', [
             'entidad' => 'archivo',
             'ruta' => $ruta,
-            'token' => config('mcp-server.tokens.admin')
+            'token' => config('mcp-server.tokens.admin'),
         ]);
         // DEBUG: Escribir la respuesta en un archivo temporal
         // fwrite(STDERR, json_encode($eliminar, JSON_PRETTY_PRINT));
@@ -144,67 +152,72 @@ class ArchivoToolTest extends McpFeatureTestCase
         $this->assertFalse((new StorageItem($ruta))->exists(), 'El archivo sigue existiendo tras eliminarlo');
     }
 
-    public function test_sobrescribir_archivo() {
+    public function test_sobrescribir_archivo()
+    {
         $ruta = '/archivos/sobrescribir.txt';
         $this->limpiarArchivosOCarpetas([$ruta]);
         (new StorageItem($ruta))->put('original');
         $crear = $this->callMcpTool('crear', [
             'entidad' => 'archivo',
             'ruta' => $ruta,
-            'data' => [ 'contenido' => 'nuevo'],
-            'token' => config('mcp-server.tokens.admin')
+            'data' => ['contenido' => 'nuevo'],
+            'token' => config('mcp-server.tokens.admin'),
         ]);
         $this->assertIsArray($crear);
         $this->assertArrayHasKey('error', $crear, 'Debe dar error al sobrescribir archivo existente');
     }
 
-    public function test_crear_carpeta() {
+    public function test_crear_carpeta()
+    {
         $ruta = '/archivos/nuevacarpeta';
         $this->limpiarArchivosOCarpetas([$ruta]);
         $crear = $this->callMcpTool('crear', [
             'entidad' => 'archivo',
             'ruta' => $ruta,
-            'data' => [ 'es_carpeta' => true ],
-            'token' => config('mcp-server.tokens.admin')
+            'data' => ['es_carpeta' => true],
+            'token' => config('mcp-server.tokens.admin'),
         ]);
         $this->assertIsArray($crear);
         $this->assertTrue((new StorageItem($ruta))->directoryExists(), 'No se creó la carpeta');
     }
 
-    public function test_permisos_carpeta() {
+    public function test_permisos_carpeta()
+    {
         $ruta = '/archivos/carpeta_permiso';
         $this->limpiarArchivosOCarpetas([$ruta]);
         $this->callMcpTool('crear', [
             'entidad' => 'archivo',
             'ruta' => $ruta,
-            'data' => [ 'es_carpeta' => true, 'permisos' => '755' ],
-            'token' => config('mcp-server.tokens.admin')
+            'data' => ['es_carpeta' => true, 'permisos' => '755'],
+            'token' => config('mcp-server.tokens.admin'),
         ]);
         $editar = $this->callMcpTool('editar', [
             'entidad' => 'archivo',
             'ruta' => $ruta,
-            'data' => [ 'permisos' => '700' ],
-            'token' => config('mcp-server.tokens.admin')
+            'data' => ['permisos' => '700'],
+            'token' => config('mcp-server.tokens.admin'),
         ]);
         $this->assertIsArray($editar);
         $this->assertEquals('700', $editar['archivo_editado']['permisos']);
     }
 
-    public function test_leer_contenido_archivo() {
+    public function test_leer_contenido_archivo()
+    {
         $ruta = '/archivos/leer.txt';
         $this->limpiarArchivosOCarpetas([$ruta]);
         $contenido = 'contenido para leer';
         $this->callMcpTool('crear', [
             'entidad' => 'archivo',
             'ruta' => $ruta,
-            'data' => [ 'contenido' => $contenido ],
-            'token' => config('mcp-server.tokens.admin')
+            'data' => ['contenido' => $contenido],
+            'token' => config('mcp-server.tokens.admin'),
         ]);
         $contenidoLeido = (new StorageItem($ruta))->exists() ? file_get_contents((new StorageItem($ruta))->path) : null;
         $this->assertEquals($contenido, $contenidoLeido);
     }
 
-    public function test_error_renombrar_a_existente() {
+    public function test_error_renombrar_a_existente()
+    {
         $ruta1 = '/archivos/yaexiste1.txt';
         $ruta2 = '/archivos/yaexiste2.txt';
         $this->limpiarArchivosOCarpetas([$ruta1, $ruta2]);
@@ -214,13 +227,14 @@ class ArchivoToolTest extends McpFeatureTestCase
             'entidad' => 'archivo',
             'ruta' => $ruta1,
             'data' => ['nuevo_nombre' => 'yaexiste2.txt'],
-            'token' => config('mcp-server.tokens.admin')
+            'token' => config('mcp-server.tokens.admin'),
         ]);
         $this->assertIsArray($result);
         $this->assertArrayHasKey('error', $result, 'Debe dar error al renombrar a un nombre ya existente');
     }
 
-    private function limpiarArchivosOCarpetas(array $rutas) {
+    private function limpiarArchivosOCarpetas(array $rutas)
+    {
         foreach ($rutas as $ruta) {
             $sti = new StorageItem($ruta);
             if ($sti->exists()) {
@@ -232,29 +246,30 @@ class ArchivoToolTest extends McpFeatureTestCase
         }
     }
 
-    public function test_editar_archivo() {
+    public function test_editar_archivo()
+    {
         $disk = 'archivos';
         $carpeta = 'archivos/testcarpeta';
-        $archivo = $carpeta . '/testfile.txt';
-        $nuevoArchivo = $carpeta . '/renombrado.txt';
+        $archivo = $carpeta.'/testfile.txt';
+        $nuevoArchivo = $carpeta.'/renombrado.txt';
         $nuevaCarpeta = 'archivos/renombradacarpeta';
         $token = config('mcp-server.tokens.admin');
 
         // Limpieza previa usando el método reutilizable
         $this->limpiarArchivosOCarpetas([
-            '/' . $nuevoArchivo,
-            '/' . $archivo,
+            '/'.$nuevoArchivo,
+            '/'.$archivo,
             '/archivos/renombradacarpeta/renombrado.txt',
-            '/' . $nuevaCarpeta,
-            '/' . $carpeta
+            '/'.$nuevaCarpeta,
+            '/'.$carpeta,
         ]);
 
         // Inicializar carpeta y archivo
-        StorageItem::ensureDirExists('/' . $carpeta);
-        (new StorageItem('/' . $archivo))->put('contenido original');
+        StorageItem::ensureDirExists('/'.$carpeta);
+        (new StorageItem('/'.$archivo))->put('contenido original');
         // Forzar propietario admin tras crear el archivo
-        \App\Models\Nodo::updateOrCreate(
-            ['ubicacion' => '/' . $archivo],
+        Nodo::updateOrCreate(
+            ['ubicacion' => '/'.$archivo],
             [
                 'user_id' => 1,
                 'group_id' => 1,
@@ -267,16 +282,16 @@ class ArchivoToolTest extends McpFeatureTestCase
         // Renombrar archivo
         $result = $this->callMcpTool('editar', [
             'entidad' => 'archivo',
-            'ruta' => '/' . $archivo,
+            'ruta' => '/'.$archivo,
             'data' => ['nuevo_nombre' => 'renombrado.txt'],
-            'token' => $token
+            'token' => $token,
         ]);
         $this->assertIsArray($result);
-        $this->assertTrue((new StorageItem('/' . $nuevoArchivo))->exists(), 'El archivo no fue renombrado en storage');
-        $this->assertFalse((new StorageItem('/' . $archivo))->exists(), 'El archivo original sigue existiendo');
+        $this->assertTrue((new StorageItem('/'.$nuevoArchivo))->exists(), 'El archivo no fue renombrado en storage');
+        $this->assertFalse((new StorageItem('/'.$archivo))->exists(), 'El archivo original sigue existiendo');
         // Forzar propietario admin tras renombrar
-        \App\Models\Nodo::updateOrCreate(
-            ['ubicacion' => '/' . $nuevoArchivo],
+        Nodo::updateOrCreate(
+            ['ubicacion' => '/'.$nuevoArchivo],
             [
                 'user_id' => 1,
                 'group_id' => 1,
@@ -289,17 +304,17 @@ class ArchivoToolTest extends McpFeatureTestCase
         // Renombrar carpeta
         $result2 = $this->callMcpTool('editar', [
             'entidad' => 'archivo',
-            'ruta' => '/' . $carpeta,
+            'ruta' => '/'.$carpeta,
             'data' => ['nuevo_nombre' => 'renombradacarpeta'],
-            'token' => $token
+            'token' => $token,
         ]);
         $this->assertIsArray($result2);
-        $this->assertTrue((new StorageItem('/' . $nuevaCarpeta))->directoryExists(), 'La carpeta no fue renombrada en storage');
-        $this->assertFalse((new StorageItem('/' . $carpeta))->directoryExists(), 'La carpeta original sigue existiendo');
+        $this->assertTrue((new StorageItem('/'.$nuevaCarpeta))->directoryExists(), 'La carpeta no fue renombrada en storage');
+        $this->assertFalse((new StorageItem('/'.$carpeta))->directoryExists(), 'La carpeta original sigue existiendo');
         // El archivo renombrado debe estar dentro de la nueva carpeta
         $this->assertTrue((new StorageItem('/archivos/renombradacarpeta/renombrado.txt'))->exists(), 'El archivo no está en la carpeta renombrada');
         // Forzar propietario admin tras renombrar carpeta
-        \App\Models\Nodo::updateOrCreate(
+        Nodo::updateOrCreate(
             ['ubicacion' => '/archivos/renombradacarpeta/renombrado.txt'],
             [
                 'user_id' => 1,
@@ -315,22 +330,22 @@ class ArchivoToolTest extends McpFeatureTestCase
             'entidad' => 'archivo',
             'ruta' => '/archivos/renombradacarpeta/renombrado.txt',
             'data' => ['permisos' => '1775'],
-            'token' => $token
+            'token' => $token,
         ]);
         $this->assertIsArray($result3);
         $this->assertEquals('1775', $result3['archivo_editado']['permisos']);
 
         // Cambiar propietario (crear grupo propio: la DB de testing solo tiene el grupo 1)
-        $grupo = \App\Models\Grupo::create([
+        $grupo = Grupo::create([
             'nombre' => 'Grupo Propietario',
-            'slug' => 'grupo-propietario-' . uniqid(),
+            'slug' => 'grupo-propietario-'.uniqid(),
             'descripcion' => 'Desc',
         ]);
         $result4 = $this->callMcpTool('editar', [
             'entidad' => 'archivo',
             'ruta' => '/archivos/renombradacarpeta/renombrado.txt',
             'data' => ['user_id' => 2, 'group_id' => $grupo->id],
-            'token' => $token
+            'token' => $token,
         ]);
         $this->assertIsArray($result4);
         $this->assertEquals(2, $result4['archivo_editado']['user_id']);
@@ -350,14 +365,16 @@ class ArchivoToolTest extends McpFeatureTestCase
         $body = substr($response, $header_size);
         $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
+
         return [
             'status' => $status,
             'headers' => $headers,
-            'body' => $body
+            'body' => $body,
         ];
     }
 
-    public function test_editar_permisos_archivo() {
+    public function test_editar_permisos_archivo()
+    {
         $ruta = '/archivos/testdescarga.txt';
         $token = config('mcp-server.tokens.admin');
 
@@ -367,7 +384,7 @@ class ArchivoToolTest extends McpFeatureTestCase
         $sti = new StorageItem($ruta);
         $sti->put('descargable');
         // Forzar nodo propietario admin
-        \App\Models\Nodo::updateOrCreate(
+        Nodo::updateOrCreate(
             ['ubicacion' => $ruta],
             ['user_id' => 1, 'group_id' => 1, 'permisos' => '1755', 'es_carpeta' => 0, 'oculto' => 0]
         );
@@ -376,20 +393,20 @@ class ArchivoToolTest extends McpFeatureTestCase
             'entidad' => 'archivo',
             'ruta' => $ruta,
             'data' => ['permisos' => '755'],
-            'token' => $token
+            'token' => $token,
         ]);
         // Verificar que el Nodo (fuente de verdad de permisos) se actualizó a 755
-        $this->assertEquals('755', \App\Models\Nodo::desde($ruta)->permisos, 'Los permisos no se persistieron en el nodo');
+        $this->assertEquals('755', Nodo::desde($ruta)->permisos, 'Los permisos no se persistieron en el nodo');
 
         // Cambiar permisos a privado (ejemplo: 750)
         $this->callMcpTool('editar', [
             'entidad' => 'archivo',
             'ruta' => $ruta,
             'data' => ['permisos' => '750'],
-            'token' => $token
+            'token' => $token,
         ]);
         // Verificar que el Nodo se actualizó a 750
-        $this->assertEquals('750', \App\Models\Nodo::desde($ruta)->permisos, 'Los permisos no se actualizaron a 750');
+        $this->assertEquals('750', Nodo::desde($ruta)->permisos, 'Los permisos no se actualizaron a 750');
 
         // El disk 'archivos' es privado por diseño (visibility: private): NO se sirve
         // por file_server estático. Su URL (/archivos/...) no es pública; la descarga
@@ -399,9 +416,7 @@ class ArchivoToolTest extends McpFeatureTestCase
         $this->assertFalse((new StorageItem($ruta))->directoryExists() === true && file_exists(public_path('archivos')), 'Disk archivos no debería exponerse como estático');
     }
 
-
-
-     public function test_crear_archivo_binario_pdf()
+    public function test_crear_archivo_binario_pdf()
     {
         $ruta = '/archivos/test_upload_binario.pdf';
         $this->limpiarArchivosOCarpetas([$ruta]);
@@ -411,8 +426,8 @@ class ArchivoToolTest extends McpFeatureTestCase
         $crear = $this->callMcpTool('crear', [
             'entidad' => 'archivo',
             'ruta' => $ruta,
-            'data' => [ 'contenido_base64' => $contenido_base64 ],
-            'token' => config('mcp-server.tokens.admin')
+            'data' => ['contenido_base64' => $contenido_base64],
+            'token' => config('mcp-server.tokens.admin'),
         ]);
         // fwrite(STDERR, print_r($crear, true));
         $this->assertIsArray($crear);

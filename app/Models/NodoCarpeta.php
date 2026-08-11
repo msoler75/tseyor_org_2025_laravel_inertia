@@ -3,15 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Storage;
-use App\Pigmalion\StorageItem;
 
 /**
  * No tiene tabla propia, es un wrapper para acceder a los nodos de tipo carpeta
  */
 class NodoCarpeta extends Model
 {
-
     protected $table = 'nodos';
 
     protected $esCarpeta = true;
@@ -30,6 +27,4 @@ class NodoCarpeta extends Model
             $carpeta->es_carpeta = true;
         });
     }
-
-
 }

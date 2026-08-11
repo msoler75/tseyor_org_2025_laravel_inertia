@@ -3,6 +3,7 @@
 namespace App\Pigmalion;
 
 use App\Models\Contenido;
+use App\T;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
@@ -10,7 +11,6 @@ define('SEARCH_RESULTS_FRAGMENT_SIZE', 300);
 
 class BusquedasHelper
 {
-
     public static $palabrasComunes = [
         'a',
         'al',
@@ -85,16 +85,15 @@ class BusquedasHelper
         'etc...',
     ];
 
-
     public static function descartarPalabrasComunes($busqueda)
     {
-        $TOKEN_GUION = "xzzzzzzhhhhhhhx";
-        $busqueda = str_replace("-", $TOKEN_GUION, $busqueda);
+        $TOKEN_GUION = 'xzzzzzzhhhhhhhx';
+        $busqueda = str_replace('-', $TOKEN_GUION, $busqueda);
         // 1. Separar la frase $busqueda en palabras, utilizando espacios y otros símbolos de puntuación como separadores
         $palabras = preg_split('/[\s\p{P}]+/u', StrEx::removerAcentos(mb_strtolower($busqueda)), -1, PREG_SPLIT_NO_EMPTY);
 
         $palabras = array_map(function ($x) use ($TOKEN_GUION) {
-            return str_replace($TOKEN_GUION, "-", $x);
+            return str_replace($TOKEN_GUION, '-', $x);
         }, $palabras);
 
         // 2. Descartar las palabras habituales, pronombres y artículos
@@ -102,12 +101,13 @@ class BusquedasHelper
         $filtradas = [];
 
         foreach ($palabras as $palabra) {
-            $palabraLimpia = str_replace("-", "", $palabra);
+            $palabraLimpia = str_replace('-', '', $palabra);
             $descartar = in_array($palabraLimpia, BusquedasHelper::$palabrasComunes);
-            if ($descartar)
+            if ($descartar) {
                 $removidas[$palabra] = 1;
-            else
+            } else {
                 $filtradas[$palabra] = 1;
+            }
         }
 
         // 3. Devolver el string con las palabras no descartadas, y un string con palabras descartadas. Si queda vacío, se devuelve el mismo string original
@@ -119,26 +119,28 @@ class BusquedasHelper
 
     public static function separarPalabrasComunes($busqueda)
     {
-        list($filtradas, $removidas) = self::descartarPalabrasComunes($busqueda);
-        return empty($filtradas) ? [$busqueda, ""] : [$filtradas, $removidas];
-    }
+        [$filtradas, $removidas] = self::descartarPalabrasComunes($busqueda);
 
+        return empty($filtradas) ? [$busqueda, ''] : [$filtradas, $removidas];
+    }
 
     /**
      * Valida que la búsqueda tenga palabras relevantes y no sea vacía
      */
     public static function validarBusqueda($busqueda)
     {
-        if (!trim($busqueda))
+        if (! trim($busqueda)) {
             return false;
-        list($relevante, $comunes) = self::descartarPalabrasComunes($busqueda);
-        return !!$relevante;
+        }
+        [$relevante, $comunes] = self::descartarPalabrasComunes($busqueda);
+
+        return (bool) $relevante;
     }
 
     public static function formatearResultados($resultados, $busqueda, $soloTitulo = false, $extraeTodos = false)
     {
         $options = ['tagOptions' => ['class' => 'search-term']];
-        $h = new ExtendedHighlighter();
+        $h = new ExtendedHighlighter;
 
         $busqueda_original = $busqueda;
 
@@ -146,63 +148,66 @@ class BusquedasHelper
 
         $busqueda = trim(StrEx::sanitizeAndDeaccent(mb_strtolower($busqueda)));
 
-        list($frase_exacta, $busqueda_sin_frase) = self::obtenerFraseExacta($busqueda);
-        if ($frase_exacta)
+        [$frase_exacta, $busqueda_sin_frase] = self::obtenerFraseExacta($busqueda);
+        if ($frase_exacta) {
             $busqueda = $busqueda_sin_frase;
+        }
 
-        list($words_primary, $words_secondary) = self::separarPalabrasComunes($busqueda);
+        [$words_primary, $words_secondary] = self::separarPalabrasComunes($busqueda);
         // if($words_primary===FALSE)
         // dd($words_primary, $words_secondary);
 
         $resultados
-            ->transform(function ($item) use ($h, $options, $busqueda, $busqueda_original_limpia, $frase_exacta, $busqueda_sin_frase, $words_primary, $words_secondary, $soloTitulo, $extraeTodos) {
+            ->transform(function ($item) use ($h, $options, $busqueda, $busqueda_original_limpia, $frase_exacta, $words_primary, $words_secondary, $soloTitulo, $extraeTodos) {
 
                 // Log::info('formatearResultados ' . $item->id);
-                $_x = new \App\T("BusquedasHelper", "formatearResultados_item");
+                $_x = new T('BusquedasHelper', 'formatearResultados_item');
 
                 $busqueda_primaria = $words_primary;
                 $busqueda_secundaria = $words_secondary;
 
                 // \App\Pigmalion\AccentRemover::benchmark($item->texto);
-                if ($soloTitulo)
+                if ($soloTitulo) {
                     unset($item['descripcion']);
-                else {
+                } else {
                     // Limpiar el texto y eliminar elementos no deseados
                     if ($item->texto && strlen($item->texto) > 50) {
 
                         $textoLimpio = strip_tags($item->texto); // Eliminar etiquetas HTML
                         $textoLimpio = preg_replace('/\bimg\b/', '', $textoLimpio); // Eliminar la palabra "img" ?
                         // eliminamos caracters de markdown
-                        $textoLimpio = \App\Pigmalion\Markdown::removeMarkdown($textoLimpio);
+                        $textoLimpio = Markdown::removeMarkdown($textoLimpio);
                         // $textoLimpio = preg_replace("/[#*_]/", "", $textoLimpio);
                         // $textoLimpio = preg_replace("/!?\[([^]]*)\]\(.+\)/", "$1", $textoLimpio);
-                    } else
+                    } else {
                         $textoLimpio = $item->descripcion;
+                    }
 
                     // $textoLimpio = StrEx::removerAcentos(mb_strtolower($textoLimpio));
 
                     if ($frase_exacta) {
-                        $words      = preg_split($h->getTokenizer()->getPattern(), $words_primary, -1, PREG_SPLIT_NO_EMPTY);
+                        $words = preg_split($h->getTokenizer()->getPattern(), $words_primary, -1, PREG_SPLIT_NO_EMPTY);
                         $busqueda_primaria = [$frase_exacta, ...$words];
-                        $busqueda_secundaria  = $words_primary;
+                        $busqueda_secundaria = $words_primary;
                     } else {
-                        $words      = preg_split($h->getTokenizer()->getPattern(), $words_primary, -1, PREG_SPLIT_NO_EMPTY);
-                        $busqueda_primaria =  [trim(StrEx::removerAcentos(mb_strtolower($busqueda_original_limpia))), ...$words];
+                        $words = preg_split($h->getTokenizer()->getPattern(), $words_primary, -1, PREG_SPLIT_NO_EMPTY);
+                        $busqueda_primaria = [trim(StrEx::removerAcentos(mb_strtolower($busqueda_original_limpia))), ...$words];
                         $busqueda_secundaria = $words_secondary;
                     }
 
-                    if (!$extraeTodos) {
+                    if (! $extraeTodos) {
                         // extraemos la parte más relevante
                         // $parteRelevante = $h->extractRelevant($busqueda_primaria, $textoLimpio, SEARCH_RESULTS_FRAGMENT_SIZE);
                         // $item->descripcion = $h->highlightPonderated($parteRelevante, $busqueda_primaria, $words_secondary, "em", $options);
-                         // extraemos todos los extractos que contienen algo del texto buscado
-                         $extractos = $h->extractRelevantAll($busqueda_primaria, $textoLimpio, SEARCH_RESULTS_FRAGMENT_SIZE);
+                        // extraemos todos los extractos que contienen algo del texto buscado
+                        $extractos = $h->extractRelevantAll($busqueda_primaria, $textoLimpio, SEARCH_RESULTS_FRAGMENT_SIZE);
                         // dd($extractos);
-                         // ordena los extractos en función de la relevancia de la búsqueda
-                         self::ordenarExtractos($extractos, $busqueda_original_limpia);
+                        // ordena los extractos en función de la relevancia de la búsqueda
+                        self::ordenarExtractos($extractos, $busqueda_original_limpia);
 
-                         if(count($extractos))
-                            $item->descripcion = $h->highlightPonderated($extractos[0], $busqueda_primaria, $words_secondary, "em", $options);
+                        if (count($extractos)) {
+                            $item->descripcion = $h->highlightPonderated($extractos[0], $busqueda_primaria, $words_secondary, 'em', $options);
+                        }
 
                     } else {
                         // extraemos todos los extractos que contienen algo del texto buscado
@@ -217,7 +222,7 @@ class BusquedasHelper
                                 $extracto,
                                 $busqueda_primaria,
                                 $busqueda_secundaria,
-                                "em",
+                                'em',
                                 $options
                             );
                         } //
@@ -227,114 +232,113 @@ class BusquedasHelper
                 }
 
                 // Realizar el mismo proceso para el campo 'titulo'
-                if ($item->titulo)
-                    $item->titulo = $h->highlightPonderated($item->titulo, $busqueda_primaria, $busqueda_secundaria, "em", $options);
-                if ($item->nombre)
-                    $item->nombre = $h->highlightPonderated($item->nombre, $busqueda_primaria, $busqueda_secundaria, "em", $options);
+                if ($item->titulo) {
+                    $item->titulo = $h->highlightPonderated($item->titulo, $busqueda_primaria, $busqueda_secundaria, 'em', $options);
+                }
+                if ($item->nombre) {
+                    $item->nombre = $h->highlightPonderated($item->nombre, $busqueda_primaria, $busqueda_secundaria, 'em', $options);
+                }
 
                 unset($item['texto']);
                 unset($item['texto_busqueda']);
+
                 // unset($item['visibilidad']);
                 return $item;
             });
     }
 
-
-
     public static function ordenarExtractos(&$extractos, $frase)
     {
-        usort($extractos, function ($a, $b) use($frase) {
+        usort($extractos, function ($a, $b) use ($frase) {
             // mira si aparece la frase de búsqueda tal cual en los extractos, y prioriza estos
             $textoA = StrEx::removerAcentos(mb_strtolower($a));
             $textoB = StrEx::removerAcentos(mb_strtolower($b));
-           $exactoA = strpos($textoA, $frase) !== FALSE ? -1 : 0;
-            $exactoB = strpos($textoB, $frase) !== FALSE ? -1 : 0;
+            $exactoA = strpos($textoA, $frase) !== false ? -1 : 0;
+            $exactoB = strpos($textoB, $frase) !== false ? -1 : 0;
+
             return $exactoA - $exactoB;
         });
     }
 
-
-    public static function resaltarPalabras($texto, $palabras): mixed {
+    public static function resaltarPalabras($texto, $palabras): mixed
+    {
 
         // hacemos lo mismo que en formatearResultados, pero aplicado solo al texto
         $options = ['tagOptions' => ['class' => 'search-term']];
 
-        $h = new ExtendedHighlighter();
+        $h = new ExtendedHighlighter;
 
         $busqueda_original_limpia = StrEx::sanitizeAndDeaccent(mb_strtolower($palabras));
 
         $busqueda = trim($busqueda_original_limpia);
 
-        list($frase_exacta, $busqueda_sin_frase) = self::obtenerFraseExacta($busqueda);
-        if ($frase_exacta)
+        [$frase_exacta, $busqueda_sin_frase] = self::obtenerFraseExacta($busqueda);
+        if ($frase_exacta) {
             $busqueda = $busqueda_sin_frase;
+        }
 
-        list($words_primary, $words_secondary) = self::separarPalabrasComunes($busqueda);
+        [$words_primary, $words_secondary] = self::separarPalabrasComunes($busqueda);
 
         if ($frase_exacta) {
-            $words      = preg_split($h->getTokenizer()->getPattern(), $words_primary, -1, PREG_SPLIT_NO_EMPTY);
+            $words = preg_split($h->getTokenizer()->getPattern(), $words_primary, -1, PREG_SPLIT_NO_EMPTY);
             $busqueda_primaria = [$frase_exacta, ...$words];
-            $busqueda_secundaria  = $words_primary;
+            $busqueda_secundaria = $words_primary;
         } else {
-            $words      = preg_split($h->getTokenizer()->getPattern(), $words_primary, -1, PREG_SPLIT_NO_EMPTY);
-            $busqueda_primaria =  [trim(StrEx::removerAcentos(mb_strtolower($busqueda_original_limpia))), ...$words];
+            $words = preg_split($h->getTokenizer()->getPattern(), $words_primary, -1, PREG_SPLIT_NO_EMPTY);
+            $busqueda_primaria = [trim(StrEx::removerAcentos(mb_strtolower($busqueda_original_limpia))), ...$words];
             $busqueda_secundaria = $words_secondary;
         }
 
-        return $h->highlightPonderated($texto, $busqueda_primaria, $busqueda_secundaria, "em", $options);
+        return $h->highlightPonderated($texto, $busqueda_primaria, $busqueda_secundaria, 'em', $options);
     }
-
-
-
 
     public static function limpiarResultados($resultados, $busqueda, $soloTitulo = false)
     {
         $options = ['tagOptions' => ['class' => 'search-term']];
-        $h = new ExtendedHighlighter();
+        $h = new ExtendedHighlighter;
 
-        list($words_primary, $words_secondary) = self::separarPalabrasComunes($busqueda);
+        [$words_primary, $words_secondary] = self::separarPalabrasComunes($busqueda);
 
         $resultados
-            ->transform(function ($item) use ($h, $options, $busqueda, $words_primary, $words_secondary, $soloTitulo) {
+            ->transform(function ($item) use ($h, $options, $words_primary, $words_secondary, $soloTitulo) {
 
-                if ($soloTitulo)
+                if ($soloTitulo) {
                     unset($item['descripcion']);
-                else
-                    $item->descripcion = $h->highlightPonderated($item->descripcion, $words_primary, $words_secondary, "em", $options);
+                } else {
+                    $item->descripcion = $h->highlightPonderated($item->descripcion, $words_primary, $words_secondary, 'em', $options);
+                }
 
                 // Realizar el mismo proceso para el campo 'titulo'
-                $item->titulo = $h->highlightPonderated($item->titulo, $words_primary, $words_secondary, "em", $options);
+                $item->titulo = $h->highlightPonderated($item->titulo, $words_primary, $words_secondary, 'em', $options);
 
                 unset($item['texto']);
                 unset($item['texto_busqueda']);
+
                 // unset($item['visibilidad']);
                 return $item;
             });
     }
 
-
-    /**
-     *
-     */
     public static function buscarContenidos($buscar, $coleccion = null, $formatear = true)
     {
         try {
             $buscar = StrEx::removerAcentos(mb_strtolower($buscar));
 
-            list($buscarRelevante, $comunes) = BusquedasHelper::separarPalabrasComunes($buscar);
+            [$buscarRelevante, $comunes] = BusquedasHelper::separarPalabrasComunes($buscar);
 
             $resultados =
                 $coleccion ? Contenido::search($buscarRelevante)
-                    ->query(fn($sub) => $sub->where('coleccion', $coleccion))
+                    ->query(fn ($sub) => $sub->where('coleccion', $coleccion))
                     ->paginate(7)
                 : Contenido::search($buscarRelevante)->paginate(7); // en realidad solo se va a tomar la primera página, se supone que son los resultados más puntuados
 
-                if($formatear) {
-                    if (strlen($buscarRelevante) < 3)
-                        BusquedasHelper::limpiarResultados($resultados, $buscar, true);
-                    else
-                        BusquedasHelper::formatearResultados($resultados, $buscar, true);
+            if ($formatear) {
+                if (strlen($buscarRelevante) < 3) {
+                    BusquedasHelper::limpiarResultados($resultados, $buscar, true);
+                } else {
+                    BusquedasHelper::formatearResultados($resultados, $buscar, true);
                 }
+            }
 
             return $resultados;
         } catch (Throwable $e) {
@@ -346,16 +350,13 @@ class BusquedasHelper
                 'error_file' => $e->getFile(),
                 'error_line' => $e->getLine(),
                 'error_class' => get_class($e),
-                'accion_recomendada' => 'Ejecutar: php artisan scout:delete-index "App\Models\Contenido" && rm storage/indexes/contenidos.index && php artisan scout:import "App\Models\Contenido"'
+                'accion_recomendada' => 'Ejecutar: php artisan scout:delete-index "App\Models\Contenido" && rm storage/indexes/contenidos.index && php artisan scout:import "App\Models\Contenido"',
             ]);
 
             // Devolver colección vacía para evitar romper la aplicación
             return collect([]);
         }
     }
-
-
-
 
     /**
      * Reliza una búsqueda en el modelo, después de verificar si es una búsqueda válida
@@ -364,12 +365,13 @@ class BusquedasHelper
     {
         $busqueda = $querySearch ?? $queryCheck;
         $busqueda = StrEx::removerAcentos(mb_strtolower($busqueda));
-        return BusquedasHelper::validarBusqueda($queryCheck) ? $model::search($busqueda) : $model::whereRaw("1=0");
-    }
 
+        return BusquedasHelper::validarBusqueda($queryCheck) ? $model::search($busqueda) : $model::whereRaw('1=0');
+    }
 
     /**
      * Indica si es una búsqueda de frase exacta y extrae la frase
+     *
      * @return "" si no hay frase exacta
      */
     public static function obtenerFraseExacta($busqueda): array
@@ -378,12 +380,13 @@ class BusquedasHelper
         preg_match('/"([^"]+)"/', $busqueda, $matches);
         if (count($matches) > 1) {
             $frase_exacta = $matches[1];
-            $busqueda_sin_frase = trim(str_replace($matches[0], "", $busqueda));
-            return [$frase_exacta, $busqueda_sin_frase];
-        } else
-            return ["", $busqueda];
-    }
+            $busqueda_sin_frase = trim(str_replace($matches[0], '', $busqueda));
 
+            return [$frase_exacta, $busqueda_sin_frase];
+        } else {
+            return ['', $busqueda];
+        }
+    }
 
     /**
      * Realiza búsqueda de contenidos usando TNTSearch, separando palabras comunes,
@@ -392,34 +395,37 @@ class BusquedasHelper
     public static function buscarIdsOrdenadosPorScore($buscar, $model)
     {
         $buscar = StrEx::removerAcentos(mb_strtolower($buscar));
-        list($relevantes, $comunes) = self::separarPalabrasComunes($buscar);
+        [$relevantes, $comunes] = self::separarPalabrasComunes($buscar);
         $items = $model::search($relevantes)->get();
         $sortedItems = $items->sortByDesc('__tntSearchScore__');
         $ids = $sortedItems->pluck('id')->toArray();
         $scores = $sortedItems->pluck('__tntSearchScore__', 'id')->toArray();
+
         return ['ids' => $ids, 'scores' => $scores];
     }
 
     /**
      * Dada una query, hace una busqueda WHERE con LIKE en los campos indicados
-     * @param mixed $buscar
-     * @param mixed $query
-     * @param mixed $fields
+     *
+     * @param  mixed  $buscar
+     * @param  mixed  $query
+     * @param  mixed  $fields
      */
-    public static function buscarQueryFields($buscar, $query, $fields) {
+    public static function buscarQueryFields($buscar, $query, $fields)
+    {
         $buscar = StrEx::removerAcentos(mb_strtolower($buscar));
-        list($relevantes, $comunes) = BusquedasHelper::separarPalabrasComunes($buscar);
+        [$relevantes, $comunes] = BusquedasHelper::separarPalabrasComunes($buscar);
         // spliteamos el string de palabras relevantes
         $palabras = explode(' ', $relevantes);
         // aplicamos cada palabra a buscar en los distintos campos
-        $query->where(function($q) use ($palabras, $fields) {
+        $query->where(function ($q) use ($palabras, $fields) {
             foreach ($fields as $field) {
                 foreach ($palabras as $palabra) {
-                    $q->orWhere($field, 'like', '%' . $palabra . '%');
+                    $q->orWhere($field, 'like', '%'.$palabra.'%');
                 }
             }
         });
+
         return $query;
     }
-
 }

@@ -2,20 +2,19 @@
 
 namespace App\Models;
 
-use Backpack\CRUD\app\Models\Traits\CrudTrait;
-use App\Models\ContenidoBaseModel;
-use Laravel\Scout\Searchable;
+use App\Pigmalion\Markdown;
 use App\Traits\EsCategorizable;
-
+use Backpack\CRUD\app\Models\Traits\CrudTrait;
+use Laravel\Scout\Searchable;
 
 class Meditacion extends ContenidoBaseModel
 {
     use CrudTrait;
-    use Searchable;
     use EsCategorizable;
+    use Searchable;
 
     // incluye la categoría 'todas'
-    public $incluyeCategoriaTodos = "Todas";
+    public $incluyeCategoriaTodos = 'Todas';
 
     protected $table = 'meditaciones';
 
@@ -29,11 +28,9 @@ class Meditacion extends ContenidoBaseModel
         'visibilidad',
     ];
 
+    // SCOUT
 
-      // SCOUT
-
-
-     /**
+    /**
      * Solo se indexa si acaso está publicado
      */
     public function shouldBeSearchable(): bool
@@ -41,8 +38,7 @@ class Meditacion extends ContenidoBaseModel
         return $this->visibilidad == 'P';
     }
 
-
-   /**
+    /**
      * Get the indexable data array for the model.
      *
      * @return array<string, mixed>
@@ -53,7 +49,7 @@ class Meditacion extends ContenidoBaseModel
             'id' => $this->id, // <- Always include the primary key
             'title' => $this->titulo,
             'description' => $this->descripcion,
-            'content' => \App\Pigmalion\Markdown::removeMarkdown($this->texto),
+            'content' => Markdown::removeMarkdown($this->texto),
         ];
     }
 }

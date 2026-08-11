@@ -2,26 +2,33 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Backpack\CRUD\app\Http\Controllers\CrudController;
-use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 use App\Models\Experiencia;
+use App\Traits\CrudContenido;
+use Backpack\CRUD\app\Http\Controllers\CrudController;
+use Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
+use Backpack\CRUD\app\Library\CrudPanel\CrudPanel;
+use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
+use Backpack\ReviseOperation\ReviseOperation;
 use Illuminate\Support\Facades\Storage;
-
 
 /**
  * Class ExperienciaCrudController
- * @package App\Http\Controllers\Admin
- * @property-read \Backpack\CRUD\app\Library\CrudPanel\CrudPanel $crud
+ *
+ * @property-read CrudPanel $crud
  */
 class ExperienciaCrudController extends CrudController
 {
-    use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
-    use \Backpack\ReviseOperation\ReviseOperation;
-    use \App\Traits\CrudContenido;
+    use CreateOperation;
+    use CrudContenido;
+    use DeleteOperation;
+    use ListOperation;
+    use ReviseOperation;
+    use ShowOperation;
+    use UpdateOperation;
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
@@ -31,7 +38,7 @@ class ExperienciaCrudController extends CrudController
     public function setup()
     {
         CRUD::setModel(Experiencia::class);
-        CRUD::setRoute(config('backpack.base.route_prefix') . '/experiencia');
+        CRUD::setRoute(config('backpack.base.route_prefix').'/experiencia');
         CRUD::setEntityNameStrings('experiencia', 'experiencias');
     }
 
@@ -39,6 +46,7 @@ class ExperienciaCrudController extends CrudController
      * Define what happens when the List operation is loaded.
      *
      * @see  https://backpackforlaravel.com/docs/crud-operation-list-entries
+     *
      * @return void
      */
     protected function setupListOperation()
@@ -49,19 +57,17 @@ class ExperienciaCrudController extends CrudController
          * Columns can be defined using the fluent syntax:
          * - CRUD::column('price')->type('number');
          */
-
-         $this->crud->addColumn([
-            'name'  => 'id',
+        $this->crud->addColumn([
+            'name' => 'id',
             'label' => 'id',
-            'type'  => 'number'
+            'type' => 'number',
         ]);
 
         $this->crud->addColumn([
-            'name'  => 'nombre',
+            'name' => 'nombre',
             'label' => 'Nombre',
-            'type'  => 'text'
+            'type' => 'text',
         ]);
-
 
         $this->crud->addColumn([
             'name' => 'updated_at',
@@ -70,19 +76,18 @@ class ExperienciaCrudController extends CrudController
         ]);
 
         $this->crud->addColumn([
-            'name'  => 'categoria',
+            'name' => 'categoria',
             'label' => 'Categoría',
-            'type'  => 'text',
+            'type' => 'text',
         ]);
 
-
         $this->crud->addColumn([
-            'name'  => 'visibilidad',
+            'name' => 'visibilidad',
             'label' => 'Estado',
-            'type'  => 'text',
+            'type' => 'text',
             'value' => function ($entry) {
                 return $entry->visibilidad == 'P' ? '✔️ Publicada' : '⚠️ Borrador';
-            }
+            },
         ]);
     }
 
@@ -90,27 +95,28 @@ class ExperienciaCrudController extends CrudController
      * Define what happens when the Create operation is loaded.
      *
      * @see https://backpackforlaravel.com/docs/crud-operation-create
+     *
      * @return void
      */
     protected function setupCreateOperation()
     {
         $this->crud->setValidation([
             // 'name' => 'required|min:2',
-            'texto' => 'required|max:65000'
+            'texto' => 'required|max:65000',
         ]);
         CRUD::setFromDb(); // set fields from db columns.
 
         CRUD::field([
             // select_from_array
             'name' => 'categoria',
-            'label' => "Tipo de experiencia",
+            'label' => 'Tipo de experiencia',
             'type' => 'select_from_array',
-            'options' =>  array_combine(array_keys(Experiencia::$categorias), array_keys(Experiencia::$categorias)),
+            'options' => array_combine(array_keys(Experiencia::$categorias), array_keys(Experiencia::$categorias)),
             'allows_null' => false,
             // 'allows_multiple' => true, // OPTIONAL; needs you to cast this to array in your model;
 
             'wrapper' => [
-                'class' => 'form-group col-md-3'
+                'class' => 'form-group col-md-3',
             ],
         ]);
 
@@ -119,12 +125,12 @@ class ExperienciaCrudController extends CrudController
         CRUD::field('visibilidad')->type('visibilidad');
 
         CRUD::field('fecha')->label('Fecha de la experiencia')->wrapper([
-            'class' => 'form-group col-md-3'
+            'class' => 'form-group col-md-3',
         ]);
 
         CRUD::field([
             // Select
-            'label' => "Usuario que creó la experiencia grupal",
+            'label' => 'Usuario que creó la experiencia grupal',
             'type' => 'select',
             'name' => 'user_id',
             // the db column for the foreign key
@@ -147,33 +153,33 @@ class ExperienciaCrudController extends CrudController
             //  you can use this to filter the results show in the select
 
             'wrapper' => [
-                'class' => 'form-group col-md-3'
+                'class' => 'form-group col-md-3',
             ],
 
-            'hint'=>'Déjalo en blanco si no es un trabajo de grupo'
+            'hint' => 'Déjalo en blanco si no es un trabajo de grupo',
         ]);
 
-        $carpeta = "medios/experiencias/" . date("Y");
+        $carpeta = 'medios/experiencias/'.date('Y');
 
-         // Verificar si la carpeta existe en el disco 'public'
-         if (!Storage::disk('public')->exists($carpeta)) {
+        // Verificar si la carpeta existe en el disco 'public'
+        if (! Storage::disk('public')->exists($carpeta)) {
             // Crear la carpeta en el disco 'public'
             Storage::disk('public')->makeDirectory($carpeta);
         }
 
         CRUD::field([
-            'label' => "Archivo adjunto",
+            'label' => 'Archivo adjunto',
             'type' => 'upload',
             'name' => 'archivo',
             'attributes' => [
-                'accept' => "text/plain,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                'accept' => 'text/plain,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document',
             ],
             'withFiles' => [
                 'disk' => 'public',
                 // the disk where file will be stored
                 'path' => $carpeta,
                 // the path inside the disk where file will be stored
-            ]
+            ],
         ]);
 
     }
@@ -182,6 +188,7 @@ class ExperienciaCrudController extends CrudController
      * Define what happens when the Update operation is loaded.
      *
      * @see https://backpackforlaravel.com/docs/crud-operation-update
+     *
      * @return void
      */
     protected function setupUpdateOperation()
@@ -189,10 +196,10 @@ class ExperienciaCrudController extends CrudController
         $this->setupCreateOperation();
     }
 
-
-     public function show($id)
+    public function show($id)
     {
         $experiencia = Experiencia::find($id);
+
         return $experiencia->visibilidad == 'P' ? redirect("/experiencias/$id") : redirect("/experiencias/$id?borrador");
     }
 }

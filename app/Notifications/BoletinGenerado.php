@@ -2,12 +2,12 @@
 
 namespace App\Notifications;
 
+use App\Models\Boletin;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\Log;
-use App\Models\Boletin;
 
 class BoletinGenerado extends Notification implements ShouldQueue
 {
@@ -38,14 +38,15 @@ class BoletinGenerado extends Notification implements ShouldQueue
      */
     public function toMail(object $notifiable)
     {
-        $urlEditarBoletin = '/admin/boletin/' . $this->boletin->id . '/edit';
+        $urlEditarBoletin = '/admin/boletin/'.$this->boletin->id.'/edit';
         $subject = $this->boletin->titulo;
         $user = $notifiable;
-        $greeting = '¡Hola ' . $user->name . '!';
+        $greeting = '¡Hola '.$user->name.'!';
         $intro = 'Se ha generado un nuevo boletín para revisión. El boletín se enviará automáticamente en 24-48 horas.';
         $actionUrl = url($urlEditarBoletin);
         $actionText = 'Editar Boletín';
-        Log::channel('notificaciones')->info('[BoletinGenerado] Enviando a: ' . ($user->email ?? 'sin email') . ' | Nombre: ' . $user->name . ' | Asunto: ' . $subject);
+        Log::channel('notificaciones')->info('[BoletinGenerado] Enviando a: '.($user->email ?? 'sin email').' | Nombre: '.$user->name.' | Asunto: '.$subject);
+
         return (new MailMessage)
             ->subject("Revisa boletín: $subject")
             ->markdown('emails.boletin_generado', [

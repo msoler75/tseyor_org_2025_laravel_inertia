@@ -2,22 +2,25 @@
 
 namespace App\Exceptions;
 
-use Illuminate\Database\QueryException;
-use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
-use Symfony\Component\Mailer\Exception\TransportException;
-use Illuminate\Auth\AuthenticationException;
-use Illuminate\Validation\ValidationException;
-use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
-use Inertia\Inertia;
-use Illuminate\Support\Facades\Log;
-use Throwable;
 use App\Pigmalion\BusquedasHelper;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\QueryException;
+use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Exceptions\InvalidSignatureException;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
+use Inertia\Inertia;
 use Jaybizzle\CrawlerDetect\CrawlerDetect;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\TooManyRequestsHttpException;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
+use Symfony\Component\Mailer\Exception\TransportException;
+use Throwable;
 
 class Handler extends ExceptionHandler
 {
@@ -85,13 +88,9 @@ class Handler extends ExceptionHandler
         return false;
     }
 
-
-
-
     /**
      * Determine if the exception is related to mail sending.
      *
-     * @param  \Throwable  $exception
      * @return bool
      */
     protected function isMailException(Throwable $exception)
@@ -106,7 +105,6 @@ class Handler extends ExceptionHandler
     /**
      * Determine if the exception is related to job execution.
      *
-     * @param  \Throwable  $exception
      * @return bool
      */
     protected function isJobException(Throwable $exception)
@@ -121,7 +119,6 @@ class Handler extends ExceptionHandler
     /**
      * Determine if the exception is related to SEO image validation.
      *
-     * @param  \Throwable  $exception
      * @return bool
      */
     protected function isSEOImageException(Throwable $exception)
@@ -133,7 +130,6 @@ class Handler extends ExceptionHandler
     /**
      * Report or log an exception.
      *
-     * @param  \Throwable  $exception
      * @return void
      */
     public function report(Throwable $exception)
@@ -146,32 +142,32 @@ class Handler extends ExceptionHandler
         // Ignorar excepciones de validación de imágenes del paquete laravel-seo
         // Estas ocurren cuando las imágenes están en /almacen/ y no en public/
         if ($this->isSEOImageException($exception)) {
-            Log::channel('http-errors')->debug('SEO Image validation error (ignored): ' . $exception->getMessage());
+            Log::channel('http-errors')->debug('SEO Image validation error (ignored): '.$exception->getMessage());
+
             return;
         }
 
         // Verificar si la excepción está relacionada con el envío de correos
         if ($this->isMailException($exception)) {
-            Log::channel('smtp')->error('Mail Exception: ' . $exception->getMessage(), ['exception' => $exception]);
+            Log::channel('smtp')->error('Mail Exception: '.$exception->getMessage(), ['exception' => $exception]);
         }
 
         // Verificar si la excepción está relacionada con la ejecución de jobs
-        else if ($this->isJobException($exception)) {
-            Log::channel('jobs')->error('Job Exception: ' . $exception->getMessage(), ['exception' => $exception]);
-        }
-        else {
+        elseif ($this->isJobException($exception)) {
+            Log::channel('jobs')->error('Job Exception: '.$exception->getMessage(), ['exception' => $exception]);
+        } else {
             // Verificar si es un error 500
-            if ($exception instanceof \Symfony\Component\HttpKernel\Exception\HttpException) {
+            if ($exception instanceof HttpException) {
                 if ($exception->getStatusCode() >= 500) {
                     Log::channel('http-errors')->error(
-                        'HTTP ' . $exception->getStatusCode() . ' | ' . $exception->getMessage() . ' | URL: ' . request()->getRequestUri(),
+                        'HTTP '.$exception->getStatusCode().' | '.$exception->getMessage().' | URL: '.request()->getRequestUri(),
                         $this->getErrorContext($exception)
                     );
                 }
             } else {
                 // Excepciones no HTTP son generalmente 500
                 Log::channel('http-errors')->error(
-                    '500 Error: ' . $exception->getMessage() . ' | URL: ' . request()->getRequestUri(),
+                    '500 Error: '.$exception->getMessage().' | URL: '.request()->getRequestUri(),
                     $this->getErrorContext($exception)
                 );
             }
@@ -179,17 +175,15 @@ class Handler extends ExceptionHandler
         }
     }
 
-
     /**
      * Muestra una página 404 con resultados relevantes
      */
-
     public function mostrar404($request, Throwable $exception)
     {
         // return response('Contenido no encontrado', 404);
 
         // Si es un bot (cualquier crawler), devolver respuesta simple sin búsqueda de alternativas
-        $crawlerDetect = new CrawlerDetect();
+        $crawlerDetect = new CrawlerDetect;
         if ($crawlerDetect->isCrawler($request->header('User-Agent'))) {
             try {
                 return response()->view('errors.bot', [
@@ -205,22 +199,25 @@ class Handler extends ExceptionHandler
         try {
             // to-do: obtener path de la ruta actual y redirigir a la vista de error
             $path = $request->path();
-            $parts = explode("/", $path);
+            $parts = explode('/', $path);
 
             $coleccion = null;
-            if (count($parts) > 1)
+            if (count($parts) > 1) {
                 $coleccion = $parts[0];
+            }
 
             $colecciones_404 = ['nodos', 'archivos', 'almacen'];
-            if (in_array($coleccion, $colecciones_404))
+            if (in_array($coleccion, $colecciones_404)) {
                 return parent::render($request, $exception);
+            }
 
-            $buscar = preg_replace("/[\?\/\.\-]/", " ", urldecode($parts[count($parts) - 1])); // quitar caracteres no permitidos en $path
+            $buscar = preg_replace("/[\?\/\.\-]/", ' ', urldecode($parts[count($parts) - 1])); // quitar caracteres no permitidos en $path
 
             $resultados = BusquedasHelper::buscarContenidos($buscar, $coleccion, false);
 
-            if ($resultados->count() == 0)
+            if ($resultados->count() == 0) {
                 $resultados = BusquedasHelper::buscarContenidos($buscar, null, false);
+            }
 
             // si solo hay un resultado, redirigimos automáticamente
             /*if ($resultados->count() == 1) {
@@ -230,37 +227,33 @@ class Handler extends ExceptionHandler
 
             // $message = $exception->getMessage();
             return Inertia::render('Error', [
-                'codigo' => 404, //$statusCode,
-                'titulo' =>  'Contenido no encontrado',
+                'codigo' => 404, // $statusCode,
+                'titulo' => 'Contenido no encontrado',
                 'mensaje' => 'No se encuentra el recurso solicitado.',
-                'alternativas' => $resultados
+                'alternativas' => $resultados,
             ])->withViewData(['noindex' => true])->toResponse($request);
         } catch (Throwable $e) {
             // Si algo falla en mostrar404, loguear el error y devolver un 404 básico
-            Log::error('Error en mostrar404: ' . $e->getMessage(), [
+            Log::error('Error en mostrar404: '.$e->getMessage(), [
                 'original_exception' => $exception->getMessage(),
                 'path' => $request->path(),
                 'url' => $request->fullUrl(),
                 'file' => $e->getFile(),
                 'line' => $e->getLine(),
-                'trace' => $e->getTraceAsString()
+                'trace' => $e->getTraceAsString(),
             ]);
 
             return response('Contenido no encontrado', 404);
         }
     }
 
-
-
     /**
      * Render an exception into an HTTP response.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param \Throwable               $exception
+     * @param  Request  $request
+     * @return Response
      *
-     * @return \Symfony\Component\HttpFoundation\Response
-     *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function render($request, Throwable $exception)
     {
@@ -314,7 +307,7 @@ class Handler extends ExceptionHandler
             } catch (\Exception $viewException) {
                 // Fallback si la vista no existe (por ejemplo, en deployment incompleto)
                 Log::error('Vista errors.bot no encontrada, usando fallback HTML', [
-                    'view_error' => $viewException->getMessage()
+                    'view_error' => $viewException->getMessage(),
                 ]);
 
                 $appName = config('app.name', 'TSEYOR.org');
@@ -353,7 +346,7 @@ HTML;
             if ($request->expectsJson()) {
                 return response()->json([
                     'message' => 'Demasiadas peticiones. Por favor, espera un momento antes de intentar de nuevo.',
-                    'retry_after' => $retryAfter
+                    'retry_after' => $retryAfter,
                 ], 429);
             }
 
@@ -362,7 +355,7 @@ HTML;
                 'titulo' => 'Demasiadas peticiones',
                 'mensaje' => 'Has realizado demasiadas peticiones en muy poco tiempo. Por favor, espera un momento antes de continuar.',
                 'retry_after' => $retryAfter,
-                'alternativas' => collect([])
+                'alternativas' => collect([]),
             ])->toResponse($request);
         }
 
@@ -378,10 +371,10 @@ HTML;
             if (
                 preg_match("/\.(png|svg|jpg|jpeg|gif|webp|svg)(\?.*)?/", $uri)
                 && $referer
-                && strpos($referer, $uri) === FALSE
-            ) // comprueba si referer es la misma url de la request
+                && strpos($referer, $uri) === false
+            ) { // comprueba si referer es la misma url de la request
                 return parent::render($request, $exception);
-
+            }
 
             return $this->mostrar404($request, $exception);
         }
@@ -399,6 +392,7 @@ HTML;
                 'params' => $filteredParams,
                 'url' => $request->fullUrl(),
             ]);
+
             return parent::render($request, $exception);
         }
 
@@ -407,13 +401,13 @@ HTML;
             Log::channel('validation')->info($exception->getMessage(), [
                 'url' => $request->fullUrl(),
             ]);
+
             return $request->expectsJson()
                 ? response()->json(['message' => 'Debes iniciar sesión.'], 401)
                 : redirect()->guest(route('login'));
         }
 
-        if($this->isMailException($exception))
-        {
+        if ($this->isMailException($exception)) {
             return parent::render($request, $exception);
         }
 
@@ -437,7 +431,6 @@ HTML;
             'is_bot' => $this->esBotRedSocial($request),
         ]);
 
-
         if ($exception instanceof InvalidSignatureException) {
             return Inertia::render('Error', [
                 'codigo' => $statusCode,
@@ -445,10 +438,6 @@ HTML;
                 'mensaje' => '',
             ])->toResponse($request);
         }
-
-
-
-
 
         if ($exception instanceof UnauthorizedHttpException) {
             return Inertia::render('Error', [
@@ -470,7 +459,7 @@ HTML;
         if (config('app.debug')) {
             // Devolver la renderización de la excepción por defecto
             return parent::render($request, $exception);
-            //return $this->prepareJsonResponse($request, $exception);
+            // return $this->prepareJsonResponse($request, $exception);
         }
 
         // si no, mostrarmos vista de error al usaurio
@@ -523,7 +512,7 @@ HTML;
 
             // Información adicional
             'referer' => $request->header('Referer'),
-            'is_crawler' => (new CrawlerDetect())->isCrawler($request->header('User-Agent')),
+            'is_crawler' => (new CrawlerDetect)->isCrawler($request->header('User-Agent')),
 
             // La excepción
             'exception' => $exception,

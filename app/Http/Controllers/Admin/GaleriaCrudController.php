@@ -2,24 +2,32 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Backpack\CRUD\app\Http\Controllers\CrudController;
-use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
-use App\Models\Nodo;
 use App\Models\Galeria;
 use App\Models\GaleriaItem;
+use App\Models\Nodo;
+use App\Models\User;
+use Backpack\CRUD\app\Http\Controllers\CrudController;
+use Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
+use Backpack\CRUD\app\Library\CrudPanel\CrudPanel;
+use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
+use Illuminate\Validation\Rule;
 
 /**
  * Class GaleriaCrudController
- * @package App\Http\Controllers\Admin
- * @property-read \Backpack\CRUD\app\Library\CrudPanel\CrudPanel $crud
+ *
+ * @property-read CrudPanel $crud
  */
 class GaleriaCrudController extends CrudController
 {
-    use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
+    use CreateOperation;
+    use DeleteOperation;
+    use ListOperation;
+    use ShowOperation;
+    use UpdateOperation;
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
@@ -30,8 +38,8 @@ class GaleriaCrudController extends CrudController
     {
         \Log::info('=== SETUP GaleriaCrudController ===');
 
-        CRUD::setModel(\App\Models\Galeria::class);
-        CRUD::setRoute(config('backpack.base.route_prefix') . '/galeria');
+        CRUD::setModel(Galeria::class);
+        CRUD::setRoute(config('backpack.base.route_prefix').'/galeria');
         CRUD::setEntityNameStrings('galeria', 'galerias');
 
         // Cargar relaciones necesarias
@@ -39,7 +47,7 @@ class GaleriaCrudController extends CrudController
 
         // Agregar ruta personalizada para escanear carpeta
         $this->crud->allowAccess('scan');
-        $this->crud->operation('scan', function() {
+        $this->crud->operation('scan', function () {
             $this->crud->loadDefaultOperationSettingsFromConfig();
         });
     }
@@ -48,15 +56,16 @@ class GaleriaCrudController extends CrudController
      * Define what happens when the List operation is loaded.
      *
      * @see https://backpackforlaravel.com/docs/crud-operation-list
+     *
      * @return void
      */
     protected function setupListOperation()
     {
-        //CRUD::column('created_at')->label('Creado')->type('datetime');
+        // CRUD::column('created_at')->label('Creado')->type('datetime');
         CRUD::column('id')->label('id')->type('number');
         CRUD::column('updated_at')->label('Actualizado')->type('datetime');
         CRUD::column('titulo')->label('Título');
-        //CRUD::column('slug')->label('Slug');
+        // CRUD::column('slug')->label('Slug');
         // CRUD::column('descripcion')->label('Descripción');
         CRUD::column('imagen')->label('Imagen')->type('image')
             // ->prefix('archivos/')
@@ -73,13 +82,13 @@ class GaleriaCrudController extends CrudController
 
             return response()->json([
                 'success' => true,
-                'message' => 'Carpeta escaneada correctamente. ' . $galeria->items()->count() . ' items encontrados.',
-                'items_count' => $galeria->items()->count()
+                'message' => 'Carpeta escaneada correctamente. '.$galeria->items()->count().' items encontrados.',
+                'items_count' => $galeria->items()->count(),
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error al escanear la carpeta: ' . $e->getMessage()
+                'message' => 'Error al escanear la carpeta: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -88,13 +97,14 @@ class GaleriaCrudController extends CrudController
      * Define what happens when the Create operation is loaded.
      *
      * @see https://backpackforlaravel.com/docs/crud-operation-create
+     *
      * @return void
      */
     protected function setupCreateOperation()
     {
         CRUD::setValidation([
             'titulo' => 'required|string|max:255',
-            'slug' => ['nullable', 'regex:/^[a-z0-9\-]+$/', \Illuminate\Validation\Rule::unique('galerias', 'slug')->ignore(request()->id)],
+            'slug' => ['nullable', 'regex:/^[a-z0-9\-]+$/', Rule::unique('galerias', 'slug')->ignore(request()->id)],
             'descripcion' => 'nullable|string',
             'ruta' => 'required|string|max:500',
         ]);
@@ -109,9 +119,10 @@ class GaleriaCrudController extends CrudController
         CRUD::field('ruta');
 
         // Hook para procesar items después de crear
-        $this->crud->operation('create', function() {
-            $this->crud->setOperationSetting('success', function($entry) {
+        $this->crud->operation('create', function () {
+            $this->crud->setOperationSetting('success', function ($entry) {
                 $this->processItemsData($entry);
+
                 return $entry;
             });
         });
@@ -121,13 +132,14 @@ class GaleriaCrudController extends CrudController
      * Define what happens when the Update operation is loaded.
      *
      * @see https://backpackforlaravel.com/docs/crud-operation-update
+     *
      * @return void
      */
     protected function setupUpdateOperation()
     {
         CRUD::setValidation([
             'titulo' => 'required|string|max:255',
-            'slug' => ['nullable', 'regex:/^[a-z0-9\-]+$/', \Illuminate\Validation\Rule::unique('galerias', 'slug')->ignore(request()->id)],
+            'slug' => ['nullable', 'regex:/^[a-z0-9\-]+$/', Rule::unique('galerias', 'slug')->ignore(request()->id)],
             'descripcion' => 'nullable|string',
             'ruta' => 'required|string|max:500',
             'assign_user_to_all' => 'nullable|exists:users,id',
@@ -150,7 +162,7 @@ class GaleriaCrudController extends CrudController
             'type' => 'view',
             'view' => 'vendor.backpack.crud.fields.galeria_items',
             'attributes' => [
-                'users' => \App\Models\User::select('id', 'name')->get(),
+                'users' => User::select('id', 'name')->get(),
             ],
         ]);
 
@@ -187,17 +199,18 @@ class GaleriaCrudController extends CrudController
         \Log::info('CRUD update executed');
 
         $response = $this->crud->performSaveAction($id);
-        \Log::info('Perform save action executed, response status: ' . $response->getStatusCode());
+        \Log::info('Perform save action executed, response status: '.$response->getStatusCode());
 
         // Procesar items después de la actualización exitosa
         $entry = $this->crud->getCurrentEntry();
-        \Log::info('Current entry ID: ' . ($entry ? $entry->id : 'null'));
+        \Log::info('Current entry ID: '.($entry ? $entry->id : 'null'));
         if ($entry) {
-            \Log::info('Procesando items para galería ID: ' . $entry->id);
+            \Log::info('Procesando items para galería ID: '.$entry->id);
             $this->processItemsData($entry);
         }
 
         \Log::info('=== FIN UPDATE GaleriaCrudController ===');
+
         return $response;
     }
 
@@ -206,7 +219,7 @@ class GaleriaCrudController extends CrudController
      */
     private function processItemsData($entry)
     {
-        \Log::info('=== PROCESANDO ITEMS para galería ID: ' . $entry->id . ' ===');
+        \Log::info('=== PROCESANDO ITEMS para galería ID: '.$entry->id.' ===');
 
         $request = request();
         $allData = $request->all();
@@ -243,7 +256,7 @@ class GaleriaCrudController extends CrudController
             if ($portadaItem && $portadaItem->galeria_id == $entry->id && $portadaItem->nodo) {
                 $entry->imagen = $portadaItem->nodo->ubicacion;
                 $entry->save();
-                \Log::info('Imagen de portada actualizada: ' . $portadaItem->nodo->ubicacion);
+                \Log::info('Imagen de portada actualizada: '.$portadaItem->nodo->ubicacion);
             }
         } else {
             // Si no se seleccionó ninguna portada, quitar la imagen
@@ -256,19 +269,21 @@ class GaleriaCrudController extends CrudController
     private function scanAndCreateItems($galeria)
     {
         $path = $galeria->ruta;
-        if (!$path) return;
+        if (! $path) {
+            return;
+        }
 
         // Buscar nodos en la carpeta
-        $nodos = Nodo::where('ubicacion', 'like', $path . '/%')
-                     ->where('es_carpeta', 0)
-                     ->get();
+        $nodos = Nodo::where('ubicacion', 'like', $path.'/%')
+            ->where('es_carpeta', 0)
+            ->get();
 
         foreach ($nodos as $nodo) {
             // Verificar si ya existe un item para este nodo en la galeria
             $existing = GaleriaItem::where('galeria_id', $galeria->id)
-                                   ->where('nodo_id', $nodo->id)
-                                   ->first();
-            if (!$existing) {
+                ->where('nodo_id', $nodo->id)
+                ->first();
+            if (! $existing) {
                 GaleriaItem::create([
                     'galeria_id' => $galeria->id,
                     'nodo_id' => $nodo->id,
@@ -289,13 +304,13 @@ class GaleriaCrudController extends CrudController
 
             return response()->json([
                 'success' => true,
-                'message' => 'Carpeta escaneada correctamente. ' . $galeria->items()->count() . ' items encontrados.',
-                'items_count' => $galeria->items()->count()
+                'message' => 'Carpeta escaneada correctamente. '.$galeria->items()->count().' items encontrados.',
+                'items_count' => $galeria->items()->count(),
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Error al escanear la carpeta: ' . $e->getMessage()
+                'message' => 'Error al escanear la carpeta: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -304,5 +319,4 @@ class GaleriaCrudController extends CrudController
     {
         return redirect("/galerias/$id");
     }
-
 }

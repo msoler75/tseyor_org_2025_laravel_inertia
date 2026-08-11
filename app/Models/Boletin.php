@@ -2,13 +2,12 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use Backpack\CRUD\app\Models\Traits\CrudTrait;
-use App\Models\Suscriptor;
+use App\Jobs\Middleware\EmailRateLimited;
 use App\Mail\BoletinEmail;
-use Illuminate\Support\Facades\Mail;
-use App\Models\Email;
 use App\Traits\EsCategorizable;
+use Backpack\CRUD\app\Models\Traits\CrudTrait;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Mail;
 
 class Boletin extends Model
 {
@@ -17,7 +16,7 @@ class Boletin extends Model
 
     protected $campoCategoria = 'tipo';
 
-    protected $table = "boletines";
+    protected $table = 'boletines';
 
     protected $fillable = ['titulo', 'texto', 'dia', 'mes', 'anyo', 'semana', 'tipo', 'enviado'];
     // tipo: enum: semanal, bisemanal, mensual, bimensual, trimestral, semestral, anual
@@ -43,7 +42,7 @@ class Boletin extends Model
         if ($this->tipo === 'todos') {
             $suscriptores = Suscriptor::all();
         } else {
-            $suscriptores = Suscriptor::where('servicio', 'boletin:' . $this->tipo)->get();
+            $suscriptores = Suscriptor::where('servicio', 'boletin:'.$this->tipo)->get();
         }
 
         // Añadimos el envío a la tabla Email de la Base de Datos, para log interno de mensajería
@@ -76,7 +75,7 @@ class Boletin extends Model
         }
 
         // Crear un registro para el último chunk si no está vacío
-        if (!empty($currentChunk)) {
+        if (! empty($currentChunk)) {
             Email::create([
                 'from' => config('mail.from.address'),
                 'to' => json_encode($currentChunk),
@@ -87,7 +86,7 @@ class Boletin extends Model
 
         // Usar el middleware EmailRateLimited para calcular los delays apropiados
         // Esto asegura que los valores estén sincronizados con la configuración del middleware
-        $rateLimiter = new \App\Jobs\Middleware\EmailRateLimited();
+        $rateLimiter = new EmailRateLimited;
         $jobType = BoletinEmail::class;
 
         // Encolar con delays progresivos calculados por el middleware
@@ -113,15 +112,15 @@ class Boletin extends Model
         return true; // El boletín se envió correctamente
     }
 
-
     public function getNumeroSuscriptoresAttribute()
     {
         // Si el tipo es 'todos', contar todos los suscriptores
         if ($this->tipo === 'todos') {
             return Suscriptor::count();
         }
+
         // Obtener el numero de suscriptores relacionados con este boletín
         // el servicio de suscriptor es 'boletin:{tipo}'
-        return Suscriptor::where('servicio', 'boletin:' . $this->tipo)->count();
+        return Suscriptor::where('servicio', 'boletin:'.$this->tipo)->count();
     }
 }

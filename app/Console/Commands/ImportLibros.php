@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
 use App\Imports\LibroImport;
+use Illuminate\Console\Command;
 
 class ImportLibros extends Command
 {
@@ -26,7 +26,7 @@ class ImportLibros extends Command
      */
     public function handle()
     {
-        echo $this->description . "\n";
+        echo $this->description."\n";
         if ($this->confirm('¿Está seguro de que desea importar los libros? Esto borrará los registros actuales.')) {
             LibroImport::importar();
             LibroImport::fusionarCategoriasSimilares();
@@ -35,7 +35,4 @@ class ImportLibros extends Command
             $this->info('La importación de libros fue cancelada.');
         }
     }
-
-
-
 }

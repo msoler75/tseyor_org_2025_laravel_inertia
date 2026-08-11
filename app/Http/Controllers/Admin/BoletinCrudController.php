@@ -2,17 +2,23 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Backpack\CRUD\app\Http\Controllers\CrudController;
-use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 use App\Models\Boletin;
+use Backpack\CRUD\app\Http\Controllers\CrudController;
+use Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
+use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
+use Illuminate\Http\JsonResponse;
 
 class BoletinCrudController extends CrudController
 {
-    use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
+    use CreateOperation;
+    use DeleteOperation;
+    use ListOperation;
+    use ShowOperation;
+    use UpdateOperation;
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
@@ -22,7 +28,7 @@ class BoletinCrudController extends CrudController
     public function setup()
     {
         CRUD::setModel(Boletin::class);
-        CRUD::setRoute(config('backpack.base.route_prefix') . '/boletin');
+        CRUD::setRoute(config('backpack.base.route_prefix').'/boletin');
         CRUD::setEntityNameStrings('boletín', 'boletines');
     }
 
@@ -57,17 +63,17 @@ class BoletinCrudController extends CrudController
             'type' => 'number',
         ]);
 
-                $this->crud->addColumn([
+        $this->crud->addColumn([
             'name' => 'mes',
             'label' => 'Mes',
             'type' => 'number',
         ]);
-/*
-        $this->crud->addColumn([
-            'name' => 'semana',
-            'label' => 'Semana',
-            'type' => 'number',
-        ]);*/
+        /*
+                $this->crud->addColumn([
+                    'name' => 'semana',
+                    'label' => 'Semana',
+                    'type' => 'number',
+                ]);*/
 
         $this->crud->addColumns([
             [
@@ -102,16 +108,15 @@ class BoletinCrudController extends CrudController
             'semana' => 'required|integer',
         ]);
 
-
         CRUD::addField([   // select_from_array
-            'name'        => 'tipo',
-            'label'       => 'Tipo',
-            'type'        => 'select_from_array',
-            'options'     => Boletin::TIPOS,
+            'name' => 'tipo',
+            'label' => 'Tipo',
+            'type' => 'select_from_array',
+            'options' => Boletin::TIPOS,
             'allows_null' => false,
-            'default'     => 'mensual',
-            'wrapper'   => [
-                'class'      => 'form-group col-md-3'
+            'default' => 'mensual',
+            'wrapper' => [
+                'class' => 'form-group col-md-3',
             ],
         ]);
 
@@ -125,7 +130,6 @@ class BoletinCrudController extends CrudController
         CRUD::field('generar')->type('generar_contenido_boletin');
 
         CRUD::field('titulo');
-
 
         CRUD::field('texto')->type('tiptap_editor');
         CRUD::field('anyo');
@@ -151,16 +155,17 @@ class BoletinCrudController extends CrudController
 
     /**
      * Envío inmediato del boletín
-     * @param mixed $id
-     * @return mixed|\Illuminate\Http\JsonResponse
+     *
+     * @param  mixed  $id
+     * @return mixed|JsonResponse
      */
     public function enviarBoletin($id)
     {
         $boletin = Boletin::findOrFail($id);
-        if($boletin->enviado) {
+        if ($boletin->enviado) {
             return response()->json([
                 'success' => false,
-                'message' => 'No se puede enviar el boletín porque ya estaba marcado como enviado.'
+                'message' => 'No se puede enviar el boletín porque ya estaba marcado como enviado.',
             ], 400);
         }
 
@@ -169,9 +174,7 @@ class BoletinCrudController extends CrudController
         // return redirect()->back()->with('success', 'Boletín enviado correctamente.');
         return response()->json([
             'success' => true,
-            'message' => 'Boletín enviado correctamente.'
+            'message' => 'Boletín enviado correctamente.',
         ], 200);
     }
-
-
 }

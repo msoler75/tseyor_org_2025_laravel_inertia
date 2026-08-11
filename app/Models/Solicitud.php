@@ -9,7 +9,8 @@ class Solicitud extends Model
 {
     use CrudTrait;
 
-    protected $table="solicitudes";
+    protected $table = 'solicitudes';
+
     /**
      * The attributes that are mass assignable.
      *
@@ -20,7 +21,7 @@ class Solicitud extends Model
         'equipo_id', // equipo donde realiza la solicitud de ingreso
         'por_user_id', // usuario que acepta o deniega la solicitud
         'fecha_aceptacion',
-        'fecha_denegacion'
+        'fecha_denegacion',
     ];
 
     /**
@@ -39,7 +40,7 @@ class Solicitud extends Model
         return $this->belongsTo(Equipo::class, 'equipo_id', 'id');
     }
 
-      /**
+    /**
      * Get the user that answered the peticion.
      */
     public function coordinador()
@@ -47,14 +48,11 @@ class Solicitud extends Model
         return $this->belongsTo(User::class, 'por_user_id', 'id');
     }
 
-
-
     // accesors
     public function getNombreEquipoAttribute()
     {
         return optional($this->equipo)->nombre;
     }
-
 
     public function getNombreUsuarioAttribute()
     {
@@ -69,12 +67,12 @@ class Solicitud extends Model
     public function verEquipoButton()
     {
         $slug = optional($this->equipo)->slug;
-        if (!$slug) return '';
-        return '<a href="/equipos/' . $slug . '?solicitudes" target="_blank" class="btn btn-sm btn-link" title="Ver equipo">
+        if (! $slug) {
+            return '';
+        }
+
+        return '<a href="/equipos/'.$slug.'?solicitudes" target="_blank" class="btn btn-sm btn-link" title="Ver equipo">
             <i class="la la-users"></i> Ver equipo
         </a>';
     }
-
-
-
 }

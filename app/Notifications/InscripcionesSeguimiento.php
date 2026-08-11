@@ -36,10 +36,11 @@ class InscripcionesSeguimiento extends Notification implements ShouldQueue
             'Atención: tienes inscripciones a Curso de Tseyor pendientes de contactar' :
             'Recordatorio: tienes inscripciones pendientes de revisar';
 
-        Log::channel('notificaciones')->info('[InscripcionesSeguimiento] Enviando a: ' . ($notifiable->email ?? 'sin email') . ' | Nombre: ' . $notifiable->name . ' | Asunto: ' . $subject);
+        Log::channel('notificaciones')->info('[InscripcionesSeguimiento] Enviando a: '.($notifiable->email ?? 'sin email').' | Nombre: '.$notifiable->name.' | Asunto: '.$subject);
+
         return (new MailMessage)
             ->subject($subject)
-            ->greeting('¡Hola ' . $notifiable->name . '!')
+            ->greeting('¡Hola '.$notifiable->name.'!')
             ->line('Tienes inscripciones asignadas que requieren tu revisión o actualización de estado.')
             ->action('Gestionar Inscripciones', $urlGestion)
             ->line($mensaje)
@@ -50,7 +51,7 @@ class InscripcionesSeguimiento extends Notification implements ShouldQueue
     public function toArray(object $notifiable): array
     {
         return [
-            'tipo' => 'seguimiento_inscripciones'
+            'tipo' => 'seguimiento_inscripciones',
         ];
     }
 }

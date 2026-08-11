@@ -17,9 +17,11 @@ class Video extends ContenidoBaseModel
     */
 
     protected $table = 'videos';
+
     // protected $primaryKey = 'id';
     // public $timestamps = false;
     protected $guarded = ['id'];
+
     protected $fillable = ['titulo', 'slug', 'descripcion', 'enlace', 'visibilidad', 'orden'];
     // protected $hidden = [];
 
@@ -32,11 +34,13 @@ class Video extends ContenidoBaseModel
     protected static function booted()
     {
         static::saving(function ($video) {
-            if (is_null($video->orden)) return;
+            if (is_null($video->orden)) {
+                return;
+            }
 
             $original = $video->getOriginal('orden');
 
-            if (!$video->exists) {
+            if (! $video->exists) {
                 static::where('orden', '>=', $video->orden)->increment('orden');
             } elseif ($video->orden != $original) {
                 if ($video->orden > $original) {
@@ -54,7 +58,9 @@ class Video extends ContenidoBaseModel
         });
 
         static::saved(function ($video) {
-            if (is_null($video->orden)) return;
+            if (is_null($video->orden)) {
+                return;
+            }
             // Recompactar para eliminar cualquier hueco
             static::reordenar();
         });
@@ -77,18 +83,20 @@ class Video extends ContenidoBaseModel
      */
     public function getMoveUpButton()
     {
-        if (is_null($this->orden)) return '';
+        if (is_null($this->orden)) {
+            return '';
+        }
 
         $previousVideo = static::where('orden', '<', $this->orden)
             ->orderBy('orden', 'desc')
             ->first();
 
-        if (!$previousVideo) {
+        if (! $previousVideo) {
             return '';
         }
 
         return '<a class="btn btn-sm btn-outline-secondary"
-                   href="' . url('admin/video/' . $this->id . '/move-up') . '"
+                   href="'.url('admin/video/'.$this->id.'/move-up').'"
                    title="Mover hacia arriba">
                    <i class="las la-arrow-up"></i>
                 </a>';
@@ -99,18 +107,20 @@ class Video extends ContenidoBaseModel
      */
     public function getMoveDownButton()
     {
-        if (is_null($this->orden)) return '';
+        if (is_null($this->orden)) {
+            return '';
+        }
 
         $nextVideo = static::where('orden', '>', $this->orden)
             ->orderBy('orden', 'asc')
             ->first();
 
-        if (!$nextVideo) {
+        if (! $nextVideo) {
             return '';
         }
 
         return '<a class="btn btn-sm btn-outline-secondary"
-                   href="' . url('admin/video/' . $this->id . '/move-down') . '"
+                   href="'.url('admin/video/'.$this->id.'/move-down').'"
                    title="Mover hacia abajo">
                    <i class="las la-arrow-down"></i>
                 </a>';

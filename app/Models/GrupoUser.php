@@ -18,10 +18,11 @@ class GrupoUser extends Model
     */
 
     protected $table = 'grupo_users';
+
     // protected $primaryKey = 'id';
     // public $timestamps = false;
     protected $guarded = ['id'];
-     // protected $fillable = ['updated_at', 'created_at'];
+    // protected $fillable = ['updated_at', 'created_at'];
     // protected $hidden = [];
 
     /*

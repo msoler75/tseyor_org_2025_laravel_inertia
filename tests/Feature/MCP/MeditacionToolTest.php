@@ -2,11 +2,14 @@
 
 namespace Tests\Feature\MCP;
 
+use App\Http\Controllers\MeditacionesController;
+use App\Models\Meditacion;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class MeditacionToolTest extends McpFeatureTestCase
 {
     use DatabaseTransactions;
+
     public function test_info_meditacion()
     {
         $result = $this->callMcpTool('info', ['entidad' => 'meditacion']);
@@ -26,7 +29,7 @@ class MeditacionToolTest extends McpFeatureTestCase
             'descripcion',
             'texto',
             'audios',
-            'visibilidad'
+            'visibilidad',
         ];
         foreach ($campos_esperados as $campo) {
             $this->assertArrayHasKey($campo, $meditacion['campos'], "Falta el campo '$campo'");
@@ -39,21 +42,21 @@ class MeditacionToolTest extends McpFeatureTestCase
 
     public function test_listar_meditaciones()
     {
-        $pp = \App\Http\Controllers\MeditacionesController::$ITEMS_POR_PAGINA;
-        \App\Models\Meditacion::withoutEvents(function () use ($pp) {
+        $pp = MeditacionesController::$ITEMS_POR_PAGINA;
+        Meditacion::withoutEvents(function () use ($pp) {
             for ($i = 0; $i < $pp + 4; $i++) {
-                \App\Models\Meditacion::create([
-                    'titulo' => 'Meditacion ' . $i,
-                    'slug' => 'meditacion-' . $i . '-' . uniqid(),
+                Meditacion::create([
+                    'titulo' => 'Meditacion '.$i,
+                    'slug' => 'meditacion-'.$i.'-'.uniqid(),
                     'categoria' => 'relajacion',
-                    'descripcion' => 'Desc ' . $i,
-                    'texto' => 'Texto ' . $i,
+                    'descripcion' => 'Desc '.$i,
+                    'texto' => 'Texto '.$i,
                     'audios' => json_encode([]),
                     'visibilidad' => 'P',
                 ]);
             }
         });
-        $this->makeAllSearchable(\App\Models\Meditacion::class);
+        $this->makeAllSearchable(Meditacion::class);
         $result = $this->callMcpTool('listar', ['entidad' => 'meditacion']);
         $this->assertIsArray($result);
         $this->assertArrayHasKey('listado', $result);
@@ -78,9 +81,9 @@ class MeditacionToolTest extends McpFeatureTestCase
 
     public function test_ver_meditacion()
     {
-        $meditacion = \App\Models\Meditacion::create([
+        $meditacion = Meditacion::create([
             'titulo' => 'Meditacion Test',
-            'slug' => 'meditacion-test-' . uniqid(),
+            'slug' => 'meditacion-test-'.uniqid(),
             'categoria' => 'relajacion',
             'descripcion' => 'Desc',
             'texto' => 'Texto',
@@ -99,14 +102,14 @@ class MeditacionToolTest extends McpFeatureTestCase
             'entidad' => 'meditacion',
             'data' => [
                 'titulo' => 'Nueva Meditacion',
-                'slug' => 'nueva-meditacion-' . uniqid(),
+                'slug' => 'nueva-meditacion-'.uniqid(),
                 'categoria' => 'relajacion',
                 'descripcion' => 'Descripción de prueba',
                 'texto' => 'Texto de prueba',
                 'audios' => json_encode([]),
                 'visibilidad' => 'P',
             ],
-            'token' => config('mcp-server.tokens.admin')
+            'token' => config('mcp-server.tokens.admin'),
         ];
         $this->callMcpTool('crear', $params);
         $this->assertDatabaseHas('meditaciones', ['slug' => $params['data']['slug']]);
@@ -114,9 +117,9 @@ class MeditacionToolTest extends McpFeatureTestCase
 
     public function test_editar_meditacion()
     {
-        $meditacion = \App\Models\Meditacion::create([
+        $meditacion = Meditacion::create([
             'titulo' => 'Editar Meditacion',
-            'slug' => 'editar-meditacion-' . uniqid(),
+            'slug' => 'editar-meditacion-'.uniqid(),
             'categoria' => 'relajacion',
             'descripcion' => 'Desc',
             'texto' => 'Texto',
@@ -128,9 +131,9 @@ class MeditacionToolTest extends McpFeatureTestCase
             'entidad' => 'meditacion',
             'id' => $meditacion->id,
             'data' => [
-                'descripcion' => $nuevaDescripcion
+                'descripcion' => $nuevaDescripcion,
             ],
-            'token' => config('mcp-server.tokens.admin')
+            'token' => config('mcp-server.tokens.admin'),
         ];
         $this->callMcpTool('editar', $params);
         $this->assertDatabaseHas('meditaciones', ['id' => $meditacion->id, 'descripcion' => $nuevaDescripcion]);
@@ -138,9 +141,9 @@ class MeditacionToolTest extends McpFeatureTestCase
 
     public function test_eliminar_meditacion()
     {
-        $meditacion = \App\Models\Meditacion::create([
+        $meditacion = Meditacion::create([
             'titulo' => 'Eliminar Meditacion',
-            'slug' => 'eliminar-meditacion-' . uniqid(),
+            'slug' => 'eliminar-meditacion-'.uniqid(),
             'categoria' => 'relajacion',
             'descripcion' => 'Desc',
             'texto' => 'Texto',
@@ -151,7 +154,7 @@ class MeditacionToolTest extends McpFeatureTestCase
             'entidad' => 'meditacion',
             'id' => $meditacion->id,
             'force' => true,
-            'token' => config('mcp-server.tokens.admin')
+            'token' => config('mcp-server.tokens.admin'),
         ];
         $this->callMcpTool('eliminar', $params);
         $this->assertDatabaseMissing('meditaciones', ['id' => $meditacion->id]);

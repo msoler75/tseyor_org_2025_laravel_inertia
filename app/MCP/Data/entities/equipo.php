@@ -8,26 +8,26 @@ return [
                 'name' => 'buscar',
                 'type' => 'string',
                 'required' => false,
-                'description' => 'Texto a buscar en los equipos. Ejemplo: "Desarrollo"'
+                'description' => 'Texto a buscar en los equipos. Ejemplo: "Desarrollo"',
             ],
             [
                 'name' => 'categoria',
                 'type' => 'string',
                 'required' => false,
-                'description' => 'Filtrar por categoría de equipo. Ejemplo: "Proyectos"'
+                'description' => 'Filtrar por categoría de equipo. Ejemplo: "Proyectos"',
             ],
             [
                 'name' => 'ano',
                 'type' => 'integer',
                 'required' => false,
-                'description' => 'Filtrar por año. Ejemplo: 2023'
+                'description' => 'Filtrar por año. Ejemplo: 2023',
             ],
             [
                 'name' => 'orden',
                 'type' => 'string',
                 'required' => false,
-                'description' => 'Orden de resultados: "recientes", "cronologico", "relevancia". Ejemplo: "cronologico"'
-            ]
+                'description' => 'Orden de resultados: "recientes", "cronologico", "relevancia". Ejemplo: "cronologico"',
+            ],
         ],
         'campos' => [
             'nombre' => ['type' => 'string', 'description' => 'Nombre del equipo'],
@@ -43,7 +43,7 @@ return [
             'ocultarCarpetas' => ['type' => 'boolean', 'description' => 'Ocultar carpetas asociadas'],
             'ocultarArchivos' => ['type' => 'boolean', 'description' => 'Ocultar archivos asociados'],
             'ocultarMiembros' => ['type' => 'boolean', 'description' => 'Ocultar miembros del equipo'],
-            'ocultarSolicitudes' => ['type' => 'boolean', 'description' => 'Ocultar solicitudes de membresía']
-        ]
+            'ocultarSolicitudes' => ['type' => 'boolean', 'description' => 'Ocultar solicitudes de membresía'],
+        ],
     ],
 ];

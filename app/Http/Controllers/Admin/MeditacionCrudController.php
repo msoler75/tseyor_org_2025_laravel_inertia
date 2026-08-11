@@ -2,25 +2,34 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Backpack\CRUD\app\Http\Controllers\CrudController;
-use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
-use App\Services\WordImport;
 use App\Models\Meditacion;
+use App\Services\WordImport;
+use App\Traits\CrudContenido;
+use Backpack\CRUD\app\Http\Controllers\CrudController;
+use Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
+use Backpack\CRUD\app\Library\CrudPanel\CrudPanel;
+use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
+use Backpack\ReviseOperation\ReviseOperation;
+use Illuminate\Validation\Rule;
 
 /**
  * Class MeditacionCrudController
- * @package App\Http\Controllers\Admin
- * @property-read \Backpack\CRUD\app\Library\CrudPanel\CrudPanel $crud
+ *
+ * @property-read CrudPanel $crud
  */
 class MeditacionCrudController extends CrudController
 {
-    use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
-    use \Backpack\ReviseOperation\ReviseOperation;
-    use \App\Traits\CrudContenido;
+    use CreateOperation;
+    use CrudContenido;
+    use DeleteOperation;
+    use ListOperation;
+    use ReviseOperation;
+    use ShowOperation;
+    use UpdateOperation;
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
@@ -30,7 +39,7 @@ class MeditacionCrudController extends CrudController
     public function setup()
     {
         CRUD::setModel(Meditacion::class);
-        CRUD::setRoute(config('backpack.base.route_prefix') . '/meditacion');
+        CRUD::setRoute(config('backpack.base.route_prefix').'/meditacion');
         CRUD::setEntityNameStrings('meditacion', 'meditaciones');
     }
 
@@ -38,6 +47,7 @@ class MeditacionCrudController extends CrudController
      * Define what happens when the List operation is loaded.
      *
      * @see  https://backpackforlaravel.com/docs/crud-operation-list-entries
+     *
      * @return void
      */
     protected function setupListOperation()
@@ -48,19 +58,17 @@ class MeditacionCrudController extends CrudController
          * Columns can be defined using the fluent syntax:
          * - CRUD::column('price')->type('number');
          */
-
         $this->crud->addColumn([
             'name' => 'id',
             'label' => 'id',
-            'type' => 'number'
+            'type' => 'number',
         ]);
 
         $this->crud->addColumn([
             'name' => 'titulo',
             'label' => 'Título',
-            'type' => 'text'
+            'type' => 'text',
         ]);
-
 
         $this->crud->addColumn([
             'name' => 'updated_at',
@@ -74,14 +82,13 @@ class MeditacionCrudController extends CrudController
             'type' => 'text',
         ]);
 
-
         $this->crud->addColumn([
             'name' => 'visibilidad',
             'label' => 'Estado',
             'type' => 'text',
             'value' => function ($entry) {
                 return $entry->visibilidad == 'P' ? '✔️ Publicado' : '⚠️ Borrador';
-            }
+            },
         ]);
 
         CRUD::addButtonFromView('top', 'import_create', 'import_create', 'end');
@@ -95,13 +102,14 @@ class MeditacionCrudController extends CrudController
      * Define what happens when the Create operation is loaded.
      *
      * @see https://backpackforlaravel.com/docs/crud-operation-create
+     *
      * @return void
      */
     protected function setupCreateOperation()
     {
         $this->crud->setValidation([
             'titulo' => 'required|min:8',
-            'slug' => [ 'nullable', 'regex:/^[a-z0-9\-]+$/', \Illuminate\Validation\Rule::unique('meditaciones', 'slug')->ignore($this->crud->getCurrentEntryId()) ],
+            'slug' => ['nullable', 'regex:/^[a-z0-9\-]+$/', Rule::unique('meditaciones', 'slug')->ignore($this->crud->getCurrentEntryId())],
             'descripcion' => 'max:400',
         ]);
 
@@ -109,7 +117,7 @@ class MeditacionCrudController extends CrudController
 
         CRUD::field([   // select_from_array
             'name' => 'categoria',
-            'label' => "Categoría",
+            'label' => 'Categoría',
             'type' => 'select_from_array',
             'options' => ['Meditaciones' => 'Meditaciones', 'Letanía' => 'Letanía', 'Talleres' => 'Talleres', 'Cuentos' => 'Cuentos', 'Extractos' => 'Extractos', 'Láminas' => 'Láminas', 'Otros' => 'Otros'],
             'allows_null' => false,
@@ -117,7 +125,7 @@ class MeditacionCrudController extends CrudController
             // 'allows_multiple' => true, // OPTIONAL; needs you to cast this to array in your model;
 
             'wrapper' => [
-                'class' => 'form-group col-md-3'
+                'class' => 'form-group col-md-3',
             ],
         ])->after('titulo');
 
@@ -138,6 +146,7 @@ class MeditacionCrudController extends CrudController
      * Define what happens when the Update operation is loaded.
      *
      * @see https://backpackforlaravel.com/docs/crud-operation-update
+     *
      * @return void
      */
     protected function setupUpdateOperation()
@@ -148,19 +157,19 @@ class MeditacionCrudController extends CrudController
     public function show($id)
     {
         $meditacion = Meditacion::find($id);
+
         return $meditacion->visibilidad == 'P' ? redirect("/meditaciones/$id") : redirect("/meditaciones/$id?borrador");
     }
 
     public function importCreate()
     {
         $contenido = Meditacion::create([
-            "titulo" => "Importado de " . $_FILES['file']['name'] . "_" . substr(str_shuffle('0123456789'), 0, 5),
-            "texto" => ""
+            'titulo' => 'Importado de '.$_FILES['file']['name'].'_'.substr(str_shuffle('0123456789'), 0, 5),
+            'texto' => '',
         ]);
 
         return $this->importUpdate($contenido->id);
     }
-
 
     public function importUpdate($id)
     {
@@ -168,7 +177,7 @@ class MeditacionCrudController extends CrudController
 
         try {
             // inicializa el importador en base a $_FILES
-            $imported = new WordImport();
+            $imported = new WordImport;
 
             // copia las imágenes desde la carpeta temporal al directorio destino, sobreescribiendo las anteriores en la carpeta
             $imported->copyImagesTo($this->getMediaFolder($contenido), true);
@@ -179,11 +188,11 @@ class MeditacionCrudController extends CrudController
             $contenido->save();
 
             return response()->json([
-                "id" => $contenido->id
+                'id' => $contenido->id,
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
-                "error" => $e->getMessage()
+                'error' => $e->getMessage(),
             ], 500);
         }
     }

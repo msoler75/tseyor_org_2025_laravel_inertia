@@ -4,6 +4,7 @@ namespace App\Pigmalion;
 
 use App\Http\Controllers\AnalyticsController;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 class AnalyticsHelper
@@ -11,7 +12,7 @@ class AnalyticsHelper
     /**
      * Trackear evento de enlace corto
      */
-    public static function trackEnlaceCorto(string $prefijo, string $codigo, string $urlDestino, Request $request = null): void
+    public static function trackEnlaceCorto(string $prefijo, string $codigo, string $urlDestino, ?Request $request = null): void
     {
         try {
             $request = $request ?? request();
@@ -23,7 +24,7 @@ class AnalyticsHelper
             Log::error('Error en AnalyticsHelper::trackEnlaceCorto', [
                 'error' => $e->getMessage(),
                 'prefijo' => $prefijo,
-                'codigo' => $codigo
+                'codigo' => $codigo,
             ]);
         }
     }
@@ -31,14 +32,15 @@ class AnalyticsHelper
     /**
      * Trackear evento personalizado para enlaces cortos
      */
-    public static function trackEventoPersonalizado(string $evento, array $parametros = [], Request $request = null): void
+    public static function trackEventoPersonalizado(string $evento, array $parametros = [], ?Request $request = null): void
     {
         try {
             $measurementId = config('services.google_analytics.measurement_id');
             $apiSecret = config('services.google_analytics.api_secret');
 
-            if (!$measurementId || !$apiSecret) {
+            if (! $measurementId || ! $apiSecret) {
                 Log::warning('Google Analytics credentials not configured');
+
                 return;
             }
 
@@ -53,14 +55,14 @@ class AnalyticsHelper
                         'name' => $evento,
                         'params' => array_merge([
                             'source' => 'enlaces_cortos_helper',
-                            'method' => 'server_side'
-                        ], $parametros)
-                    ]
-                ]
+                            'method' => 'server_side',
+                        ], $parametros),
+                    ],
+                ],
             ];
 
             // Enviar a Google Analytics
-            $response = \Illuminate\Support\Facades\Http::timeout(3)->post(
+            $response = Http::timeout(3)->post(
                 "https://www.google-analytics.com/mp/collect?measurement_id={$measurementId}&api_secret={$apiSecret}",
                 $payload
             );
@@ -68,14 +70,14 @@ class AnalyticsHelper
             if ($response->successful()) {
                 Log::info('Evento personalizado enviado a GA', [
                     'evento' => $evento,
-                    'parametros' => $parametros
+                    'parametros' => $parametros,
                 ]);
             }
 
         } catch (\Exception $e) {
             Log::error('Error enviando evento personalizado a GA', [
                 'error' => $e->getMessage(),
-                'evento' => $evento
+                'evento' => $evento,
             ]);
         }
     }
@@ -85,11 +87,11 @@ class AnalyticsHelper
      */
     private static function generateClientId(Request $request): string
     {
-        $userFingerprint = $request->ip() . '|' . $request->userAgent();
+        $userFingerprint = $request->ip().'|'.$request->userAgent();
         $hashedFingerprint = md5($userFingerprint);
         $dateStamp = date('Ymd');
 
-        return substr($hashedFingerprint, 0, 10) . '.' . strtotime($dateStamp);
+        return substr($hashedFingerprint, 0, 10).'.'.strtotime($dateStamp);
     }
 
     /**
@@ -104,8 +106,7 @@ class AnalyticsHelper
             'enlace_prefijo' => $prefijo,
             'enlace_corto' => "/{$prefijo}/{$codigo}",
             'url_original' => $urlOriginal,
-            'longitud_original' => strlen($urlOriginal)
+            'longitud_original' => strlen($urlOriginal),
         ]);
     }
-
 }

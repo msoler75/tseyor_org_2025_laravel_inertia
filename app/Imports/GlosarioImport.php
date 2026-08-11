@@ -2,29 +2,27 @@
 
 namespace App\Imports;
 
-use App\Services\WordImport;
 use App\Models\Termino;
+use App\Services\WordImport;
 use Illuminate\Support\Facades\Log;
 
 class GlosarioImport
 {
-
-
     public static function importar()
     {
-        Log::info("Importando glosario. Importar()");
+        Log::info('Importando glosario. Importar()');
 
-        $imported = new WordImport();
+        $imported = new WordImport;
 
-        Log::info("Convertido a MD. Copiando imagenes...");
+        Log::info('Convertido a MD. Copiando imagenes...');
 
         // Copiaremos las imágenes a la carpeta de destino
-        $imagesFolder = "medios/glosario";
+        $imagesFolder = 'medios/glosario';
 
         // copia las imágenes desde la carpeta temporal al directorio destino
         $imported->copyImagesTo($imagesFolder, true);
 
-        $glosario_md = storage_path("imports/glosario.md");
+        $glosario_md = storage_path('imports/glosario.md');
 
         self::borrar_temporales();
 
@@ -35,28 +33,28 @@ class GlosarioImport
         return true;
     }
 
-
     public static function borrar_temporales()
     {
-        $terminos_json = storage_path("imports/terminos.json");
+        $terminos_json = storage_path('imports/terminos.json');
 
         // eliminamos datos temporales
-        if (file_exists($terminos_json))
+        if (file_exists($terminos_json)) {
             unlink($terminos_json);
+        }
     }
 
     public static function procesar()
     {
-        Log::info("GlosarioImport::procesar()");
+        Log::info('GlosarioImport::procesar()');
 
-        $terminos_json = storage_path("imports/terminos.json");
-        if (!file_exists($terminos_json)) {
+        $terminos_json = storage_path('imports/terminos.json');
+        if (! file_exists($terminos_json)) {
 
-            $glosario_md = storage_path("imports/glosario.md");
+            $glosario_md = storage_path('imports/glosario.md');
 
             $glosario = file_get_contents($glosario_md);
 
-            Log::info("GlosarioImport::parse()");
+            Log::info('GlosarioImport::parse()');
 
             $terminos = self::parse($glosario);
 
@@ -72,21 +70,21 @@ class GlosarioImport
 
         // inserta/modifica los términos
         foreach ($terminos as $idx => $nuevoTermino) {
-            if (!($terminos[$idx]['insertado'] ?? false)) {
-                $termino =  Termino::where('nombre', $nuevoTermino['termino'])->first();
-                if (!$termino) {
-                    Log::info("Creando " . $nuevoTermino['termino']);
+            if (! ($terminos[$idx]['insertado'] ?? false)) {
+                $termino = Termino::where('nombre', $nuevoTermino['termino'])->first();
+                if (! $termino) {
+                    Log::info('Creando '.$nuevoTermino['termino']);
                     $termino = Termino::create([
                         'nombre' => $nuevoTermino['termino'],
                         'texto' => $nuevoTermino['descripcion'],
                         'ref_terminos' => $nuevoTermino['ref_terminos'],
                         'ref_libros' => $nuevoTermino['ref_libros'],
-                        'visibilidad' => 'P'
+                        'visibilidad' => 'P',
                     ]);
                 } else {
                     // revisa si hay algun cambio en la descripción
                     if ($termino->texto != $nuevoTermino['descripcion'] || $termino->ref_terminos != $nuevoTermino['ref_terminos'] || $termino->ref_libros != $nuevoTermino['ref_libros']) {
-                        Log::info("Actualizando " . $nuevoTermino['termino']);
+                        Log::info('Actualizando '.$nuevoTermino['termino']);
                         $termino->texto = $nuevoTermino['descripcion'];
                         $termino->descripcion = null;
                         $termino->ref_terminos = $nuevoTermino['ref_terminos'];
@@ -120,13 +118,14 @@ class GlosarioImport
     {
         function corregirPuntuacionGlobal($str)
         {
-            $str = preg_replace("/\*\*(.+?)\*\*(?!\*)/", "<b>$1</b>", $str); // cambia primero los asteriscos dobles por negritas
-            $str = preg_replace("/\*([^*><]+)\*/", "<i>$1</i>", $str); // cambia los asteriscos simples por cursiva
+            $str = preg_replace("/\*\*(.+?)\*\*(?!\*)/", '<b>$1</b>', $str); // cambia primero los asteriscos dobles por negritas
+            $str = preg_replace("/\*([^*><]+)\*/", '<i>$1</i>', $str); // cambia los asteriscos simples por cursiva
             $str = preg_replace("/<i>([^*><]+)<\/i>/", '_$1_', $str); // devuelve al formato markdown las cursivas
             $str = preg_replace("/<b>([^*><]+)<\/b>/", '**$1**', $str); // devuelve al formato markdown las negritas
-            $str =  preg_replace("/“\*\*/", "**“", $str);  // corrige desplazamiento de negritas
-            $str = preg_replace("/\*\*([“”])\*\*/", "$1", $str);
-            $str = preg_replace("/^\s*> /", "", $str);
+            $str = preg_replace("/“\*\*/", '**“', $str);  // corrige desplazamiento de negritas
+            $str = preg_replace("/\*\*([“”])\*\*/", '$1', $str);
+            $str = preg_replace("/^\s*> /", '', $str);
+
             return $str;
         }
 
@@ -147,41 +146,43 @@ class GlosarioImport
         {
             $descripcion = trim($descripcion);
             $descripcion = ltrim($descripcion, '.');
-            $descripcion = preg_replace("/^>\s*$/mu", "", $descripcion);
-            $descripcion = preg_replace("/^[\s\t]*\*[\s\t]*$/u", "", $descripcion); // quita lineas con un solo asterisco
-            //$descripcion = preg_replace("/\*\*([^\*]+)\*\*/mu", "_$1_", $descripcion); // cambia las negritas por cursiva
+            $descripcion = preg_replace("/^>\s*$/mu", '', $descripcion);
+            $descripcion = preg_replace("/^[\s\t]*\*[\s\t]*$/u", '', $descripcion); // quita lineas con un solo asterisco
+            // $descripcion = preg_replace("/\*\*([^\*]+)\*\*/mu", "_$1_", $descripcion); // cambia las negritas por cursiva
             $descripcion = preg_replace("/\n{2,99}/mu", "\n", $descripcion);
             $descripcion = preg_replace("/\r\n/m", "\n", $descripcion);
             $descripcion = preg_replace("/\n\s*\n\s*\n/mu", "\n\n", $descripcion);
+
             return $descripcion;
         }
 
         // cambia las url de las imagenes para que apunten a la carpeta correcta
         function prepararImagenes($descripcion)
         {
-            return preg_replace("#\.\/medios\/#", "/almacen/medios/glosario/", $descripcion);
+            return preg_replace("#\.\/medios\/#", '/almacen/medios/glosario/', $descripcion);
         }
 
         function quitarCitas($descripcion)
         {
-            return preg_replace("/^>(.*)/mu", "$1", $descripcion);
+            return preg_replace('/^>(.*)/mu', '$1', $descripcion);
         }
 
         function unirLineas($descripcion)
         {
-            return preg_replace("/[\r\n]+(\s\t)*([a-záéíóú])/u", "$1 $2", $descripcion);
+            return preg_replace("/[\r\n]+(\s\t)*([a-záéíóú])/u", '$1 $2', $descripcion);
         }
-
 
         // Función para buscar referencias "Véase" en la descripción
         function extraerReferencias(&$texto)
         {
             // $referencias = [];
             // preg_match_all('/\(\s*V[ée]ase\s.*\)/su', $descripcion, $matches);
-            //admite Vease, Véase, V e a s e, V é a s e
+            // admite Vease, Véase, V e a s e, V é a s e
 
             preg_match("/\(\s*V\s*[eé]\s*a\s*s\s*e\s/u", $texto, $m, PREG_OFFSET_CAPTURE);
-            if (!count($m)) return [];
+            if (! count($m)) {
+                return [];
+            }
             $inicio = $m[0][1];
             $r = [];
             if ($inicio !== false) {
@@ -199,12 +200,12 @@ class GlosarioImport
                 }
 
                 $resultado = substr($texto, $inicioReferencias, $fin - $inicioReferencias - 1);
-                $texto = substr($texto,  0, $inicio) . substr($texto,  $fin + 1);
+                $texto = substr($texto, 0, $inicio).substr($texto, $fin + 1);
                 $r[] = $resultado;
             }
+
             return $r;
         }
-
 
         // Función para limpiar las referencias de la descripción
         function limpiarReferencias($referencias)
@@ -215,13 +216,12 @@ class GlosarioImport
             return $referencias;
         }
 
-
-
         // Función para obtener los términos de una referencia a términos del glosario
         function obtenerTerminosReferencia($referencia)
         {
             $referencia = preg_replace('/\([^()]*\)/', '', $referencia);
-            return preg_replace("/[\*_]/", "", $referencia);
+
+            return preg_replace("/[\*_]/", '', $referencia);
         }
 
         // Función para limpiar caracteres tipográficos y espacios de los términos
@@ -255,8 +255,10 @@ class GlosarioImport
 
         function agregarAlUltimo(&$terminos, $texto)
         {
-            if (!count($terminos)) return;
-            $terminos[count($terminos) - 1]['descripcion'] .= "\n" . $texto;
+            if (! count($terminos)) {
+                return;
+            }
+            $terminos[count($terminos) - 1]['descripcion'] .= "\n".$texto;
         }
 
         function strposx($text, $patron)
@@ -267,7 +269,6 @@ class GlosarioImport
                 return false;
             }
         }
-
 
         // Buscar el título "GLOSARIO DE TÉRMINOS" y obtener el contenido después de él
         $posicionInicio = strposx($contenido, "/\*\*GLOSARIO\s+DE\s+T.RMINOS\*\*/u");
@@ -293,22 +294,22 @@ class GlosarioImport
 
                 $palabraLimpiada = limpiarTermino($palabra);
 
-                if (!$palabraLimpiada) continue;
+                if (! $palabraLimpiada) {
+                    continue;
+                }
 
                 $siguiente = $resultados[$i + 1][0];
 
                 // Verificar si es una palabra en negrita
                 if (esPalabraNegrita($palabra) && strlen($palabraLimpiada) > 1) {
                     // Verificar si el siguiente valor no es una palabra en negrita y no es un texto vacío
-                    if (!esPalabraNegrita($siguiente) && tieneCaracteresValidos($siguiente)) {
+                    if (! esPalabraNegrita($siguiente) && tieneCaracteresValidos($siguiente)) {
                         $termino = trim($palabra);
 
                         $descripcion = $siguiente;
 
                         // Buscar referencias "Véase" y almacenarlas
                         $referencias = extraerReferencias($descripcion);
-
-
 
                         // limpiar texto de la descripcion
                         $descripcion = limpiarDescripcion($descripcion);
@@ -321,7 +322,7 @@ class GlosarioImport
                         $referenciasLibros = [];
 
                         foreach ($referencias as $referencia) {
-                            $referencia = preg_replace("/[\r\n]+/", " ", $referencia);
+                            $referencia = preg_replace("/[\r\n]+/", ' ', $referencia);
                             $referencia = limpiarReferencias($referencia);
                             $referencia = trim($referencia);
 
@@ -340,9 +341,10 @@ class GlosarioImport
                             $refTerminos = obtenerTerminosReferencia($textoModificado);
 
                             // Limpiar caracteres tipográficos y espacios de los términos
-                            $refTerminos = preg_split("/[,;]/", $refTerminos);
-                            foreach ($refTerminos as $refTermino)
+                            $refTerminos = preg_split('/[,;]/', $refTerminos);
+                            foreach ($refTerminos as $refTermino) {
                                 $referenciasTerminos[] = limpiarTermino($refTermino);
+                            }
                         }
 
                         $descripcion = unirLineas($descripcion);
@@ -350,21 +352,25 @@ class GlosarioImport
                         $terminos[] = [
                             'termino' => limpiarTermino($termino),
                             'descripcion' => $descripcion,
-                            'ref_libros' => implode(", ", $referenciasLibros),
-                            'ref_terminos' => implode(", ", $referenciasTerminos)
+                            'ref_libros' => implode(', ', $referenciasLibros),
+                            'ref_terminos' => implode(', ', $referenciasTerminos),
                         ];
 
                         $i++;
-                    } else
+                    } else {
                         agregarAlUltimo($terminos, $palabra);
-                } else if (strlen($palabraLimpiada) > 1)
+                    }
+                } elseif (strlen($palabraLimpiada) > 1) {
                     agregarAlUltimo($terminos, $palabra);
+                }
             }
+
             // Imprimir el array de términos
             return $terminos;
         } else {
             throw new \Exception("No se encontró el título 'GLOSARIO DE TÉRMINOS' en el archivo.");
         }
+
         return [];
     }
 }

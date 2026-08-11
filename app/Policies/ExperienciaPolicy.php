@@ -4,7 +4,6 @@ namespace App\Policies;
 
 use App\Models\Experiencia;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
 class ExperienciaPolicy
@@ -24,8 +23,10 @@ class ExperienciaPolicy
      */
     public function view(?User $user, Experiencia $experiencia): bool
     {
-        if ($experiencia->categoria == Experiencia::$CATEGORIA_INTERIORIZACION)
+        if ($experiencia->categoria == Experiencia::$CATEGORIA_INTERIORIZACION) {
             return $user && $user->esIniciado();
+        }
+
         return true;
     }
 }

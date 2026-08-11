@@ -5,16 +5,17 @@ namespace App\Models;
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Pivot;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
+use Venturecraft\Revisionable\RevisionableTrait;
 
 class Grupo extends Model
 {
     use CrudTrait;
-    use \Venturecraft\Revisionable\RevisionableTrait;
-    use \Illuminate\Database\Eloquent\SoftDeletes;
+    use RevisionableTrait;
+    use SoftDeletes;
 
     protected $revisionCreationsEnabled = true;
-
 
     // cuando se crea un usuario, llenaremos el campo "frase" con una frase aleatoria desde un archivo de texto
     public static function boot()
@@ -22,15 +23,16 @@ class Grupo extends Model
         parent::boot();
 
         static::saving(function ($grupo) {
-            if (!$grupo->slug)
+            if (! $grupo->slug) {
                 $grupo->slug = Str::slug($grupo->nombre);
+            }
         });
     }
 
     protected $fillable = [
         'nombre',
         'slug',
-        'descripcion'
+        'descripcion',
     ];
 
     public function usuarios()
@@ -49,9 +51,10 @@ class Grupo extends Model
         $usersWithoutPivot = $users->map(function ($user) {
             return [
                 'value' => $user->id,
-                'label' => $user->name //"{$user->name} <{$user->email}>"
+                'label' => $user->name, // "{$user->name} <{$user->email}>"
             ];
         });
+
         return $usersWithoutPivot->toJson();
     }
 }

@@ -2,16 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Inertia\Inertia;
 use App\Models\Centro;
-use App\Models\Evento;
 use App\Models\Entrada;
+use App\Models\Evento;
 use App\Models\Libro;
 use App\Pigmalion\Countries;
 use App\Pigmalion\SEO;
 use App\Pigmalion\StorageItem;
-
+use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class CentrosController extends Controller
 {
@@ -24,10 +23,11 @@ class CentrosController extends Controller
 
         $query = Centro::select(['id', 'nombre', 'imagen', 'descripcion', 'pais']);
 
-        if ($buscar)
+        if ($buscar) {
             $query->buscar($buscar);
-        else
+        } else {
             $query->latest('created_at');
+        }
 
         $resultados = $query->paginate(self::$ITEMS_POR_PAGINA, ['*'], 'page', $page)
             ->appends($request->except('page'));
@@ -37,13 +37,14 @@ class CentrosController extends Controller
         $resultados->getCollection()->transform(function ($centro) use (&$paises) {
             $codigo = $centro->pais;
             $centro->pais = Countries::getCountry($centro->pais);
-            $paises[] = ["codigo"=>$codigo, "nombre"=>$centro->pais];
+            $paises[] = ['codigo' => $codigo, 'nombre' => $centro->pais];
+
             return $centro;
         });
 
         return Inertia::render('Centros/Index', [
             'listado' => $resultados,
-            'paises' => $paises
+            'paises' => $paises,
         ])
             ->withViewData(SEO::get('centros'));
     }
@@ -56,15 +57,16 @@ class CentrosController extends Controller
             $centro = Centro::with('contacto')->where('slug', $id)->firstOrFail();
         }
 
-        if (!$centro) {
+        if (! $centro) {
             abort(404); // Manejo de Centro no encontrada
         }
 
         $loc = new StorageItem($centro->getCarpetaMedios());
         $imagenes = $loc->listImages();
 
-        if (!in_array($centro->imagen, $imagenes))
+        if (! in_array($centro->imagen, $imagenes)) {
             array_unshift($imagenes, $centro->imagen);
+        }
 
         $eventos = Evento::select(['id', 'titulo', 'slug', 'descripcion', 'fecha_inicio', 'imagen'])->where('centro_id', $centro->id)->publicado()->take(4)->latest()->get();
         $entradas = Entrada::select(['id', 'titulo', 'slug', 'descripcion', 'imagen'])->whereIn('slug', preg_split("/[\r\n\t\s,]+/", $centro->entradas, -1, PREG_SPLIT_NO_EMPTY))->publicada()->latest()->get();
@@ -75,9 +77,9 @@ class CentrosController extends Controller
         return Inertia::render('Centros/Centro', [
             'centro' => $centro,
             'imagenes' => $imagenes,
-            'eventos'   => $eventos,
+            'eventos' => $eventos,
             'entradas' => $entradas,
-            'libros'    => $libros
+            'libros' => $libros,
         ])
             ->withViewData(SEO::from($centro));
     }

@@ -13,9 +13,10 @@ class EntradaFactory extends Factory
     public function definition()
     {
         $titulo = $this->faker->sentence(4);
+
         return [
             'titulo' => $titulo,
-            'slug' => Str::slug($titulo) . '-' . $this->faker->unique()->randomNumber(5),
+            'slug' => Str::slug($titulo).'-'.$this->faker->unique()->randomNumber(5),
             'descripcion' => $this->faker->paragraph(2),
             'categoria' => $this->faker->randomElement(['Pueblo Tseyor', 'ONG', 'Otros']),
             'texto' => $this->faker->paragraph(5),

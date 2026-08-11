@@ -9,29 +9,31 @@ class ChatGPTController extends Controller
     //
     public function chat(Request $request)
     {
-        $texto = $request->input("texto");
+        $texto = $request->input('texto');
 
-        if (!$texto)
-            abort(400, "Debe especificar el texto");
+        if (! $texto) {
+            abort(400, 'Debe especificar el texto');
+        }
 
-        $apikey = config("services.openrouter_key", null);
-        if (!$apikey)
-            abort(400, "No se ha configurado la clave API de OpenAI");
+        $apikey = config('services.openrouter_key', null);
+        if (! $apikey) {
+            abort(400, 'No se ha configurado la clave API de OpenAI');
+        }
 
         $opts = [
             // "model" => "dall-e-2",
-            "model" => 'gpt-3.5-turbo-0125',
+            'model' => 'gpt-3.5-turbo-0125',
             // "object"=> "chat.completion",
-            "messages" => [
+            'messages' => [
                 [
-                    "role" => "system",
-                    "content" => 'Eres un asistente util que da siempre respuestas breves y concisas, sin explicaciones, a menos que se te pidan.'
+                    'role' => 'system',
+                    'content' => 'Eres un asistente util que da siempre respuestas breves y concisas, sin explicaciones, a menos que se te pidan.',
                 ],
                 [
-                    "role" => "user",
-                    "content" => $texto
-                ]
-            ]
+                    'role' => 'user',
+                    'content' => $texto,
+                ],
+            ],
         ];
 
         $ch = curl_init();
@@ -40,7 +42,7 @@ class ChatGPTController extends Controller
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
         curl_setopt($ch, CURLOPT_HTTPHEADER, [
             'Content-Type: application/json',
-            'Authorization: Bearer ' . $apikey
+            'Authorization: Bearer '.$apikey,
         ]);
         curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($opts));
 
@@ -53,7 +55,7 @@ class ChatGPTController extends Controller
 
         curl_close($ch);
 
-        return response()->json(['respuesta' => $response, 'status_code'=>$status], 200);
+        return response()->json(['respuesta' => $response, 'status_code' => $status], 200);
 
     }
 }

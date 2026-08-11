@@ -23,10 +23,8 @@ class NodoArchivo extends Model
             $query->where('es_carpeta', false);
         });
 
-
         static::creating(function ($carpeta) {
             $carpeta->es_carpeta = false;
         });
     }
-
 }

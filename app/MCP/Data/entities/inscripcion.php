@@ -8,20 +8,20 @@ return [
                 'name' => 'buscar',
                 'type' => 'string',
                 'required' => false,
-                'description' => 'Texto a buscar en las inscripciones. Ejemplo: "María"'
+                'description' => 'Texto a buscar en las inscripciones. Ejemplo: "María"',
             ],
             [
                 'name' => 'estado',
                 'type' => 'string',
                 'required' => false,
-                'description' => 'Filtrar por estado: "pendiente", "asignada", "contactada", "inscrita", "descartada".'
+                'description' => 'Filtrar por estado: "pendiente", "asignada", "contactada", "inscrita", "descartada".',
             ],
             [
                 'name' => 'orden',
                 'type' => 'string',
                 'required' => false,
-                'description' => 'Orden de resultados: "recientes", "cronologico", "relevancia". Ejemplo: "recientes"'
-            ]
+                'description' => 'Orden de resultados: "recientes", "cronologico", "relevancia". Ejemplo: "recientes"',
+            ],
         ],
         'campos' => [
             'nombre' => ['type' => 'string', 'description' => 'Nombre completo'],
@@ -34,7 +34,7 @@ return [
             'comentario' => ['type' => 'string', 'description' => 'Comentario del solicitante'],
             'estado' => ['type' => 'string', 'description' => 'Estado: pendiente, asignada, contactada, inscrita, descartada'],
             'user_id' => ['type' => 'int', 'description' => 'ID del usuario asignado para seguimiento'],
-            'notas' => ['type' => 'string', 'description' => 'Notas internas de seguimiento']
-        ]
+            'notas' => ['type' => 'string', 'description' => 'Notas internas de seguimiento'],
+        ],
     ],
 ];

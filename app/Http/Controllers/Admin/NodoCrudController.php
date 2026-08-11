@@ -4,21 +4,28 @@ namespace App\Http\Controllers\Admin;
 
 use App\Models\Nodo;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
+use Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
+use Backpack\CRUD\app\Library\CrudPanel\CrudPanel;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
+use Backpack\ReviseOperation\ReviseOperation;
 
 /**
  * Class NodoCrudController
- * @package App\Http\Controllers\Admin
- * @property-read \Backpack\CRUD\app\Library\CrudPanel\CrudPanel $crud
+ *
+ * @property-read CrudPanel $crud
  */
 class NodoCrudController extends CrudController
 {
-    use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
-    use \Backpack\ReviseOperation\ReviseOperation;
+    use CreateOperation;
+    use DeleteOperation;
+    use ListOperation;
+    use ReviseOperation;
+    use ShowOperation;
+    use UpdateOperation;
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
@@ -28,7 +35,7 @@ class NodoCrudController extends CrudController
     public function setup()
     {
         CRUD::setModel(Nodo::class);
-        CRUD::setRoute(config('backpack.base.route_prefix') . '/nodo');
+        CRUD::setRoute(config('backpack.base.route_prefix').'/nodo');
         CRUD::setEntityNameStrings('nodo', 'nodos');
     }
 
@@ -36,6 +43,7 @@ class NodoCrudController extends CrudController
      * Define what happens when the List operation is loaded.
      *
      * @see  https://backpackforlaravel.com/docs/crud-operation-list-entries
+     *
      * @return void
      */
     protected function setupListOperation()
@@ -47,26 +55,25 @@ class NodoCrudController extends CrudController
          * - CRUD::column('price')->type('number');
          */
 
-
-        //CRUD::field('user')->remove();
-        //CRUD::field('group')->remove();
+        // CRUD::field('user')->remove();
+        // CRUD::field('group')->remove();
 
         $this->crud->addColumn([
             'name' => 'ubicacion',
             'label' => 'Ubicación',
-            'limit' => 200
+            'limit' => 200,
         ]);
 
         $this->crud->addColumn([
             'name' => 'group',
             'label' => 'Grupo',
-            'limit' => 32
+            'limit' => 32,
         ]);
 
         $this->crud->addColumn([
             'name' => 'permisos',
             'label' => 'Permisos',
-            'limit' => 5
+            'limit' => 5,
         ]);
 
         /*$this->crud->addColumn([
@@ -114,6 +121,7 @@ class NodoCrudController extends CrudController
      * Define what happens when the Create operation is loaded.
      *
      * @see https://backpackforlaravel.com/docs/crud-operation-create
+     *
      * @return void
      */
     protected function setupCreateOperation()
@@ -128,7 +136,6 @@ class NodoCrudController extends CrudController
          * Fields can be defined using the fluent syntax:
          * - CRUD::field('price')->type('number');
          */
-
         CRUD::field('oculto')->type('checkbox')->wrapper(['class' => 'form-group col-md-3']);
         CRUD::field('user_id')->type('select')->wrapper(['class' => 'form-group col-md-3']);
         CRUD::field('group_id')->type('select')->wrapper(['class' => 'form-group col-md-3']);
@@ -140,13 +147,13 @@ class NodoCrudController extends CrudController
      * Define what happens when the Update operation is loaded.
      *
      * @see https://backpackforlaravel.com/docs/crud-operation-update
+     *
      * @return void
      */
     protected function setupUpdateOperation()
     {
         $this->setupCreateOperation();
     }
-
 
     public function show($id)
     {

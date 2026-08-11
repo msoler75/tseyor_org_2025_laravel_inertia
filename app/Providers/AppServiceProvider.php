@@ -2,13 +2,12 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\ServiceProvider;
+use App\Http\Controllers\Admin\UserCrudController;
 use App\Models\Equipo;
 use App\Models\Membresia;
-use App\Observers\MembresiaObserver;
 use App\Observers\EquipoObserver;
-use Illuminate\Support\Facades\Cookie;
-use Inertia\Inertia;
+use App\Observers\MembresiaObserver;
+use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -22,11 +21,9 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->bind(
             // \Backpack\PermissionManager\app\Http\Controllers\UserCrudController::class, //this is package controller
-            \App\Http\Controllers\Admin\UserCrudController::class //this should be your own controller
+            UserCrudController::class // this should be your own controller
         );
     }
-
-
 
     /**
      * Bootstrap any application services.
@@ -37,7 +34,7 @@ class AppServiceProvider extends ServiceProvider
     {
         // Registrar el hint path para las vistas de correo
         $this->loadViewsFrom(resource_path('views/emails'), 'emails');
-         $this->loadViewsFrom(resource_path('views/vendor/mail'), 'mail');
+        $this->loadViewsFrom(resource_path('views/vendor/mail'), 'mail');
 
         // Equipos y grupos
 
@@ -46,7 +43,6 @@ class AppServiceProvider extends ServiceProvider
 
         // observamos los cambios en membresías de equipos
         // Membresia::observe(MembresiaObserver::class);
-
 
     }
 }

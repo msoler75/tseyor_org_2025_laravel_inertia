@@ -2,15 +2,16 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
+use Illuminate\Database\Eloquent\Model;
 
 class Suscriptor extends Model
 {
     use CrudTrait;
-    protected $table = "suscriptores";
-    protected $fillable = ['servicio', 'email', 'token', 'estado'];
 
+    protected $table = 'suscriptores';
+
+    protected $fillable = ['servicio', 'email', 'token', 'estado'];
 
     /* servicio puede ser :
     boletin:semanal

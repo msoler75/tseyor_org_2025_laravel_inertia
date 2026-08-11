@@ -2,24 +2,31 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\RadioItem;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
+use Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
+use Backpack\CRUD\app\Library\CrudPanel\CrudPanel;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
+use Backpack\ReviseOperation\ReviseOperation;
 use Illuminate\Http\Request;
-
 
 /**
  * Class RadioItemCrudController
- * @package App\Http\Controllers\Admin
- * @property-read \Backpack\CRUD\app\Library\CrudPanel\CrudPanel $crud
+ *
+ * @property-read CrudPanel $crud
  */
 class RadioItemCrudController extends CrudController
 {
-    use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
-    use \Backpack\ReviseOperation\ReviseOperation;
+    use CreateOperation;
+    use DeleteOperation;
+    use ListOperation;
+    use ReviseOperation;
+    use ShowOperation;
+    use UpdateOperation;
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
@@ -28,8 +35,8 @@ class RadioItemCrudController extends CrudController
      */
     public function setup()
     {
-        CRUD::setModel(\App\Models\RadioItem::class);
-        CRUD::setRoute(config('backpack.base.route_prefix') . '/radio-item');
+        CRUD::setModel(RadioItem::class);
+        CRUD::setRoute(config('backpack.base.route_prefix').'/radio-item');
         CRUD::setEntityNameStrings('Radio item', 'Listado Radio Tseyor');
     }
 
@@ -37,6 +44,7 @@ class RadioItemCrudController extends CrudController
      * Define what happens when the List operation is loaded.
      *
      * @see  https://backpackforlaravel.com/docs/crud-operation-list-entries
+     *
      * @return void
      */
     protected function setupListOperation()
@@ -47,7 +55,6 @@ class RadioItemCrudController extends CrudController
          * Columns can be defined using the fluent syntax:
          * - CRUD::column('price')->type('number');
          */
-
         CRUD::column('id');
 
         CRUD::column('titulo');
@@ -58,31 +65,31 @@ class RadioItemCrudController extends CrudController
 
         // CRUD::column('desactivado')->label('desactivado')->type("check");
 
-
         $this->crud->addColumn([
             'name' => 'audio_play',
             'label' => 'Audio',
             'type' => 'view',
-            'view' => 'vendor.backpack.crud.columns.audio_play'
+            'view' => 'vendor.backpack.crud.columns.audio_play',
         ]);
 
         $this->crud->addColumn([
             'name' => 'is_active',
             'label' => 'Activo',
             'type' => 'view',
-            'view' => 'vendor.backpack.crud.columns.toggle_switch'
+            'view' => 'vendor.backpack.crud.columns.toggle_switch',
         ]);
 
         CRUD::setOperationSetting('lineButtonsAsDropdown', true);
 
-         // Añadir el botón personalizado en la parte superior
-         CRUD::addButtonFromView('top', 'audio_player_component', 'audio_player_component', 'beginning');
+        // Añadir el botón personalizado en la parte superior
+        CRUD::addButtonFromView('top', 'audio_player_component', 'audio_player_component', 'beginning');
     }
 
     /**
      * Define what happens when the Create operation is loaded.
      *
      * @see https://backpackforlaravel.com/docs/crud-operation-create
+     *
      * @return void
      */
     protected function setupCreateOperation()
@@ -91,7 +98,7 @@ class RadioItemCrudController extends CrudController
             'titulo' => 'required',
             'url' => 'required',
             'duracion' => 'required',
-            'categoria' => 'required'
+            'categoria' => 'required',
         ]);
         CRUD::setFromDb(); // set fields from db columns.
 
@@ -99,26 +106,25 @@ class RadioItemCrudController extends CrudController
          * Fields can be defined using the fluent syntax:
          * - CRUD::field('price')->type('number');
          */
-
         CRUD::field('titulo')->type('text');
 
         CRUD::field('url')->type('text')->hint('URL del archivo de audio');
 
         CRUD::field('duracion')->type('text')->wrapper([
-            'class' => 'form-group col-md-3'
+            'class' => 'form-group col-md-3',
         ])->hint('Se puede poner la duración en formato HH:MM:SS ó MM:SS ó el tiempo total en segundos');
 
         CRUD::field([
             // select_from_array
             'name' => 'categoria',
-            'label' => "Categoría",
+            'label' => 'Categoría',
             'type' => 'select_from_array',
             'options' => ['Comunicados' => 'Comunicados', 'Talleres y meditaciones' => 'Talleres y meditaciones', 'Entrevistas y mesas redondas' => 'Entrevistas y mesas redondas', 'Jingles' => 'Jingles'],
             'allows_null' => false,
             'default' => '0',
             // 'allows_multiple' => true, // OPTIONAL; needs you to cast this to array in your model;
             'wrapper' => [
-                'class' => 'form-group col-md-3'
+                'class' => 'form-group col-md-3',
             ],
         ]);
     }
@@ -127,6 +133,7 @@ class RadioItemCrudController extends CrudController
      * Define what happens when the Update operation is loaded.
      *
      * @see https://backpackforlaravel.com/docs/crud-operation-update
+     *
      * @return void
      */
     protected function setupUpdateOperation()
@@ -140,7 +147,7 @@ class RadioItemCrudController extends CrudController
     public function toggle(Request $request, $id)
     {
         $radioItem = $this->crud->model::findOrFail($id);
-        $radioItem->desactivado = !$request->input('active');
+        $radioItem->desactivado = ! $request->input('active');
         $radioItem->save();
 
         return response()->json(['success' => true]);

@@ -2,30 +2,40 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Backpack\CRUD\app\Http\Controllers\CrudController;
-use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
-use App\Services\WordImport;
 use App\Models\Evento;
 use App\Pigmalion\Countries;
+use App\Services\WordImport;
+use App\Traits\CrudContenido;
+use Backpack\CRUD\app\Http\Controllers\CrudController;
+use Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
+use Backpack\CRUD\app\Library\CrudPanel\CrudPanel;
+use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
+use Backpack\ReviseOperation\ReviseOperation;
+use Carbon\Carbon;
+use Illuminate\Validation\Rule;
 
 /**
  * Class EventoCrudController
- * @package App\Http\Controllers\Admin
- * @property-read \Backpack\CRUD\app\Library\CrudPanel\CrudPanel $crud
+ *
+ * @property-read CrudPanel $crud
  */
 class EventoCrudController extends CrudController
 {
-    use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation {
+    use CreateOperation {
         store as traitStore;
     }
-    use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation {
+    use CrudContenido;
+    use DeleteOperation;
+    use ListOperation;
+    use ReviseOperation;
+    use ShowOperation;
+    use UpdateOperation {
         update as traitUpdate;
     }
-    use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
-    use \Backpack\ReviseOperation\ReviseOperation;
-    use \App\Traits\CrudContenido;
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
@@ -35,7 +45,7 @@ class EventoCrudController extends CrudController
     public function setup()
     {
         CRUD::setModel(Evento::class);
-        CRUD::setRoute(config('backpack.base.route_prefix') . '/evento');
+        CRUD::setRoute(config('backpack.base.route_prefix').'/evento');
         CRUD::setEntityNameStrings('evento', 'eventos');
     }
 
@@ -43,6 +53,7 @@ class EventoCrudController extends CrudController
      * Define what happens when the List operation is loaded.
      *
      * @see  https://backpackforlaravel.com/docs/crud-operation-list-entries
+     *
      * @return void
      */
     protected function setupListOperation()
@@ -50,22 +61,20 @@ class EventoCrudController extends CrudController
         $this->crud->addColumn([
             'name' => 'id',
             'label' => 'id',
-            'type' => 'number'
+            'type' => 'number',
         ]);
 
         $this->crud->addColumn([
             'name' => 'titulo',
             'label' => 'Título',
-            'type' => 'text'
+            'type' => 'text',
         ]);
-
 
         $this->crud->addColumn([
             'name' => 'updated_at',
             'label' => 'Modificado',
             'type' => 'datetime',
         ]);
-
 
         $this->crud->addColumn([
             'name' => 'categoria',
@@ -79,7 +88,7 @@ class EventoCrudController extends CrudController
             'type' => 'text',
             'value' => function ($entry) {
                 return $entry->visibilidad == 'P' ? '✔️ Publicado' : '⚠️ Borrador';
-            }
+            },
         ]);
 
         CRUD::addButtonFromView('top', 'import_create', 'import_create', 'end');
@@ -93,13 +102,14 @@ class EventoCrudController extends CrudController
      * Define what happens when the Create operation is loaded.
      *
      * @see https://backpackforlaravel.com/docs/crud-operation-create
+     *
      * @return void
      */
     protected function setupCreateOperation()
     {
         $this->crud->setValidation([
             'titulo' => 'required|min:8',
-            'slug' => [\Illuminate\Validation\Rule::unique('eventos', 'slug')->ignore($this->crud->getCurrentEntryId())],
+            'slug' => [Rule::unique('eventos', 'slug')->ignore($this->crud->getCurrentEntryId())],
             'descripcion' => 'required|max:400',
             'texto' => 'required|max:65000',
             'fecha_inicio' => 'required',
@@ -111,7 +121,6 @@ class EventoCrudController extends CrudController
          * Fields can be defined using the fluent syntax:
          * - CRUD::field('price')->type('number');
          */
-
         $folder = $this->getMediaFolder();
 
         CRUD::field('descripcion')->type('textarea')->attributes(['maxlength' => 400]);
@@ -134,7 +143,6 @@ class EventoCrudController extends CrudController
             ],
         ]);
 
-
         CRUD::field('fecha_inicio')->type('date')->wrapper(['style' => 'width: 200px']);
         CRUD::field('fecha_fin')->type('date')->wrapper(['style' => 'width: 200px']);
         CRUD::field('hora_inicio')->type('time')->wrapper(['style' => 'width: 200px']);
@@ -144,31 +152,28 @@ class EventoCrudController extends CrudController
             'name' => 'fechas_evento',
             'label' => 'Fechas del evento (evento repetible)',
             'type' => 'fechas_evento',
-            'wrapper' => ['class' => 'form-group col-md-12']
+            'wrapper' => ['class' => 'form-group col-md-12'],
         ]);
 
-
-         CRUD::field([   // select_from_array
+        CRUD::field([   // select_from_array
             'name' => 'pais',
-            'label' => "País",
+            'label' => 'País',
             'type' => 'select_from_array',
             'options' => Countries::$list,
             'allows_null' => false,
             'default' => 'ES',
             'wrapper' => [
-                'class' => 'form-group col-md-3'
+                'class' => 'form-group col-md-3',
             ],
         ]);
 
         CRUD::field('published_at')->type('datetime')->wrapper(['style' => 'width: 260px']);
 
-
         CRUD::field('visibilidad')->type('visibilidad');
-
 
         CRUD::field([   // select_from_array
             'name' => 'categoria',
-            'label' => "Categoría",
+            'label' => 'Categoría',
             'type' => 'select_from_array',
             'options' => ['Curso' => 'Curso', 'Convivencias' => 'Convivencias', 'Encuentro' => 'Encuentro', 'Presentación' => 'Presentación'],
             'allows_null' => false,
@@ -176,7 +181,7 @@ class EventoCrudController extends CrudController
             // 'allows_multiple' => true, // OPTIONAL; needs you to cast this to array in your model;
 
             'wrapper' => [
-                'class' => 'form-group col-md-3'
+                'class' => 'form-group col-md-3',
             ],
         ]);
 
@@ -188,8 +193,8 @@ class EventoCrudController extends CrudController
             'attribute' => 'nombre',
             'model' => 'App\Models\Centro',
             'wrapper' => [
-                'class' => 'form-group col-md-4'
-            ]
+                'class' => 'form-group col-md-4',
+            ],
         ])->after('visibilidad');
 
         CRUD::field([
@@ -200,8 +205,8 @@ class EventoCrudController extends CrudController
             'attribute' => 'nombre',
             'model' => 'App\Models\Sala',
             'wrapper' => [
-                'class' => 'form-group col-md-4'
-            ]
+                'class' => 'form-group col-md-4',
+            ],
         ])->after('centro_id');
 
         CRUD::field([
@@ -212,8 +217,8 @@ class EventoCrudController extends CrudController
             'attribute' => 'nombre',
             'model' => 'App\Models\Equipo',
             'wrapper' => [
-                'class' => 'form-group col-md-4'
-            ]
+                'class' => 'form-group col-md-4',
+            ],
         ])->after('sala_id');
 
         CRUD::field('visibilidad')->type('visibilidad');
@@ -222,12 +227,11 @@ class EventoCrudController extends CrudController
         CRUD::field('published_at')->label('Fecha publicación')->type('datetime')->attributes(['step' => 1]);
     }
 
-
-
     /**
      * Define what happens when the Update operation is loaded.
      *
      * @see https://backpackforlaravel.com/docs/crud-operation-update
+     *
      * @return void
      */
     protected function setupUpdateOperation()
@@ -235,26 +239,23 @@ class EventoCrudController extends CrudController
         $this->setupCreateOperation();
     }
 
-
-
     public function show($id)
     {
         $evento = Evento::find($id);
+
         return $evento->visibilidad == 'P' ? redirect("/eventos/$id") : redirect("/eventos/$id?borrador");
     }
-
 
     public function importCreate()
     {
         $contenido = Evento::create([
-            "titulo" => "Importado de " . $_FILES['file']['name'] . "_" . substr(str_shuffle('0123456789'), 0, 5),
-            "texto" => "",
-            "categoria" => 'Encuentro'
+            'titulo' => 'Importado de '.$_FILES['file']['name'].'_'.substr(str_shuffle('0123456789'), 0, 5),
+            'texto' => '',
+            'categoria' => 'Encuentro',
         ]);
 
         return $this->importUpdate($contenido->id);
     }
-
 
     public function importUpdate($id)
     {
@@ -262,7 +263,7 @@ class EventoCrudController extends CrudController
 
         try {
             // inicializa el importador en base a $_FILES
-            $imported = new WordImport();
+            $imported = new WordImport;
 
             // copia las imágenes desde la carpeta temporal al directorio destino, sobreescribiendo las anteriores en la carpeta
             $imported->copyImagesTo($this->getMediaFolder($contenido), true);
@@ -273,11 +274,11 @@ class EventoCrudController extends CrudController
             $contenido->save();
 
             return response()->json([
-                "id" => $contenido->id
+                'id' => $contenido->id,
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
-                "error" => $e->getMessage()
+                'error' => $e->getMessage(),
             ], 500);
         }
     }
@@ -294,9 +295,10 @@ class EventoCrudController extends CrudController
             $imagenesRaw = json_decode($imagenesRaw, true);
         }
 
-        if (!is_array($imagenesRaw) || empty($imagenesRaw)) {
+        if (! is_array($imagenesRaw) || empty($imagenesRaw)) {
             $req->request->set('imagen', '');
             $req->request->set('imagenes', []);
+
             return;
         }
 
@@ -359,15 +361,17 @@ class EventoCrudController extends CrudController
             $inputDates = array_filter(array_map('trim', explode(',', $inputDates)));
         }
 
-        if (!is_array($inputDates)) {
+        if (! is_array($inputDates)) {
             $inputDates = [];
         }
 
         $normalized = [];
         foreach ($inputDates as $d) {
-            if (empty($d)) continue;
+            if (empty($d)) {
+                continue;
+            }
             try {
-                $normalized[] = \Carbon\Carbon::parse($d)->format('Y-m-d');
+                $normalized[] = Carbon::parse($d)->format('Y-m-d');
             } catch (\Throwable $e) {
                 // ignorar
             }
@@ -381,12 +385,12 @@ class EventoCrudController extends CrudController
         $req->request->set('fechas_evento', $csv);
 
         // Si no hay fecha_inicio especificada, establecer la primera
-        if (empty($req->input('fecha_inicio')) && !empty($normalized)) {
+        if (empty($req->input('fecha_inicio')) && ! empty($normalized)) {
             $req->request->set('fecha_inicio', $normalized[0]);
         }
 
         // Si no hay fecha_fin especificada, establecer la última
-        if (empty($req->input('fecha_fin')) && !empty($normalized)) {
+        if (empty($req->input('fecha_fin')) && ! empty($normalized)) {
             $req->request->set('fecha_fin', $normalized[count($normalized) - 1]);
         }
     }

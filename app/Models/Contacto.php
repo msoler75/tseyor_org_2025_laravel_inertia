@@ -2,10 +2,9 @@
 
 namespace App\Models;
 
-use Backpack\CRUD\app\Models\Traits\CrudTrait;
-use App\Models\ContenidoBaseModel;
-use App\Pigmalion\Countries;
 use App\Http\Controllers\ContactosController;
+use App\Pigmalion\Countries;
+use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Laravel\Scout\Searchable;
 
 class Contacto extends ContenidoBaseModel
@@ -27,9 +26,8 @@ class Contacto extends ContenidoBaseModel
         'email',
         'latitud',
         'longitud',
-        'visibilidad'
+        'visibilidad',
     ];
-
 
     public static function boot()
     {
@@ -44,36 +42,34 @@ class Contacto extends ContenidoBaseModel
 
     }
 
-     // ACCESOR
-     public function getNombrePaisAttribute()
-     {
-         return Countries::getCountry($this->pais);
-     }
+    // ACCESOR
+    public function getNombrePaisAttribute()
+    {
+        return Countries::getCountry($this->pais);
+    }
 
+    // obtiene el texto para el buscador, lo que nos interesa que encuentre de este contenido
+    public function getTextoContenidoBuscador()
+    {
+        return $this->poblacion.', '.$this->NombrePais;
+    }
 
-     // obtiene el texto para el buscador, lo que nos interesa que encuentre de este contenido
-     public function getTextoContenidoBuscador() {
-        return $this->poblacion .", ". $this->NombrePais;
-     }
+    public function centro() // centro relacionado con este contacto (si lo hay)
+    {
+        return $this->hasOne(Centro::class, 'contacto_id');
+    }
 
+    public function usuario() // usuario relacionado con este contacto (si lo hay)
+    {
+        return $this->hasOne(User::class, 'contacto_id');
+    }
 
-     public function centro() // centro relacionado con este contacto (si lo hay)
-     {
-         return $this->hasOne(Centro::class, 'contacto_id');
-     }
+    // para convertir los paises en texto buscable para Scout
+    public function toSearchableArray()
+    {
+        $array = $this->toArray();
+        $array['pais_nombre'] = $this->NombrePais;
 
-     public function usuario() // usuario relacionado con este contacto (si lo hay)
-     {
-         return $this->hasOne(User::class, 'contacto_id');
-     }
-
-
-     // para convertir los paises en texto buscable para Scout
-     public function toSearchableArray()
-     {
-         $array = $this->toArray();
-         $array['pais_nombre'] = $this->NombrePais;
-         return $array;
-     }
-
+        return $array;
+    }
 }

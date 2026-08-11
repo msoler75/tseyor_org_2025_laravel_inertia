@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Galeria;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Inertia\Response;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
 
 class GaleriaController extends Controller
@@ -18,8 +20,9 @@ class GaleriaController extends Controller
 
         $query = Galeria::select('id', 'titulo', 'descripcion', 'imagen', 'created_at', 'updated_at');
 
-         if ($buscar)
+        if ($buscar) {
             $query->buscar($buscar);
+        }
 
         $resultados = $query
             ->orderBy('created_at', 'desc')
@@ -29,6 +32,7 @@ class GaleriaController extends Controller
         // Agregar imagen_principal a cada galeria
         $resultados->getCollection()->transform(function ($galeria) {
             $galeria->imagen_principal = $galeria->imagen_principal;
+
             return $galeria;
         });
 
@@ -41,15 +45,15 @@ class GaleriaController extends Controller
                     title: 'Galerías - Tseyor',
                     description: 'Explora nuestras colecciones de imágenes y arte de la comunidad Tseyor.',
                     image: null
-                )
+                ),
             ]);
     }
 
     /**
      * Mostrar la página de una galería específica.
      *
-     * @param  string $id
-     * @return \Inertia\Response
+     * @param  string  $id
+     * @return Response
      */
     public function show($id)
     {
@@ -64,10 +68,10 @@ class GaleriaController extends Controller
         ])
             ->withViewData([
                 'seo' => new SEOData(
-                    title: $galeria->titulo . ' - Galerías Tseyor',
+                    title: $galeria->titulo.' - Galerías Tseyor',
                     description: $galeria->descripcion ?? 'Explora esta galería de imágenes.',
                     image: $galeria->imagen_principal
-                )
+                ),
             ]);
     }
 
@@ -75,11 +79,11 @@ class GaleriaController extends Controller
      * Devolver la información de una galería específica en formato JSON (API).
      *
      * @param  int  $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function apiShow($id)
     {
-         if (is_numeric($id)) {
+        if (is_numeric($id)) {
             $galeria = Galeria::with(['items.nodo', 'items.user'])->findOrFail($id);
         } else {
             $galeria = Galeria::with(['items.nodo', 'items.user'])->where('slug', $id)->firstOrFail();
@@ -100,7 +104,7 @@ class GaleriaController extends Controller
                         'id' => $item->user->id,
                         'name' => $item->user->name,
                         'slug' => $item->user->slug ?? null,
-                        'url' => route('usuario', ['slug' => $item->user->slug ?? $item->user->id])
+                        'url' => route('usuario', ['slug' => $item->user->slug ?? $item->user->id]),
                     ] : null,
                 ];
             }),

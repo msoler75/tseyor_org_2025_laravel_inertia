@@ -2,12 +2,12 @@
 
 namespace App\Services;
 
-
+use App\Models\Contenido;
 use App\Models\EnlaceCorto;
 use App\Pigmalion\AnalyticsHelper;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class EnlaceCortoService
 {
@@ -23,13 +23,13 @@ class EnlaceCortoService
         array $seoData = []
     ): EnlaceCorto {
         // Validar URL
-        if (!filter_var($urlOriginal, FILTER_VALIDATE_URL)) {
+        if (! filter_var($urlOriginal, FILTER_VALIDATE_URL)) {
             Log::error('[EnlaceCortoService] URL no válida', ['url' => $urlOriginal]);
             throw new \InvalidArgumentException('URL no válida');
         }
 
         // Detectar automáticamente el prefijo si no se proporciona
-        if (!$prefijo) {
+        if (! $prefijo) {
             $prefijo = $this->detectarPrefijo($urlOriginal);
             Log::info('[EnlaceCortoService] Prefijo detectado', ['url' => $urlOriginal, 'prefijo' => $prefijo]);
         }
@@ -41,6 +41,7 @@ class EnlaceCortoService
             ->first();
         if ($existing) {
             Log::info('[EnlaceCortoService] Enlace existente encontrado', ['url' => $urlOriginal, 'prefijo' => $prefijo, 'codigo' => $existing->codigo]);
+
             return $existing;
         }
 
@@ -57,7 +58,7 @@ class EnlaceCortoService
         }
 
         // Si no se encontró en Contenido, extraer desde la URL
-        if (!$metadatos) {
+        if (! $metadatos) {
             $metadatos = $this->extraerMetadatosSEO($urlOriginal, $seoData);
         }        // Crear enlace
         $enlace = EnlaceCorto::create([
@@ -97,14 +98,13 @@ class EnlaceCortoService
             'prefijo' => $prefijo,
             'tipo' => $tipoEnlace,
             'tiene_contenido_relacionado' => $contenidoRelacionado !== null,
-            'url_original' => $urlOriginal
+            'url_original' => $urlOriginal,
         ]);
 
         Log::info('[EnlaceCortoService] Enlace creado', ['id' => $enlace->id, 'codigo' => $enlace->codigo, 'prefijo' => $enlace->prefijo, 'url_original' => $enlace->url_original, 'url_corta' => $enlace->url_corta ?? null]);
+
         return $enlace;
     }
-
-
 
     /**
      * Resolver un enlace corto y redirigir
@@ -120,7 +120,7 @@ class EnlaceCortoService
                 ->first();
         });
 
-        if (!$enlace) {
+        if (! $enlace) {
             return null;
         }
 
@@ -157,10 +157,10 @@ class EnlaceCortoService
     /**
      * Buscar contenido relacionado por URL (solo para URLs internas)
      */
-    private function buscarContenidoRelacionado(string $url): ?\App\Models\Contenido
+    private function buscarContenidoRelacionado(string $url): ?Contenido
     {
         // Solo buscar contenido relacionado si es una URL interna
-        if (!$this->esUrlInterna($url)) {
+        if (! $this->esUrlInterna($url)) {
             return null;
         }
 
@@ -173,7 +173,7 @@ class EnlaceCortoService
         $path = parse_url($url, PHP_URL_PATH);
 
         // Buscar en el modelo Contenido
-        return \App\Models\Contenido::where(function ($query) use ($path) {
+        return Contenido::where(function ($query) use ($path) {
             $query->whereRaw("CONCAT('/', coleccion, '/', COALESCE(slug_ref, id_ref)) = ?", [$path])
                 ->orWhere('slug_ref', ltrim($path, '/'));
         })
@@ -231,7 +231,7 @@ class EnlaceCortoService
             'rar',
             '7z',
             'tar',
-            'gz'                      // Archivos comprimidos
+            'gz',                      // Archivos comprimidos
         ];
 
         $extension = strtolower(pathinfo($path, PATHINFO_EXTENSION));
@@ -275,10 +275,10 @@ class EnlaceCortoService
             'webp' => 'Imagen WebP',
             'zip' => 'Archivo ZIP',
             'rar' => 'Archivo RAR',
-            '7z' => 'Archivo 7Z'
+            '7z' => 'Archivo 7Z',
         ];
 
-        $tipoArchivo = $tiposArchivo[$extension] ?? 'Archivo ' . strtoupper($extension);
+        $tipoArchivo = $tiposArchivo[$extension] ?? 'Archivo '.strtoupper($extension);
         $titulo = $nombreSinExtension ?: $nombreArchivo;
         $descripcion = "Descargar {$tipoArchivo}: {$nombreArchivo}";
 
@@ -290,7 +290,7 @@ class EnlaceCortoService
             'og_titulo' => substr($titulo, 0, 95),
             'og_descripcion' => substr($descripcion, 0, 300),
             'og_tipo' => $this->obtenerTipoOgParaArchivo($extension),
-            'twitter_titulo' => substr($titulo, 0, 70)
+            'twitter_titulo' => substr($titulo, 0, 70),
         ];
     }
 
@@ -314,7 +314,7 @@ class EnlaceCortoService
             'png' => 'website',
             'gif' => 'website',
             'svg' => 'website',
-            'webp' => 'website'
+            'webp' => 'website',
         ];
 
         return $tiposOg[$extension] ?? 'website';
@@ -323,7 +323,7 @@ class EnlaceCortoService
     /**
      * Determinar el tipo de enlace para logging
      */
-    private function determinarTipoEnlace(string $url, ?\App\Models\Contenido $contenido): string
+    private function determinarTipoEnlace(string $url, ?Contenido $contenido): string
     {
         if ($contenido) {
             return 'contenido_interno';
@@ -343,7 +343,7 @@ class EnlaceCortoService
     /**
      * Extraer metadatos desde el modelo Contenido
      */
-    private function extraerMetadatosDesdeContenido(\App\Models\Contenido $contenido): array
+    private function extraerMetadatosDesdeContenido(Contenido $contenido): array
     {
         $metadatos = [
             'titulo' => $contenido->titulo,
@@ -362,6 +362,7 @@ class EnlaceCortoService
 
         return $metadatos;
     }
+
     /**
      * Extraer metadatos SEO de una URL
      */
@@ -390,13 +391,14 @@ class EnlaceCortoService
             $context = stream_context_create([
                 'http' => [
                     'timeout' => 5,
-                    'user_agent' => 'Mozilla/5.0 (compatible; TSEYORBot/1.0)'
-                ]
+                    'user_agent' => 'Mozilla/5.0 (compatible; TSEYORBot/1.0)',
+                ],
             ]);
 
             $html = @file_get_contents($url, false, $context);
-            if (!$html) {
+            if (! $html) {
                 $metadatos['titulo'] = parse_url($url, PHP_URL_HOST);
+
                 return $metadatos;
             }
 
@@ -444,12 +446,12 @@ class EnlaceCortoService
         } catch (\Exception $e) {
             Log::warning('Error extrayendo metadatos SEO', [
                 'url' => $url,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
         }
 
         // Fallbacks
-        if (!$metadatos['titulo']) {
+        if (! $metadatos['titulo']) {
             $metadatos['titulo'] = parse_url($url, PHP_URL_HOST);
         }
 
@@ -467,10 +469,9 @@ class EnlaceCortoService
     {
         $count = EnlaceCorto::where('activo', false)->delete();
         Log::info("Limpiados {$count} enlaces cortos inactivos");
+
         return $count;
     }
-
-
 
     /**
      * Validar dominio permitido
@@ -480,7 +481,7 @@ class EnlaceCortoService
         $host = parse_url($url, PHP_URL_HOST);
         $blockedDomains = config('enlaces_cortos.dominios_bloqueados', []);
 
-        return !in_array($host, $blockedDomains);
+        return ! in_array($host, $blockedDomains);
     }
 
     /**
@@ -495,7 +496,7 @@ class EnlaceCortoService
         $codigo = $base;
 
         while (EnlaceCorto::where('prefijo', 'e')->where('codigo', $codigo)->exists()) {
-            $codigo = $base . $sufijo;
+            $codigo = $base.$sufijo;
             $sufijo++;
         }
 
@@ -521,7 +522,7 @@ class EnlaceCortoService
             Log::warning('Error actualizando contador de clics', [
                 'prefijo' => $prefijo,
                 'codigo' => $codigo,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
         }
     }
@@ -530,12 +531,12 @@ class EnlaceCortoService
      * Obtener enlace corto para una URL con toda la lógica de negocio
      * Busca existente o crea nuevo, maneja umbral de longitud, tracking, etc.
      *
-     * @param string $url URL original
-     * @param bool|null $creado Parámetro por referencia que indica si se creó un nuevo enlace
-     * @param bool|null $fueAcortada Parámetro por referencia que indica si la URL fue acortada
+     * @param  string  $url  URL original
+     * @param  bool|null  $creado  Parámetro por referencia que indica si se creó un nuevo enlace
+     * @param  bool|null  $fueAcortada  Parámetro por referencia que indica si la URL fue acortada
      * @return EnlaceCorto|null Modelo del enlace corto o null si no se pudo crear/acortar
      */
-    public function obtenerEnlaceParaUrl(string $url,  &$fueAcortada = null, &$existia = null): ?EnlaceCorto
+    public function obtenerEnlaceParaUrl(string $url, &$fueAcortada = null, &$existia = null): ?EnlaceCorto
     {
         $existia = false;
         $fueAcortada = false;
@@ -557,12 +558,14 @@ class EnlaceCortoService
 
             $fueAcortada = true;
             $existia = true;
+
             return $enlace;
         }
 
         // Verificar si la URL necesita acortarse usando lógica mejorada
-        if (!$this->necesitaAcortarse($url)) {
+        if (! $this->necesitaAcortarse($url)) {
             Log::info('[EnlaceCortoService] URL no necesita acortarse', ['url' => $url]);
+
             return null;
         }
 
@@ -572,12 +575,14 @@ class EnlaceCortoService
             Log::info('[EnlaceCortoService] Nuevo enlace creado', ['url' => $url, 'codigo' => $enlace->codigo, 'prefijo' => $enlace->prefijo, 'url_corta' => $enlace->url_corta ?? null]);
             $fueAcortada = true;
             $existia = false;
+
             return $enlace;
         } catch (\Exception $e) {
             Log::error('[EnlaceCortoService] Error creando enlace corto automático', [
                 'url' => $url,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
+
             return null;
         }
     }
@@ -605,11 +610,13 @@ class EnlaceCortoService
         } catch (\Exception $e) {
             Log::warning('Error creando enlace corto en ContenidoHelper', [
                 'url' => $url,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
+
             return null;
         }
     }
+
     /**
      * Detectar prefijo automáticamente basado en la URL
      */
@@ -631,7 +638,7 @@ class EnlaceCortoService
     /**
      * Determinar si una URL necesita acortarse usando lógica inteligente
      *
-     * @param string $url URL completa a evaluar
+     * @param  string  $url  URL completa a evaluar
      * @return bool true si necesita acortarse, false si no
      */
     public function necesitaAcortarse(string $url): bool
@@ -651,17 +658,18 @@ class EnlaceCortoService
             'path' => $path,
             'longitud_path' => $longitudPath,
             'longitud_query' => $longitudQuery,
-            'umbral_longitud' => $umbralLongitud
+            'umbral_longitud' => $umbralLongitud,
         ]);
 
         // Regla 1: Verificar patrones excluidos (URLs que por patrón no se acortan)
-        if(!$query) { // no pueden tener query para ser excluidos
+        if (! $query) { // no pueden tener query para ser excluidos
             foreach ($patronesExcluidos as $patron) {
-                if (preg_match('/' . $patron . '/', $path)) {
+                if (preg_match('/'.$patron.'/', $path)) {
                     Log::info('[EnlaceCortoService] URL coincide con patrón excluido', [
                         'path' => $path,
-                        'patron' => $patron
+                        'patron' => $patron,
                     ]);
+
                     return false;
                 }
             }
@@ -671,8 +679,9 @@ class EnlaceCortoService
         $query = parse_url($url, component: PHP_URL_QUERY);
         if ($query && strlen($query) > 20) {
             Log::info('[EnlaceCortoService] URL con parámetros largos, sí se acorta', [
-                'query_length' => strlen($query)
+                'query_length' => strlen($query),
             ]);
+
             return true;
         }
 
@@ -681,17 +690,17 @@ class EnlaceCortoService
             Log::info('[EnlaceCortoService] URL larga, sí se acorta', [
                 'longitud_path' => $longitudPath,
                 'longitud_query' => $longitudQuery,
-                'umbral_longitud' => $umbralLongitud
+                'umbral_longitud' => $umbralLongitud,
             ]);
+
             return true;
         }
 
         // Si no cumple ninguna regla de acortamiento, no acortar
         Log::info('[EnlaceCortoService] URL no necesita acortarse', [
-            'longitud_path' => $longitudPath
+            'longitud_path' => $longitudPath,
         ]);
 
         return false;
     }
-
 }

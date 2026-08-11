@@ -2,10 +2,10 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
-use Doctrine\Inflector\InflectorFactory;
 use App\Models\Contenido;
 use App\Pigmalion\ContenidoHelper;
+use Doctrine\Inflector\InflectorFactory;
+use Illuminate\Console\Command;
 
 class ContenidosImport extends Command
 {
@@ -33,16 +33,17 @@ class ContenidosImport extends Command
 
         $coleccion = $this->argument('coleccion');
 
-    $confirmado = $this->option('y');
-    if ($confirmado || $this->confirm('¿Está seguro de que desea recrear los contenidos? Esto borrará los registros actuales.')) {
+        $confirmado = $this->option('y');
+        if ($confirmado || $this->confirm('¿Está seguro de que desea recrear los contenidos? Esto borrará los registros actuales.')) {
 
             // Verificar si la clase del modelo existe
             $inflector = InflectorFactory::create()->build();
             $nombreSingular = $inflector->singularize($coleccion);
-            $claseModelo = 'App\\Models\\' . ucfirst($nombreSingular);
+            $claseModelo = 'App\\Models\\'.ucfirst($nombreSingular);
 
-            if (!class_exists($claseModelo)) {
+            if (! class_exists($claseModelo)) {
                 $this->error("La colección $coleccion no tiene un modelo asociado.");
+
                 return;
             }
 

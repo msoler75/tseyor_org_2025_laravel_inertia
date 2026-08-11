@@ -3,30 +3,37 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\Equipo;
+use App\Traits\CrudContenido;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
+use Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
+use Backpack\CRUD\app\Library\CrudPanel\CrudPanel;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
-
-
+use Backpack\ReviseOperation\ReviseOperation;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Validation\Rule;
 
 /**
  * Class EquipoCrudController
- * @package App\Http\Controllers\Admin
- * @property-read \Backpack\CRUD\app\Library\CrudPanel\CrudPanel $crud
+ *
+ * @property-read CrudPanel $crud
  */
 class EquipoCrudController extends CrudController
 {
-    use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation {
+    use CreateOperation {
         store as traitStore;
     }
-    use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation {
+    use CrudContenido;
+    use DeleteOperation;
+    use ListOperation;
+    use ReviseOperation;
+    use ShowOperation;
+    use UpdateOperation {
         update as traitUpdate;
     }
-    use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
-    use \Backpack\ReviseOperation\ReviseOperation;
-
-    use \App\Traits\CrudContenido;
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
@@ -36,7 +43,7 @@ class EquipoCrudController extends CrudController
     public function setup()
     {
         CRUD::setModel(Equipo::class);
-        CRUD::setRoute(config('backpack.base.route_prefix') . '/equipo');
+        CRUD::setRoute(config('backpack.base.route_prefix').'/equipo');
         CRUD::setEntityNameStrings('equipo', 'equipos');
     }
 
@@ -44,6 +51,7 @@ class EquipoCrudController extends CrudController
      * Define what happens when the List operation is loaded.
      *
      * @see  https://backpackforlaravel.com/docs/crud-operation-list-entries
+     *
      * @return void
      */
     protected function setupListOperation()
@@ -54,14 +62,11 @@ class EquipoCrudController extends CrudController
          * Columns can be defined using the fluent syntax:
          * - CRUD::column('price')->type('number');
          */
-
-
         $this->crud->addColumn([
-            'name'  => 'nombre',
+            'name' => 'nombre',
             'label' => 'Nombre',
-            'type'  => 'text'
+            'type' => 'text',
         ]);
-
 
         $this->crud->addColumn([
             'name' => 'updated_at',
@@ -69,22 +74,20 @@ class EquipoCrudController extends CrudController
             'type' => 'datetime',
         ]);
 
-
         $this->crud->addColumn([
             'name' => 'imagen',
             'label' => 'Imagen',
             'type' => 'image',
             'value' => function ($entry) {
-                return $entry->imagen . '?mh=25';
-            }
+                return $entry->imagen.'?mh=25';
+            },
         ]);
-
 
         $this->crud->addColumn([
             'label' => 'miembros',
             'value' => function ($entry) {
                 return $entry->miembros()->count();
-            }
+            },
         ]);
 
         // CRUD::column('CreadorNombre')->type('text')->label("Creado por");
@@ -94,13 +97,14 @@ class EquipoCrudController extends CrudController
      * Define what happens when the Create operation is loaded.
      *
      * @see https://backpackforlaravel.com/docs/crud-operation-create
+     *
      * @return void
      */
     protected function setupCreateOperation()
     {
         $this->crud->setValidation([
             'nombre' => 'required|min:8',
-            'slug' => [ 'nullable', 'regex:/^[a-z0-9\-]+$/', \Illuminate\Validation\Rule::unique('equipos', 'slug')->ignore($this->crud->getCurrentEntryId()) ],
+            'slug' => ['nullable', 'regex:/^[a-z0-9\-]+$/', Rule::unique('equipos', 'slug')->ignore($this->crud->getCurrentEntryId())],
             'descripcion' => 'required|max:400',
             'anuncio' => 'max:400',
             'informacion' => 'max:400',
@@ -116,29 +120,28 @@ class EquipoCrudController extends CrudController
 
         // CRUD::field('user')->type('select');
 
+        CRUD::field('nombre')->type('text')->attributes(['maxlength' => 64]);
 
-        CRUD::field('nombre')->type('text')->attributes(['maxlength'=>64]);
-
-        CRUD::field('slug')->type('text')->attributes(['maxlength'=>64])->hint('Puedes dejarlo en blanco');
+        CRUD::field('slug')->type('text')->attributes(['maxlength' => 64])->hint('Puedes dejarlo en blanco');
 
         CRUD::field([   // select_from_array
             'name' => 'categoria',
-            'label' => "Categoría",
+            'label' => 'Categoría',
             'type' => 'select_from_array',
-            'options' => [''=>'Sin definir', 'UTG'=>'UTG', 'ONG'=>'ONG', 'Casas y Muulasterios'=>'Casas y Muulasterios'],
+            'options' => ['' => 'Sin definir', 'UTG' => 'UTG', 'ONG' => 'ONG', 'Casas y Muulasterios' => 'Casas y Muulasterios'],
             'allows_null' => false,
             'default' => 'Pueblo Tseyor',
             // 'allows_multiple' => true, // OPTIONAL; needs you to cast this to array in your model;
             'wrapper' => [
-                'class' => 'form-group col-md-4'
+                'class' => 'form-group col-md-4',
             ],
-        ])->after("slug");
+        ])->after('slug');
 
-        CRUD::field('descripcion')->type('textarea')->attributes(['maxlength'=>400]);
+        CRUD::field('descripcion')->type('textarea')->attributes(['maxlength' => 400]);
 
         $folder = $this->getMediaFolder();
 
-        CRUD::field('imagen')->type('image_cover')->attributes(['folder' => $folder, 'initial-images'=> '/almacen/medios/equipos/equipo1.jpg,/almacen/medios/equipos/equipo2.jpg,/almacen/medios/equipos/equipo3.jpg,/almacen/medios/equipos/equipo4.jpg,/almacen/medios/equipos/equipo5.jpg']);
+        CRUD::field('imagen')->type('image_cover')->attributes(['folder' => $folder, 'initial-images' => '/almacen/medios/equipos/equipo1.jpg,/almacen/medios/equipos/equipo2.jpg,/almacen/medios/equipos/equipo3.jpg,/almacen/medios/equipos/equipo4.jpg,/almacen/medios/equipos/equipo5.jpg']);
 
         CRUD::field('anuncio')->type('tiptap_editor_simple');
 
@@ -149,22 +152,22 @@ class EquipoCrudController extends CrudController
         CRUD::field('grupo')->type('hidden');
 
         $this->crud->addField([
-            'name'              => 'CoordinadoresJSON',
-            'label'             => 'Coordinadores',
-            'type'              => 'select_model',
+            'name' => 'CoordinadoresJSON',
+            'label' => 'Coordinadores',
+            'type' => 'select_model',
             'model' => 'user',
             'options' => null,
             'multiple' => true,
         ]);
 
         $this->crud->addField([
-            'name'              => 'MiembrosJSON',
-            'label'             => 'Miembros',
-            'type'              => 'select_model',
+            'name' => 'MiembrosJSON',
+            'label' => 'Miembros',
+            'type' => 'select_model',
             'model' => 'user',
             'options' => null,
             'multiple' => true,
-            'hint' => 'Opcionalmente puedes poner aquí también a los coordinadores, aunque no es necesario. Pulsa espacio para cargar todos los usuarios, o escribe para buscar'
+            'hint' => 'Opcionalmente puedes poner aquí también a los coordinadores, aunque no es necesario. Pulsa espacio para cargar todos los usuarios, o escribe para buscar',
         ]);
 
         CRUD::field('oculto')->type('checkbox')->label('Ocultar equipo')->hint('Es un equipo privado');
@@ -178,6 +181,7 @@ class EquipoCrudController extends CrudController
      * Define what happens when the Update operation is loaded.
      *
      * @see https://backpackforlaravel.com/docs/crud-operation-update
+     *
      * @return void
      */
     protected function setupUpdateOperation()
@@ -185,18 +189,15 @@ class EquipoCrudController extends CrudController
         $this->setupCreateOperation();
     }
 
-
     public function show($id)
     {
         return redirect("/equipos/$id");
     }
 
-
-
     /**
      * Store a newly created resource in the database.
      *
-     * @return \Illuminate\Http\RedirectResponse
+     * @return RedirectResponse
      */
     public function store()
     {
@@ -205,16 +206,15 @@ class EquipoCrudController extends CrudController
 
         $r = $this->traitStore();
 
-        $this->actualizarMiembros($this->crud->entry->id, $this->crud->getRequest()->CoordinadoresJSON,  $this->crud->getRequest()->MiembrosJSON);
+        $this->actualizarMiembros($this->crud->entry->id, $this->crud->getRequest()->CoordinadoresJSON, $this->crud->getRequest()->MiembrosJSON);
 
         return $r;
     }
 
-
     /**
      * Update the specified resource in the database.
      *
-     * @return \Illuminate\Http\RedirectResponse
+     * @return RedirectResponse
      */
     public function update()
     {
@@ -223,11 +223,10 @@ class EquipoCrudController extends CrudController
 
         $r = $this->traitUpdate();
 
-        $this->actualizarMiembros($this->crud->entry->id, $this->crud->getRequest()->CoordinadoresJSON,  $this->crud->getRequest()->MiembrosJSON);
+        $this->actualizarMiembros($this->crud->entry->id, $this->crud->getRequest()->CoordinadoresJSON, $this->crud->getRequest()->MiembrosJSON);
 
         return $r;
     }
-
 
     /**
      * Actualiza los miembros del equipo y sus roles
@@ -258,7 +257,7 @@ class EquipoCrudController extends CrudController
 
         // Obtener los miembros que deben ser removidos
         $miembros_a_remover = $miembros_actuales->filter(function ($miembro) use ($coordinadores_ids, $miembros_ids) {
-            return !in_array($miembro->id, $coordinadores_ids) && !in_array($miembro->id, $miembros_ids);
+            return ! in_array($miembro->id, $coordinadores_ids) && ! in_array($miembro->id, $miembros_ids);
         });
 
         // Remover las membresías que ya no pertenecen al equipo ni son coordinadores

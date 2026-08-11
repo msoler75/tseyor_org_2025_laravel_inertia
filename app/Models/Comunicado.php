@@ -2,14 +2,12 @@
 
 namespace App\Models;
 
-use Backpack\CRUD\app\Models\Traits\CrudTrait;
-use App\Models\ContenidoConAudios;
-use Laravel\Scout\Searchable;
+use App\Pigmalion\Markdown;
 use App\Pigmalion\StorageItem;
+use App\Services\PDFGenerator;
+use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Log;
-
-
+use Laravel\Scout\Searchable;
 
 class Comunicado extends ContenidoConAudios
 {
@@ -35,32 +33,26 @@ class Comunicado extends ContenidoConAudios
         'fechaComunicado',
     ];
 
-
     public $sortable = [
-        'fechaComunicado'
+        'fechaComunicado',
     ];
-
 
     public static function boot()
     {
         parent::boot();
 
         static::updated(function ($comunicado) {
-            $pdf_path = storage_path('app/public/comunicados/' . $comunicado->id . '.pdf');
+            $pdf_path = storage_path('app/public/comunicados/'.$comunicado->id.'.pdf');
             if (file_exists($pdf_path)) {
                 unlink($pdf_path);
             }
         });
     }
 
-
-
-
     public function getPdfPathAttribute()
     {
-        return 'pdf/comunicados/' . $this->ano . '/' . $this->pdf_filename;
+        return 'pdf/comunicados/'.$this->ano.'/'.$this->pdf_filename;
     }
-
 
     // hooks del modelo
     protected static function booted()
@@ -82,8 +74,6 @@ class Comunicado extends ContenidoConAudios
     }
     */
 
-
-
     // ContenidoConAudios
 
     /**
@@ -91,16 +81,16 @@ class Comunicado extends ContenidoConAudios
      **/
     public function generarNombreAudio($index)
     {
-        $tipo = "";
+        $tipo = '';
         switch (intval($this->categoria)) {
             case 1:
-                $tipo = " TAP";
+                $tipo = ' TAP';
                 break;
             case 2:
-                $tipo = " DDM";
+                $tipo = ' DDM';
                 break;
             case 3:
-                $tipo = " MUUL";
+                $tipo = ' MUUL';
                 break;
         }
 
@@ -109,14 +99,14 @@ class Comunicado extends ContenidoConAudios
         $multiple = count($audios) > 1;
 
         $name1 = "TSEYOR $fecha ({$this->numero})";
-        $name2 =  $tipo;
+        $name2 = $tipo;
         $letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
         $suffix = $letters[$index];
-        $name3 = $multiple ? " " . $suffix : "";
-        $name = $name1 . $name2 . $name3 . ".mp3";
+        $name3 = $multiple ? ' '.$suffix : '';
+        $name = $name1.$name2.$name3.'.mp3';
+
         return $name;
     }
-
 
     // ACCESSORS
 
@@ -124,13 +114,13 @@ class Comunicado extends ContenidoConAudios
     {
         switch ($this->categoria) {
             case 1:
-                return "TAP";
+                return 'TAP';
             case 2:
-                return "12 del M.";
+                return '12 del M.';
             case 3:
-                return "Muul";
+                return 'Muul';
             default:
-                "General";
+                'General';
         }
     }
 
@@ -290,8 +280,10 @@ class Comunicado extends ContenidoConAudios
         $coleccion = $this->getTable();
         $folderCompleto = $this->id ? "/almacen/medios/$coleccion/{$this->ano}/{$this->id}" : self::getCarpetaMediosTemp();
         StorageItem::ensureDirExists($folderCompleto);
-        if ($formatoRutaRelativa)
+        if ($formatoRutaRelativa) {
             return (new StorageItem($folderCompleto))->relativeLocation;
+        }
+
         return $folderCompleto;
     }
 
@@ -302,9 +294,8 @@ class Comunicado extends ContenidoConAudios
      */
     public function shouldBeSearchable(): bool
     {
-        return $this->visibilidad == 'P' && !$this->deleted_at;
+        return $this->visibilidad == 'P' && ! $this->deleted_at;
     }
-
 
     /**
      * Get the indexable data array for the model.
@@ -318,19 +309,18 @@ class Comunicado extends ContenidoConAudios
             // <- Always include the primary key
             'title' => $this->titulo,
             'description' => $this->descripcion,
-            'content' => \App\Pigmalion\Markdown::removeMarkdown($this->texto),
+            'content' => Markdown::removeMarkdown($this->texto),
             'categoria' => $this->categoria,
             'numero' => $this->numero,
             // 'fecha_comunicado' => $this->fecha_comunicado,
-            'ano' => $this->ano
+            'ano' => $this->ano,
         ];
     }
-
 
     // PDF
 
     public function generatePdf()
     {
-        return \App\Services\PDFGenerator::generatePdf($this, 'contenido-sin-titulo-pdf');
+        return PDFGenerator::generatePdf($this, 'contenido-sin-titulo-pdf');
     }
 }

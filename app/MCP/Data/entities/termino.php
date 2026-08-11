@@ -11,7 +11,7 @@ return [
             'texto' => ['type' => 'string', 'description' => 'Definición o explicación'],
             'ref_terminos' => ['type' => 'string', 'description' => 'Referencias a otros términos'],
             'ref_libros' => ['type' => 'string', 'description' => 'Referencias a libros'],
-            'visibilidad' => ['type' => 'string', 'description' => '"P"=publicado, "B"=borrador']
-        ]
+            'visibilidad' => ['type' => 'string', 'description' => '"P"=publicado, "B"=borrador'],
+        ],
     ],
 ];

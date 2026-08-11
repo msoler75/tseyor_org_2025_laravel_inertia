@@ -22,6 +22,4 @@ class TestJob implements ShouldQueue
 
         Log::info('Fin del trabajo de prueba');
     }
-
-
 }

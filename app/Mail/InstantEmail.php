@@ -5,19 +5,19 @@ namespace App\Mail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Queue\SerializesModels;
-use App\Models\Email;
 
 /**
  * Sirve para enviar un mensaje sin posibilidad de encolarlo (queue)
  * Acepta archivos adjuntos
  */
-
 class InstantEmail extends Mailable  // implements ShouldQueue
 {
     // use Queueable, SerializesModels;
 
     public $data;
+
     public $view;
 
     public function __construct(string $view, array $data)
@@ -28,7 +28,8 @@ class InstantEmail extends Mailable  // implements ShouldQueue
 
     public function build()
     {
-        $defaultfrom = config("mail.from.address", "web@tseyor.org");
+        $defaultfrom = config('mail.from.address', 'web@tseyor.org');
+
         return $this->from($this->data['from'] ?? $defaultfrom)
             ->replyTo($this->data['replyTo'] ?? null)
             ->subject($this->data['subject'] ?? 'Mensaje desde tseyor.org')
@@ -36,16 +37,13 @@ class InstantEmail extends Mailable  // implements ShouldQueue
             ->with($this->data);
     }
 
-
     /**
      * Get the attachments for the message.
      *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
+     * @return array<int, Attachment>
      */
     public function attachments(): array
     {
         return $this->data['attachments'] ?? [];
     }
-
-
 }

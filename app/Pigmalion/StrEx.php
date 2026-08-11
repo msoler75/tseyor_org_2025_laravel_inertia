@@ -6,16 +6,16 @@ use Illuminate\Support\Str;
 
 class StrEx extends Str
 {
-
     public static function removerAcentosIconv($texto)
     {
         $texto = iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $texto);
+
         return $texto;
     }
 
     public static function removerAcentosStrtr($texto)
     {
-        $acentos = array(
+        $acentos = [
             'á' => 'a',
             'é' => 'e',
             'í' => 'i',
@@ -27,18 +27,18 @@ class StrEx extends Str
             'Í' => 'I',
             'Ó' => 'O',
             'Ú' => 'U',
-            //'Ñ'=>'N',
-            //'ñ'=> 'n'
+            // 'Ñ'=>'N',
+            // 'ñ'=> 'n'
             // Agrega más caracteres acentuados y sus correspondientes sin acento si es necesario
-        );
+        ];
         $texto = strtr($texto, $acentos);
+
         return $texto;
     }
 
-
     public static function removerAcentosRegex1($texto)
     {
-        $acentos = array(
+        $acentos = [
             '/[áàâãªä]/u' => 'a',
             '/[ÁÀÂÃÄ]/u' => 'A',
             '/[éèêë]/u' => 'e',
@@ -50,10 +50,11 @@ class StrEx extends Str
             '/[úùûü]/u' => 'u',
             '/[ÚÙÛÜ]/u' => 'U',
             '/ç/' => 'c',
-            '/Ç/' => 'C'
+            '/Ç/' => 'C',
             // Agrega más caracteres acentuados y sus correspondientes sin acento si es necesario
-        );
+        ];
         $texto = preg_replace(array_keys($acentos), array_values($acentos), $texto);
+
         return $texto;
     }
 
@@ -65,10 +66,12 @@ class StrEx extends Str
                 $char = $matches[0];
                 $accented = htmlentities($char, ENT_QUOTES, 'UTF-8');
                 $unaccented = html_entity_decode(preg_replace('/&([a-zA-Z])(uml|acute|grave|circ|tilde|cedil);/', '$1', $accented), ENT_QUOTES, 'UTF-8');
+
                 return $unaccented;
             },
             $string
         );
+
         return $string;
     }
 
@@ -79,11 +82,13 @@ class StrEx extends Str
         $str = mb_ereg_replace('[íÍ]', 'i', $str);
         $str = mb_ereg_replace('[óÓ]', 'o', $str);
         $str = mb_ereg_replace('[úÚ]', 'u', $str);
+
         // $str = mb_ereg_replace('[^A-Za-z0-9]', ' ', $str);
         return $str;
     }
 
-    public static function removerAcentos($texto) {
+    public static function removerAcentos($texto)
+    {
         return self::removerAcentosStrtr($texto);
     }
 
@@ -91,9 +96,9 @@ class StrEx extends Str
     {
         $str = self::removerAcentosStrtr($str);
         $str = preg_replace('/[^A-Za-z0-9ñÑçÇ"]/u', ' ', $str);
+
         return $str;
     }
-
 
     /**
      * Retorna un porcentaje de similitud
@@ -105,8 +110,6 @@ class StrEx extends Str
 
         // Calcula la distancia de Levenshtein entre las dos cadenas
         $levenshteinDistance = levenshtein($str1, $str2);
-
-
 
         // Calcula la longitud de la cadena más larga entre las dos
         $maxLen = max(strlen($str1), strlen($str2));

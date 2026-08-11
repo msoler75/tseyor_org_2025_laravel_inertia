@@ -2,11 +2,14 @@
 
 namespace Tests\Feature\MCP;
 
+use App\Http\Controllers\VideosController;
+use App\Models\Video;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class VideoToolTest extends McpFeatureTestCase
 {
     use DatabaseTransactions;
+
     public function test_info_video()
     {
         $result = $this->callMcpTool('info', ['entidad' => 'video']);
@@ -24,18 +27,18 @@ class VideoToolTest extends McpFeatureTestCase
 
     public function test_listar_videos()
     {
-        $pp = \App\Http\Controllers\VideosController::$ITEMS_POR_PAGINA;
+        $pp = VideosController::$ITEMS_POR_PAGINA;
         // crear algunos videos de prueba
         for ($i = 0; $i < $pp + 4; $i++) {
-            \App\Models\Video::create([
-                'titulo' => 'Video ' . $i,
-                'slug' => 'video-' . $i . '-' . uniqid(),
-                'descripcion' => 'Desc ' . $i,
-                'enlace' => 'https://video' . $i . '.com',
+            Video::create([
+                'titulo' => 'Video '.$i,
+                'slug' => 'video-'.$i.'-'.uniqid(),
+                'descripcion' => 'Desc '.$i,
+                'enlace' => 'https://video'.$i.'.com',
                 'visibilidad' => 'P',
             ]);
         }
-        $this->makeAllSearchable(\App\Models\Video::class);
+        $this->makeAllSearchable(Video::class);
         $result = $this->callMcpTool('listar', ['entidad' => 'video']);
         $this->assertIsArray($result);
         $this->assertArrayHasKey('listado', $result);
@@ -59,14 +62,14 @@ class VideoToolTest extends McpFeatureTestCase
 
     public function test_ver_video()
     {
-        $video = \App\Models\Video::create([
+        $video = Video::create([
             'titulo' => 'Video Test',
-            'slug' => 'video-test-' . uniqid(),
+            'slug' => 'video-test-'.uniqid(),
             'descripcion' => 'Desc',
             'enlace' => 'https://video-test.com',
             'visibilidad' => 'P',
         ]);
-        $result = $this->callMcpTool('ver', ['entidad'=>'video', 'slug' => $video->slug]);
+        $result = $this->callMcpTool('ver', ['entidad' => 'video', 'slug' => $video->slug]);
         $this->assertIsArray($result);
         $this->assertArrayHasKey('video', $result);
         $this->assertEquals($video->slug, $result['video']['slug'] ?? $result['video']->slug ?? null);
@@ -78,12 +81,12 @@ class VideoToolTest extends McpFeatureTestCase
             'entidad' => 'video',
             'data' => [
                 'titulo' => 'Nuevo Video',
-                'slug' => 'nuevo-video-' . uniqid(),
+                'slug' => 'nuevo-video-'.uniqid(),
                 'descripcion' => 'Descripción de prueba',
                 'enlace' => 'https://nuevo-video.com',
                 'visibilidad' => 'P',
             ],
-            'token' => config('mcp-server.tokens.admin')
+            'token' => config('mcp-server.tokens.admin'),
         ];
         $this->callMcpTool('crear', $params);
         $this->assertDatabaseHas('videos', ['slug' => $params['data']['slug']]);
@@ -91,9 +94,9 @@ class VideoToolTest extends McpFeatureTestCase
 
     public function test_editar_video()
     {
-        $video = \App\Models\Video::create([
+        $video = Video::create([
             'titulo' => 'Editar Video',
-            'slug' => 'editar-video-' . uniqid(),
+            'slug' => 'editar-video-'.uniqid(),
             'descripcion' => 'Desc',
             'enlace' => 'https://editar-video.com',
             'visibilidad' => 'P',
@@ -103,9 +106,9 @@ class VideoToolTest extends McpFeatureTestCase
             'entidad' => 'video',
             'id' => $video->id,
             'data' => [
-                'descripcion' => $nuevaDescripcion
+                'descripcion' => $nuevaDescripcion,
             ],
-            'token' => config('mcp-server.tokens.admin')
+            'token' => config('mcp-server.tokens.admin'),
         ];
         $this->callMcpTool('editar', $params);
         $this->assertDatabaseHas('videos', ['id' => $video->id, 'descripcion' => $nuevaDescripcion]);
@@ -113,9 +116,9 @@ class VideoToolTest extends McpFeatureTestCase
 
     public function test_eliminar_video()
     {
-        $video = \App\Models\Video::create([
+        $video = Video::create([
             'titulo' => 'Eliminar Video',
-            'slug' => 'eliminar-video-' . uniqid(),
+            'slug' => 'eliminar-video-'.uniqid(),
             'descripcion' => 'Desc',
             'enlace' => 'https://eliminar-video.com',
             'visibilidad' => 'P',
@@ -124,7 +127,7 @@ class VideoToolTest extends McpFeatureTestCase
             'entidad' => 'video',
             'id' => $video->id,
             'force' => true,
-            'token' => config('mcp-server.tokens.admin')
+            'token' => config('mcp-server.tokens.admin'),
         ];
         $this->callMcpTool('eliminar', $params);
         $this->assertDatabaseMissing('videos', ['id' => $video->id]);

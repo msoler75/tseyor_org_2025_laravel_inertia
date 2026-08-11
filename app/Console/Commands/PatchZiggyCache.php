@@ -7,6 +7,7 @@ use Illuminate\Console\Command;
 class PatchZiggyCache extends Command
 {
     protected $signature = 'ziggy:patch-cache';
+
     protected $description = 'Apply file-based route cache to Ziggy for cross-request performance';
 
     private const MARKER = 'el archivo ziggy se guarda en cache';
@@ -38,6 +39,7 @@ PHP;
 
         if (! file_exists($path)) {
             $this->error("Ziggy source not found at: $path");
+
             return self::FAILURE;
         }
 
@@ -45,18 +47,20 @@ PHP;
 
         if (str_contains($content, self::MARKER)) {
             $this->info('[Ziggy] File-based route cache already applied.');
+
             return self::SUCCESS;
         }
 
         // Try Ziggy v1 pattern: if (! static::$cache) { static::$cache = $this->nameKeyedRoutes(); }
         $v1pattern = '/(if\s*\(\s*!\s*static\s*::\s*\$cache\s*\)\s*\{)\s*static\s*::\s*\$cache\s*=\s*\$this->nameKeyedRoutes\s*\(\s*\)\s*;\s*(\})/s';
-        $v1replacement = '$1' . "\n" . self::CACHE_BLOCK . "\n" . '$2';
+        $v1replacement = '$1'."\n".self::CACHE_BLOCK."\n".'$2';
 
         $patched = preg_replace($v1pattern, $v1replacement, $content, -1, $count);
 
         if ($count === 1) {
             file_put_contents($path, $patched);
             $this->info('[Ziggy v1] File-based route cache applied successfully.');
+
             return self::SUCCESS;
         }
 
@@ -75,10 +79,12 @@ PHP;
         if ($count === 1) {
             file_put_contents($path, $patched);
             $this->info('[Ziggy v2] File-based route cache applied successfully.');
+
             return self::SUCCESS;
         }
 
-        $this->error("[Ziggy] Could not identify the constructor cache block. Ziggy version may be unsupported.");
+        $this->error('[Ziggy] Could not identify the constructor cache block. Ziggy version may be unsupported.');
+
         return self::FAILURE;
     }
 }

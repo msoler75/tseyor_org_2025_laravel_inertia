@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use Inertia\Inertia;
-use Illuminate\Http\Request;
 use App\Models\Tutorial;
-use App\Pigmalion\SEO;
 use App\Pigmalion\BusquedasHelper;
+use App\Pigmalion\SEO;
+use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class TutorialesController extends Controller
 {
@@ -21,33 +21,33 @@ class TutorialesController extends Controller
         $query = Tutorial::select(['slug', 'titulo', 'descripcion', 'updated_at', 'categoria'])
             ->publicado();
 
-        if ($buscar)
+        if ($buscar) {
             $query->buscar($buscar);
-        else if ($categoria == '_') // todos por orden alfabético
+        } elseif ($categoria == '_') { // todos por orden alfabético
             $query->orderBy('titulo', 'asc');
-        else if ($categoria)
+        } elseif ($categoria) {
             $query->where('categoria', $categoria);
-        else
+        } else {
             $query->latest('updated_at');
+        }
 
         $resultados = $query->paginate(self::$ITEMS_POR_PAGINA, ['*'], 'page', $page)
             ->appends($request->except('page'));
 
-        if ($buscar)
+        if ($buscar) {
             BusquedasHelper::formatearResultados($resultados, $buscar);
+        }
 
-        $categorias = (new Tutorial())->getCategorias();
+        $categorias = (new Tutorial)->getCategorias();
 
         return Inertia::render('Tutoriales/Index', [
             'categoriaActiva' => $categoria,
             'filtrado' => $buscar,
             'listado' => $resultados,
-            'categorias' => $categorias
+            'categorias' => $categorias,
         ])
             ->withViewData(SEO::get('Tutoriales'));
     }
-
-
 
     public function show($id)
     {
@@ -60,7 +60,7 @@ class TutorialesController extends Controller
         $borrador = request()->has('borrador');
         $publicado = $tutorial->visibilidad == 'P';
         $editor = optional(auth()->user())->can('administrar contenidos');
-        if (!$tutorial || (!$publicado && !$borrador && !$editor)) {
+        if (! $tutorial || (! $publicado && ! $borrador && ! $editor)) {
             abort(404); // Item no encontrado o no autorizado
         }
 

@@ -2,23 +2,21 @@
 
 namespace App\Imports;
 
-use \DateTime;
-use \Exception;
+use App\Pigmalion\StorageItem;
 use App\Services\WordImport;
+use DateTime;
 // use Illuminate\Support\Str;
 // use Illuminate\Support\Facades\Log;
 // use Illuminate\Support\Facades\Storage;
-use App\Pigmalion\StorageItem;
+use Exception;
 
-
-class Comunicado extends \App\Models\Comunicado {
+class Comunicado extends \App\Models\Comunicado
+{
     protected $revisionEnabled = false;
 }
 
-
 class ComunicadoImport
 {
-
     public static function importar()
     {
 
@@ -26,7 +24,7 @@ class ComunicadoImport
         $lista_comunicados = base_path('resources/data/comunicados.lst');
 
         // Ruta a la carpeta donde están los audios originales
-        $carpeta_audios_originales = "D:\\tseyor.org\\biblioteca\\comunicados\\audios";
+        $carpeta_audios_originales = 'D:\\tseyor.org\\biblioteca\\comunicados\\audios';
 
         // Leer el archivo línea por línea
         $lineas = file($lista_comunicados, FILE_IGNORE_NEW_LINES);
@@ -45,21 +43,21 @@ class ComunicadoImport
             $nombresMp3 = isset($campos[5]) ? explode(',', $campos[5]) : [];
             $categoriaIdx = 0;
             switch ($categoria) {
-                case "GEN":
+                case 'GEN':
                     $categoriaIdx = 0;
                     break;
-                case "TAP":
+                case 'TAP':
                     $categoriaIdx = 1;
                     break;
-                case "DDM":
+                case 'DDM':
                     $categoriaIdx = 2;
                     break;
-                case "MUUL":
+                case 'MUUL':
                     $categoriaIdx = 3;
                     break;
             }
 
-            $tituloFormato = ($categoria == 'GEN' ? '' : $categoria . " ") . $numero . ". " . $titulo;
+            $tituloFormato = ($categoria == 'GEN' ? '' : $categoria.' ').$numero.'. '.$titulo;
 
             echo "$numero $categoria $fecha $titulo ... ";
 
@@ -75,42 +73,41 @@ class ComunicadoImport
 
                 $archivoWord = self::searchDocx($numero, $categoria, $fecha);
 
-                if (!$archivoWord) {
-                    die("Importación detenida. No encontramos archivo word para este comunicado: $numero $categoria $fecha $titulo\n");
+                if (! $archivoWord) {
+                    exit("Importación detenida. No encontramos archivo word para este comunicado: $numero $categoria $fecha $titulo\n");
                 }
-
 
                 $dateObj = DateTime::createFromFormat('y/m/d', $fecha);
 
-                if (!$dateObj) {
+                if (! $dateObj) {
                     echo "Error en formato de Fecha para $fecha\n";
-                    die;
+                    exit;
                 }
 
                 $año = $dateObj->format('Y');
 
                 // verificamos audios
-                $prefijo = "TSEYOR ";
+                $prefijo = 'TSEYOR ';
                 foreach ($nombresMp3 as $nombreMp3) {
                     if ($nombreMp3) {
-                        $origMp3 = realpath($carpeta_audios_originales . "/" . $prefijo . $nombreMp3 . '.mp3');
-                        if(!$origMp3)
-                        die("No se ha encontrado ".$carpeta_audios_originales . "/" . $prefijo . $nombreMp3 . '.mp3');
+                        $origMp3 = realpath($carpeta_audios_originales.'/'.$prefijo.$nombreMp3.'.mp3');
+                        if (! $origMp3) {
+                            exit('No se ha encontrado '.$carpeta_audios_originales.'/'.$prefijo.$nombreMp3.'.mp3');
+                        }
                     }
                 }
 
                 // echo "Creamos la entrada de comunicado.\n";
 
                 $contenido = Comunicado::create([
-                    "titulo" => $tituloFormato,
-                    "texto" => "",
-                    "numero" => $numero,
-                    "categoria" => $categoriaIdx,
-                    "fecha_comunicado" => $dateObj->format('Y-m-d'),
-                    "ano" => $año,
-                    "visibilidad" => 'B',
+                    'titulo' => $tituloFormato,
+                    'texto' => '',
+                    'numero' => $numero,
+                    'categoria' => $categoriaIdx,
+                    'fecha_comunicado' => $dateObj->format('Y-m-d'),
+                    'ano' => $año,
+                    'visibilidad' => 'B',
                 ]);
-
 
                 $imported = null;
 
@@ -125,16 +122,16 @@ class ComunicadoImport
                     $imported->copyImagesTo($contenido->getCarpetaMedios(), true);
 
                     // Rutas de las carpetas
-                    $rutaMp3 = "/almacen/medios/comunicados/audios/$año";//$contenido->getCarpetaMedios();
+                    $rutaMp3 = "/almacen/medios/comunicados/audios/$año"; // $contenido->getCarpetaMedios();
                     StorageItem::ensureDirExists($rutaMp3);
 
                     // Asignar los nombres de los archivos MP3
                     $mp3 = [];
                     foreach ($nombresMp3 as $nombreMp3) {
                         if ($nombreMp3) {
-                            $origMp3 = realpath($carpeta_audios_originales . "/" . $prefijo . $nombreMp3 . '.mp3');
-                            $destNombreMp3 = preg_replace("# (PAB|TRI|JUN)#", "", $nombreMp3);
-                            $destMp3 = $rutaMp3 . "/" . $prefijo . $destNombreMp3 . '.mp3';
+                            $origMp3 = realpath($carpeta_audios_originales.'/'.$prefijo.$nombreMp3.'.mp3');
+                            $destNombreMp3 = preg_replace('# (PAB|TRI|JUN)#', '', $nombreMp3);
+                            $destMp3 = $rutaMp3.'/'.$prefijo.$destNombreMp3.'.mp3';
                             $pathDest = (new StorageItem($destMp3))->path;
                             echo "$origMp3 -> $pathDest [$destMp3]\n";
                             copy($origMp3, $pathDest);
@@ -145,7 +142,7 @@ class ComunicadoImport
                     $texto = $imported->content;
 
                     // cambiamos urls
-                    $texto = preg_replace("/(www\.)?tseyor\.com/", "tseyor.org", $texto);
+                    $texto = preg_replace("/(www\.)?tseyor\.com/", 'tseyor.org', $texto);
 
                     // $texto = preg_replace("/#{4,99}\s*/", "", $texto);
 
@@ -154,16 +151,16 @@ class ComunicadoImport
 
                     // Crear una nueva instancia de Comunicado
                     $contenido->update([
-                        "texto" => $texto,
-                        "audios" => $mp3,
+                        'texto' => $texto,
+                        'audios' => $mp3,
                     ]);
 
-                    if (!$contenido->imagen || $contenido->imagen == "/almacen/medios/logos/sello_tseyor_64.png") {
+                    if (! $contenido->imagen || $contenido->imagen == '/almacen/medios/logos/sello_tseyor_64.png') {
                         $guias = ['Shilcars', 'Rasbek', 'Melcor', 'Noiwanak', 'Aumnor', 'Aium Om', 'Orjaín', 'Mo', 'Rhaum', 'Jalied'];
-                        $regex = "/\b(" . implode("|", $guias) . ")\b/i";
+                        $regex = "/\b(".implode('|', $guias).")\b/i";
                         if (preg_match($regex, $contenido->texto, $matches)) {
                             // Log::info("guia encontrado:" . print_r($matches, true));
-                            $guia = strtolower(str_replace(["í", " "], ["i", ""], $matches[0]));
+                            $guia = strtolower(str_replace(['í', ' '], ['i', ''], $matches[0]));
                             $contenido->update(['imagen' => "/almacen/medios/guias/$guia.jpg"]);
                         }
                     }
@@ -185,16 +182,16 @@ class ComunicadoImport
     {
         $carpeta = "D:\documentos\TSEYOR\comunicados";
 
-        $fechaArchivo = str_replace("/", "", $fecha);
+        $fechaArchivo = str_replace('/', '', $fecha);
 
         // Formatear el número y la categoría
-        $numeroFormateado = preg_replace("/^0+/", "", $numero);
+        $numeroFormateado = preg_replace('/^0+/', '', $numero);
         $categoriaFormateada = strtoupper($categoria);
 
         // Buscar archivos que cumplan con el número y la categoría en la carpeta
         $patronBusqueda = '';
 
-        $numeroRegex = str_replace(".", "\\.", $numeroFormateado);
+        $numeroRegex = str_replace('.', '\\.', $numeroFormateado);
         if ($categoriaFormateada === 'GEN') {
             // Patrón de búsqueda para la categoría "GEN"
             $patronBusqueda = "/^\(0*{$numeroRegex}\)/";
@@ -204,7 +201,7 @@ class ComunicadoImport
         }
 
         // Obtener todos los archivos en la carpeta
-        $archivosCarpeta = glob($carpeta . '/*');
+        $archivosCarpeta = glob($carpeta.'/*');
 
         // Realizar la búsqueda con expresiones regulares y obtener los matches
         $archivos = [];
@@ -228,8 +225,8 @@ class ComunicadoImport
             $patronFecha = '/(\d{6})/';
             preg_match($patronFecha, $nombreArchivo, $coincidencias);
 
-            if (!empty($coincidencias) && $coincidencias[1] === $fechaArchivo) {
-                return $carpeta . "/" . $nombreArchivo;
+            if (! empty($coincidencias) && $coincidencias[1] === $fechaArchivo) {
+                return $carpeta.'/'.$nombreArchivo;
             }
         }
 
@@ -237,15 +234,15 @@ class ComunicadoImport
         throw new Exception("No se encontró ningún archivo .docx con número=$numero, categoria=$categoria, fecha=$fecha");
     }
 
-
-    public static function publicarComunicados() {
-        $comunicados = Comunicado::where('visibilidad','B')->take(200)->get();
+    public static function publicarComunicados()
+    {
+        $comunicados = Comunicado::where('visibilidad', 'B')->take(200)->get();
         $n = 1;
-        foreach($comunicados as $comunicado) {
-            echo $n++ . ". " .$comunicado->titulo."\n";
+        foreach ($comunicados as $comunicado) {
+            echo $n++.'. '.$comunicado->titulo."\n";
             $comunicado->update(['visibilidad' => 'P']);
         }
 
-        echo "Se han publicado " . $comunicados->count(). " comunicados";
+        echo 'Se han publicado '.$comunicados->count().' comunicados';
     }
 }

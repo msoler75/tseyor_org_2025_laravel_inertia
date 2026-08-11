@@ -17,9 +17,11 @@ class Sala extends ContenidoBaseModel
     */
 
     protected $table = 'salas';
+
     // protected $primaryKey = 'id';
     // public $timestamps = false;
     protected $guarded = ['id'];
+
     protected $fillable = ['nombre', 'slug', 'descripcion', 'enlace'];
     // protected $hidden = [];
 

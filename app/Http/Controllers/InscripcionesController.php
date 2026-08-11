@@ -2,22 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Mail\InscripcionConfirmacionEmail;
+use App\Mail\InscripcionEmail;
 use App\Models\Inscripcion;
 use App\Models\User;
+use App\Pigmalion\BusquedasHelper;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Auth;
-use App\Mail\InscripcionEmail;
-use App\Mail\InscripcionConfirmacionEmail;
-use App\Notifications\InscripcionAsignada;
-use App\Pigmalion\BusquedasHelper;
 use Inertia\Inertia;
-
 
 class InscripcionesController extends Controller
 {
-
     public static $ITEMS_POR_PAGINA = 20;
 
     // nueva inscripción
@@ -28,23 +25,25 @@ class InscripcionesController extends Controller
             'nombre' => 'required|max:255',
             'dia' => 'nullable|integer|min:1|max:31',
             'mes' => 'nullable|integer|min:1|max:12',
-            'anyo' => 'required|integer|min:1900|max:' . (date('Y') - 10),
+            'anyo' => 'required|integer|min:1900|max:'.(date('Y') - 10),
             'ciudad' => 'required|max:255',
             'region' => 'required|max:255',
             'pais' => 'required|max:255',
             'email' => 'required|email|max:255',
             'telefono' => 'required|nullable|max:255',
-            'comentario' => 'nullable'
+            'comentario' => 'nullable',
         ]);
 
-        if(!$dataValidated['dia'])
-        $dataValidated['dia'] = 1;
+        if (! $dataValidated['dia']) {
+            $dataValidated['dia'] = 1;
+        }
 
-        if(!$dataValidated['mes'])
-        $dataValidated['mes'] = 1;
+        if (! $dataValidated['mes']) {
+            $dataValidated['mes'] = 1;
+        }
 
         // Construir la fecha
-        $fecha_sql = $dataValidated['anyo'] . "-" . $dataValidated['mes'] . "-" . $dataValidated['dia'];
+        $fecha_sql = $dataValidated['anyo'].'-'.$dataValidated['mes'].'-'.$dataValidated['dia'];
 
         $data = [
             'nombre' => $dataValidated['nombre'],
@@ -53,9 +52,9 @@ class InscripcionesController extends Controller
             'region' => $dataValidated['region'],
             'pais' => $dataValidated['pais'],
             'email' => $dataValidated['email'],
-            'telefono' => $dataValidated['telefono'] ?? "",
-            'comentario' => $dataValidated['comentario'] ?? "",
-            'ultima_actividad' => now() // Establecer fecha inicial de actividad
+            'telefono' => $dataValidated['telefono'] ?? '',
+            'comentario' => $dataValidated['comentario'] ?? '',
+            'ultima_actividad' => now(), // Establecer fecha inicial de actividad
         ];
 
         // Crear una nueva instancia de Inscripcion y guardarla en la base de datos
@@ -94,14 +93,11 @@ class InscripcionesController extends Controller
             return redirect()->back()->with('success', 'La inscripción se ha guardado correctamente');
         } else {
             // Devolver un objeto JSON con los errores de validación
-            Log::channel('inscripciones')->error("Inscripción. No se pudo guardar la inscripción ", $data);
+            Log::channel('inscripciones')->error('Inscripción. No se pudo guardar la inscripción ', $data);
+
             return redirect()->back()->withErrors(['No se pudo guardar la inscripción, inténtalo de nuevo']);
         }
     }
-
-
-
-
 
     /**
      * Muestra formulario de gestión para una inscripción específica
@@ -131,7 +127,7 @@ class InscripcionesController extends Controller
 
         $request->validate([
             'user_id' => 'required|exists:users,id',
-            'motivo' => 'nullable|string|max:500'
+            'motivo' => 'nullable|string|max:500',
         ]);
 
         $usuario = User::findOrFail($request->user_id);
@@ -143,8 +139,9 @@ class InscripcionesController extends Controller
 
         if ($inscripcionesActivas >= config('inscripciones.asignacion.max_inscripciones_por_usuario')) {
             Log::channel('inscripciones')->warning("Asignación fallida: usuario {$usuario->id} ({$usuario->name}) tiene {$inscripcionesActivas} inscripciones activas, límite alcanzado");
+
             return back()->withErrors([
-                'user_id' => 'El usuario ya tiene el máximo de inscripciones activas permitidas.'
+                'user_id' => 'El usuario ya tiene el máximo de inscripciones activas permitidas.',
             ]);
         }
 
@@ -153,7 +150,7 @@ class InscripcionesController extends Controller
         // Usar update() para confiar en los observers que centralizan efectos (notas, notificaciones)
         $inscripcion->update(['user_id' => $usuario->id]);
         // Añadir motivo como comentario si se proporciona
-        if (!empty($request->motivo)) {
+        if (! empty($request->motivo)) {
             $inscripcion->comentar($request->motivo, true);
         }
 
@@ -174,13 +171,13 @@ class InscripcionesController extends Controller
 
         Log::channel('inscripciones')->info("ActualizarEstado: User {$user->id} ({$user->name}), isAdmin: {$isAdmin}, isAssigned: {$isAssigned}, inscripcion.user_id: {$inscripcion->user_id}");
 
-        if (!$isAdmin && !$isAssigned) {
+        if (! $isAdmin && ! $isAssigned) {
             Log::channel('inscripciones')->warning("ActualizarEstado denegado: User {$user->id} no tiene permisos para inscripcion {$inscripcion->id}");
             abort(403, 'No tienes permisos para cambiar el estado de esta inscripción');
         }
 
         $request->validate([
-            'estado' => 'required|in:' . implode(',', array_keys(Inscripcion::getEstadosDisponibles()))
+            'estado' => 'required|in:'.implode(',', array_keys(Inscripcion::getEstadosDisponibles())),
         ]);
 
         Log::channel('inscripciones')->info("ActualizarEstado: Cambiando estado de {$inscripcion->estado} a {$request->estado} para inscripcion {$inscripcion->id}");
@@ -199,16 +196,15 @@ class InscripcionesController extends Controller
     {
         // Solo el usuario asignado puede rebotar
         if ($inscripcion->user_id !== Auth::id()) {
-            Log::channel('inscripciones')->warning("Rebote denegado: usuario " . Auth::id() . " intentó rebotar inscripción {$inscripcion->id} asignada a {$inscripcion->user_id}");
+            Log::channel('inscripciones')->warning('Rebote denegado: usuario '.Auth::id()." intentó rebotar inscripción {$inscripcion->id} asignada a {$inscripcion->user_id}");
             abort(403);
         }
 
         $request->validate([
-            'motivo' => 'required|string|min:10|max:500'
+            'motivo' => 'required|string|min:10|max:500',
         ]);
 
-        Log::channel('inscripciones')->info("Rebotando inscripción {$inscripcion->id} por usuario " . Auth::id() . ", motivo: {$request->motivo}");
-
+        Log::channel('inscripciones')->info("Rebotando inscripción {$inscripcion->id} por usuario ".Auth::id().", motivo: {$request->motivo}");
 
         // Capturar nombre del tutor anterior antes de modificar el modelo
         $nombreUsuario = $inscripcion->usuarioAsignado?->name ?? 'Usuario desconocido';
@@ -236,7 +232,7 @@ class InscripcionesController extends Controller
 
         return response()->json([
             'message' => 'Inscripción rebotada correctamente',
-            'inscripcion' => $inscripcion->fresh()
+            'inscripcion' => $inscripcion->fresh(),
         ]);
     }
 
@@ -250,18 +246,19 @@ class InscripcionesController extends Controller
 
         $query = Inscripcion::where('user_id', Auth::id());
 
-        if ($buscar)
-            BusquedasHelper::buscarQueryFields($buscar, $query,  ['nombre', 'ciudad', 'region', 'pais', 'email', 'telefono', 'comentario', 'estado', 'notas']);
+        if ($buscar) {
+            BusquedasHelper::buscarQueryFields($buscar, $query, ['nombre', 'ciudad', 'region', 'pais', 'email', 'telefono', 'comentario', 'estado', 'notas']);
+        }
 
         // aquí ya aplicamos criterios de ordenación, siendo primeras las inscripciones "abiertas" (no tienen estado finalizado)
         $estadosFinalizados = ['finalizado', 'duplicada', 'nointeresado', 'abandonado', 'nocontesta', 'caducada'];
-        $query->orderByRaw('CASE WHEN estado IN ("' . implode('","', $estadosFinalizados) . '") THEN 1 ELSE 0 END')
-              ->orderByDesc('fecha_asignacion');
+        $query->orderByRaw('CASE WHEN estado IN ("'.implode('","', $estadosFinalizados).'") THEN 1 ELSE 0 END')
+            ->orderByDesc('fecha_asignacion');
 
         $resultados = $query->paginate(self::$ITEMS_POR_PAGINA, ['*'], 'page', $page)
             ->appends($request->except('page'));
 
-        //$inscripciones = $query->orderBy('created_at', 'desc')->paginate(10)->withQueryString();
+        // $inscripciones = $query->orderBy('created_at', 'desc')->paginate(10)->withQueryString();
 
         return Inertia::render('Inscripciones/MisAsignaciones', [
             'listado' => $resultados,
@@ -270,7 +267,7 @@ class InscripcionesController extends Controller
             'umbralesdias' => [
                 'asignado_urgente' => config('inscripciones.umbrales.asignado_urgente', 3),
                 'contactado_urgente' => config('inscripciones.umbrales.contactado_urgente', 7),
-                'encurso_seguimiento' => config('inscripciones.umbrales.encurso_seguimiento', 30)
+                'encurso_seguimiento' => config('inscripciones.umbrales.encurso_seguimiento', 30),
             ],
             'filtrado' => $buscar,
         ]);
@@ -283,11 +280,11 @@ class InscripcionesController extends Controller
     {
         $query = $request->get('q', '');
 
-        $usuarios = User:://role(config('inscripciones.asignacion.rol_elegible'))
+        $usuarios = User::// role(config('inscripciones.asignacion.rol_elegible'))
             where('name', 'like', "%{$query}%")
-            ->orWhere('email', 'like', "%{$query}%")
-            ->limit(10)
-            ->get(['id', 'name', 'email']);
+                ->orWhere('email', 'like', "%{$query}%")
+                ->limit(10)
+                ->get(['id', 'name', 'email']);
 
         return response()->json($usuarios);
     }
@@ -302,19 +299,19 @@ class InscripcionesController extends Controller
         $validated = $request->validate([
             'inscripciones_ids' => 'required|array',
             'inscripciones_ids.*' => 'exists:inscripciones,id',
-            'user_id' => 'required|exists:users,id'
+            'user_id' => 'required|exists:users,id',
         ]);
 
         $usuario = User::find($validated['user_id']);
         $inscripciones = Inscripcion::whereIn('id', $validated['inscripciones_ids'])->get();
 
-        Log::channel('inscripciones')->info("Iniciando asignación masiva: " . count($validated['inscripciones_ids']) . " inscripciones a usuario {$usuario->id} ({$usuario->name})");
+        Log::channel('inscripciones')->info('Iniciando asignación masiva: '.count($validated['inscripciones_ids'])." inscripciones a usuario {$usuario->id} ({$usuario->name})");
 
         $asignadas = 0;
         // Suprimir notificaciones individuales durante la asignación masiva
         Inscripcion::suppressAssignmentNotifications(function () use ($inscripciones, $usuario, &$asignadas) {
             foreach ($inscripciones as $inscripcion) {
-                if (!$inscripcion->user_id) { // Solo asignar si no está ya asignada
+                if (! $inscripcion->user_id) { // Solo asignar si no está ya asignada
                     // Asignar mediante update para dejar que los observers gestionen notas/fechas
                     $inscripcion->update(['user_id' => $usuario->id]);
                     $asignadas++;
@@ -330,14 +327,14 @@ class InscripcionesController extends Controller
         return redirect()->back()->with('success', "{$asignadas} inscripciones asignadas a {$usuario->name}");
     }
 
-     /**
+    /**
      * Añade un comentario rápido a la inscripción usando Inscripcion::comentar
      */
     public function agregarComentario(Request $request, Inscripcion $inscripcion)
     {
         // Solo el usuario asignado o admin puede comentar
-        if (!Auth::user()->hasRole('admin') && $inscripcion->user_id !== Auth::id()) {
-            Log::channel('inscripciones')->warning("Comentario denegado: usuario " . Auth::id() . " intentó comentar en inscripción {$inscripcion->id} asignada a {$inscripcion->user_id}");
+        if (! Auth::user()->hasRole('admin') && $inscripcion->user_id !== Auth::id()) {
+            Log::channel('inscripciones')->warning('Comentario denegado: usuario '.Auth::id()." intentó comentar en inscripción {$inscripcion->id} asignada a {$inscripcion->user_id}");
             abort(403);
         }
 
@@ -345,7 +342,7 @@ class InscripcionesController extends Controller
             'comentario' => 'required|string|max:1000',
         ]);
 
-        Log::channel('inscripciones')->info("Añadiendo comentario a inscripción {$inscripcion->id} por usuario " . Auth::id() . ": {$request->comentario}");
+        Log::channel('inscripciones')->info("Añadiendo comentario a inscripción {$inscripcion->id} por usuario ".Auth::id().": {$request->comentario}");
 
         // Centraliza la lógica de nota en el modelo
         $inscripcion->comentar($request->comentario, true); // true indica que es actividad del tutor
@@ -366,16 +363,16 @@ class InscripcionesController extends Controller
     public function actualizarNotas(Request $request, Inscripcion $inscripcion)
     {
         // Verificar que el usuario puede gestionar esta inscripción
-        if (!Auth::user()->hasRole('admin') && $inscripcion->user_id !== Auth::id()) {
-            Log::channel('inscripciones')->warning("Actualización de notas denegada: usuario " . Auth::id() . " intentó actualizar notas en inscripción {$inscripcion->id} asignada a {$inscripcion->user_id}");
+        if (! Auth::user()->hasRole('admin') && $inscripcion->user_id !== Auth::id()) {
+            Log::channel('inscripciones')->warning('Actualización de notas denegada: usuario '.Auth::id()." intentó actualizar notas en inscripción {$inscripcion->id} asignada a {$inscripcion->user_id}");
             abort(403);
         }
 
         $request->validate([
-            'notas' => 'nullable|string'
+            'notas' => 'nullable|string',
         ]);
 
-        Log::channel('inscripciones')->info("Actualizando notas de inscripción {$inscripcion->id} por usuario " . Auth::id());
+        Log::channel('inscripciones')->info("Actualizando notas de inscripción {$inscripcion->id} por usuario ".Auth::id());
 
         $inscripcion->notas = $request->notas;
         $inscripcion->ultima_actividad = now(); // Marcar actividad del tutor

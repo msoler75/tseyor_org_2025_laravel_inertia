@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use Inertia\Inertia;
-use Illuminate\Http\Request;
 use App\Models\Psicografia;
-use App\Pigmalion\SEO;
 use App\Pigmalion\BusquedasHelper;
+use App\Pigmalion\SEO;
+use App\Pigmalion\StorageItem;
+use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class PsicografiasController extends Controller
 {
@@ -15,8 +16,9 @@ class PsicografiasController extends Controller
     public function index(Request $request)
     {
         // esto es para el puzle
-        if ($request->has('json'))
+        if ($request->has('json')) {
             return $this->json();
+        }
 
         $page = $request->input('page', 1);
         $buscar = $request->input('buscar');
@@ -24,63 +26,62 @@ class PsicografiasController extends Controller
 
         $query = Psicografia::select('*');
 
-        if ($buscar)
+        if ($buscar) {
             $query->buscar($buscar);
-        else if ($categoria == '_') // todos por orden alfabético
+        } elseif ($categoria == '_') { // todos por orden alfabético
             $query->orderBy('titulo', 'asc');
-        else if ($categoria)
+        } elseif ($categoria) {
             $query->where('categoria', $categoria);
-        else
+        } else {
             $query->latest('updated_at');
-
+        }
 
         $resultados = $query->paginate(self::$ITEMS_POR_PAGINA, ['*'], 'page', $page)
             ->appends($request->except('page'));
 
-        if ($buscar)
+        if ($buscar) {
             BusquedasHelper::formatearResultados($resultados, $buscar);
+        }
 
-        $categorias = (new Psicografia())->getCategorias();
+        $categorias = (new Psicografia)->getCategorias();
 
         return Inertia::render('Psicografias/Index', [
             'categoriaActiva' => $categoria,
             'filtrado' => $buscar,
             'listado' => $resultados,
-            'categorias' => $categorias
+            'categorias' => $categorias,
         ])
             ->withViewData(SEO::get('psicografias'));
     }
 
-
-
     public function json()
     {
         // obtiene los items sin busqueda
-        $resultados = Psicografia::select("*")->get()
-        ->transform(function ($item) {
-            $item->imagen = $item->imagen ? (new \App\Pigmalion\StorageItem($item->imagen))->urlPath : null;
-            return $item;
-        });
+        $resultados = Psicografia::select('*')->get()
+            ->transform(function ($item) {
+                $item->imagen = $item->imagen ? (new StorageItem($item->imagen))->urlPath : null;
+
+                return $item;
+            });
 
         return response()->json($resultados);
     }
-
-
 
     public function show($id)
     {
         if (is_numeric($id)) {
             $psicografia = Psicografia::find($id);
-            if (!$psicografia)
+            if (! $psicografia) {
                 $psicografia = Psicografia::where('slug', $id)->firstOrFail();
+            }
         } else {
             $psicografia = Psicografia::where('slug', $id)->firstOrFail();
         }
 
         $borrador = request()->has('borrador');
-        $publicado =  true; //
+        $publicado = true; //
         $editor = optional(auth()->user())->can('administrar contenidos');
-        if (!$psicografia || (!$publicado && !$borrador && !$editor)) {
+        if (! $psicografia || (! $publicado && ! $borrador && ! $editor)) {
             abort(404); // Item no encontrado o no autorizado
         }
 
@@ -91,15 +92,15 @@ class PsicografiasController extends Controller
             ->where('titulo', '<', $psicografia->titulo)->orderBy('titulo', 'desc')->first();
 
         // obtenemos ancho y alto de la imagen original
-        $filepath = (new \App\Pigmalion\StorageItem($psicografia->imagen))->path;
-        list($ancho, $alto) = @getimagesize($filepath);
+        $filepath = (new StorageItem($psicografia->imagen))->path;
+        [$ancho, $alto] = @getimagesize($filepath);
 
         return Inertia::render('Psicografias/Psicografia', [
             'psicografia' => $psicografia,
-            'ancho'=> $ancho,
-            'alto'=> $alto,
+            'ancho' => $ancho,
+            'alto' => $alto,
             'siguiente' => $siguiente ?? null,
-            'anterior' => $anterior ?? null
+            'anterior' => $anterior ?? null,
         ])
             ->withViewData(SEO::from($psicografia));
     }

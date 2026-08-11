@@ -2,8 +2,8 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
 use App\Rules\UniqueUserName;
+use Illuminate\Foundation\Http\FormRequest;
 
 class UserUpdateCrudRequest extends FormRequest
 {
@@ -28,8 +28,8 @@ class UserUpdateCrudRequest extends FormRequest
         $id = $this->get('id') ?? request()->route('id');
 
         return [
-            'name'     => ['required', new UniqueUserName($id)],
-            'email'    => 'required|unique:'.config('permission.table_names.users', 'users').',email,'.$id,
+            'name' => ['required', new UniqueUserName($id)],
+            'email' => 'required|unique:'.config('permission.table_names.users', 'users').',email,'.$id,
             'password' => 'confirmed',
         ];
     }

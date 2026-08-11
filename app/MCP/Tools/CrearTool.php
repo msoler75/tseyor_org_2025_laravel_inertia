@@ -17,14 +17,18 @@ class CrearTool extends BaseTool
         Log::channel('mcp')->info('[MCP] Crear', ['params' => $params]);
 
         $modelo = $params['entidad'] ?? null;
-        if (!$modelo) return ['error' => 'Falta el parámetro entidad'];
+        if (! $modelo) {
+            return ['error' => 'Falta el parámetro entidad'];
+        }
 
-        Log::channel('mcp')->info('[MCP] entidad: ' . $modelo);
+        Log::channel('mcp')->info('[MCP] entidad: '.$modelo);
 
         $toolsClass = $this->getModelToolsClass($modelo);
-        if (!class_exists($toolsClass)) return ['error' => 'Clase no encontrada: ' . $toolsClass];
+        if (! class_exists($toolsClass)) {
+            return ['error' => 'Clase no encontrada: '.$toolsClass];
+        }
 
-        $modelTools = new $toolsClass();
+        $modelTools = new $toolsClass;
         $this->checkMcpToken($params, $modelTools->getRequiredPermissions($this->name()));
 
         return $modelTools->onCrear($params, $this);

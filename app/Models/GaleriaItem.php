@@ -4,9 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Galeria;
-use App\Models\Nodo;
-use App\Models\User;
 
 class GaleriaItem extends Model
 {

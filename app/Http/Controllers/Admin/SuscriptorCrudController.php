@@ -2,18 +2,23 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\Suscriptor;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
+use Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 use Backpack\CRUD\app\Library\Widget;
-use App\Models\Suscriptor;
 
 class SuscriptorCrudController extends CrudController
 {
-    use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
+    use CreateOperation;
+    use DeleteOperation;
+    use ListOperation;
+    use ShowOperation;
+    use UpdateOperation;
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
@@ -23,7 +28,7 @@ class SuscriptorCrudController extends CrudController
     public function setup()
     {
         CRUD::setModel(Suscriptor::class);
-        CRUD::setRoute(config('backpack.base.route_prefix') . '/suscriptor');
+        CRUD::setRoute(config('backpack.base.route_prefix').'/suscriptor');
         CRUD::setEntityNameStrings('suscriptor', 'suscriptores');
     }
 
@@ -39,8 +44,8 @@ class SuscriptorCrudController extends CrudController
             Widget::make()
                 ->class('card mb-2')
                 ->content([
-                    'body' => 'Gestión de suscriptores al boletín Tseyor.'
-                ])
+                    'body' => 'Gestión de suscriptores al boletín Tseyor.',
+                ]),
         ]);
 
         // Configurar columnas existentes en el modelo Suscriptor
@@ -59,7 +64,7 @@ class SuscriptorCrudController extends CrudController
     protected function setupCreateOperation()
     {
         CRUD::setValidation([
-            'email' => 'required|email|unique:suscriptores,email,' . request()->id,
+            'email' => 'required|email|unique:suscriptores,email,'.request()->id,
             'servicio' => 'required|string',
             'estado' => 'required|string',
         ]);

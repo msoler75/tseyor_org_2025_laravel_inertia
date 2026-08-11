@@ -8,7 +8,7 @@ return [
             'nombre' => ['type' => 'string', 'description' => 'Nombre de la sala'],
             'slug' => ['type' => 'string', 'description' => 'Slug único'],
             'descripcion' => ['type' => 'string', 'description' => 'Descripción breve'],
-            'enlace' => ['type' => 'string', 'description' => 'Enlace de acceso']
-        ]
+            'enlace' => ['type' => 'string', 'description' => 'Enlace de acceso'],
+        ],
     ],
 ];

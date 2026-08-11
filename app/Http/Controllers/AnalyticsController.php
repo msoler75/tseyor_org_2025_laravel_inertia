@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class AnalyticsController extends Controller
 {
@@ -17,7 +17,7 @@ class AnalyticsController extends Controller
             $data = $request->all();
 
             // Validar datos mínimos requeridos
-            if (!isset($data['event']) || !isset($data['content_type'])) {
+            if (! isset($data['event']) || ! isset($data['content_type'])) {
                 return response()->json(['error' => 'Datos incompletos'], 400);
             }
 
@@ -30,7 +30,7 @@ class AnalyticsController extends Controller
                 'time_category' => $data['time_category'] ?? null,
                 'user_agent' => $request->userAgent(),
                 'ip' => $request->ip(),
-                'timestamp' => $data['timestamp'] ?? now()->timestamp
+                'timestamp' => $data['timestamp'] ?? now()->timestamp,
             ]);
 
             // Reenviar a Google Analytics via servidor
@@ -42,7 +42,7 @@ class AnalyticsController extends Controller
         } catch (\Exception $e) {
             Log::error('Analytics Beacon error', [
                 'error' => $e->getMessage(),
-                'data' => $request->all()
+                'data' => $request->all(),
             ]);
 
             return response('', 204); // Siempre responder 204 para no bloquear
@@ -58,8 +58,9 @@ class AnalyticsController extends Controller
             $measurementId = config('services.google_analytics.measurement_id');
             $apiSecret = config('services.google_analytics.api_secret');
 
-            if (!$measurementId || !$apiSecret) {
+            if (! $measurementId || ! $apiSecret) {
                 Log::warning('Google Analytics credentials not configured');
+
                 return;
             }
 
@@ -81,10 +82,10 @@ class AnalyticsController extends Controller
                             'page_title' => $data['page_title'] ?? '',
                             'page_location' => $data['page_location'] ?? '',
                             'source' => 'server_beacon', // Identificar que viene del servidor
-                            'engagement_time_msec' => intval(($data['view_time_seconds'] ?? 0) * 1000)
-                        ]
-                    ]
-                ]
+                            'engagement_time_msec' => intval(($data['view_time_seconds'] ?? 0) * 1000),
+                        ],
+                    ],
+                ],
             ];
 
             // Enviar a Google Analytics
@@ -97,19 +98,19 @@ class AnalyticsController extends Controller
                 Log::info('Data sent to Google Analytics via server', [
                     'event' => $data['event'],
                     'client_id' => $clientId,
-                    'source' => $data['client_id'] ? 'frontend_client_id' : 'generated_client_id'
+                    'source' => $data['client_id'] ? 'frontend_client_id' : 'generated_client_id',
                 ]);
             } else {
                 Log::warning('Failed to send to Google Analytics', [
                     'status' => $response->status(),
-                    'response' => $response->body()
+                    'response' => $response->body(),
                 ]);
             }
 
         } catch (\Exception $e) {
             Log::error('Error sending to Google Analytics', [
                 'error' => $e->getMessage(),
-                'data' => $data
+                'data' => $data,
             ]);
         }
     }
@@ -123,8 +124,9 @@ class AnalyticsController extends Controller
             $measurementId = config('services.google_analytics.measurement_id');
             $apiSecret = config('services.google_analytics.api_secret');
 
-            if (!$measurementId || !$apiSecret) {
+            if (! $measurementId || ! $apiSecret) {
                 Log::warning('Google Analytics credentials not configured for short links');
+
                 return;
             }
 
@@ -144,10 +146,10 @@ class AnalyticsController extends Controller
                             'user_agent' => $request->userAgent(),
                             'referer' => $request->header('referer', ''),
                             'source' => 'enlaces_cortos',
-                            'method' => 'server_redirect'
-                        ]
-                    ]
-                ]
+                            'method' => 'server_redirect',
+                        ],
+                    ],
+                ],
             ];
 
             // Enviar a Google Analytics
@@ -161,13 +163,13 @@ class AnalyticsController extends Controller
                     'prefijo' => $prefijo,
                     'codigo' => $codigo,
                     'url_destino' => $urlDestino,
-                    'client_id' => $clientId
+                    'client_id' => $clientId,
                 ]);
             } else {
                 Log::warning('Failed to track enlace corto in GA', [
                     'status' => $response->status(),
                     'prefijo' => $prefijo,
-                    'codigo' => $codigo
+                    'codigo' => $codigo,
                 ]);
             }
 
@@ -176,7 +178,7 @@ class AnalyticsController extends Controller
                 'error' => $e->getMessage(),
                 'prefijo' => $prefijo,
                 'codigo' => $codigo,
-                'url_destino' => $urlDestino
+                'url_destino' => $urlDestino,
             ]);
         }
     }
@@ -188,7 +190,7 @@ class AnalyticsController extends Controller
     private function generateClientId(Request $request)
     {
         // Usar datos que no cambien durante la sesión del usuario
-        $userFingerprint = $request->ip() . '|' . $request->userAgent();
+        $userFingerprint = $request->ip().'|'.$request->userAgent();
 
         // MD5 del fingerprint (consistente para el mismo usuario)
         $hashedFingerprint = md5($userFingerprint);
@@ -198,6 +200,6 @@ class AnalyticsController extends Controller
 
         // Formato de client_id de GA4: {random}.{timestamp}
         // Usamos hash consistente + timestamp del día
-        return substr($hashedFingerprint, 0, 10) . '.' . strtotime($dateStamp);
+        return substr($hashedFingerprint, 0, 10).'.'.strtotime($dateStamp);
     }
 }

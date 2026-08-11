@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
 use App\Imports\UserImport;
+use Illuminate\Console\Command;
 
 class ImportUsers extends Command
 {
@@ -26,7 +26,7 @@ class ImportUsers extends Command
      */
     public function handle()
     {
-        echo $this->description . "\n";
+        echo $this->description."\n";
         if ($this->confirm('¿Está seguro de que desea importar los usuarios? Esto borrará los registros actuales.')) {
             UserImport::importar();
             $this->info('¡Los usuarios se importaron correctamente!');

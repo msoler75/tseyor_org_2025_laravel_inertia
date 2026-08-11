@@ -4,7 +4,6 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
-use Druidfi\Mysqldump;
 
 class DBRestore extends Command
 {
@@ -32,11 +31,10 @@ class DBRestore extends Command
         if ($this->confirm('¿Está seguro de que desea importar la copia? Esto borrará todos los datos de la base de datos.')) {
             echo "Restaurando...\n";
 
-            die('NO IMPLEMENTADO');
+            exit('NO IMPLEMENTADO');
 
             // donde se guardarán los backups
-            $carpeta = "storage/backups";
-
+            $carpeta = 'storage/backups';
 
             $databaseName = DB::getDatabaseName();
 
@@ -45,7 +43,6 @@ class DBRestore extends Command
         } else {
             $this->info('La restauración fue cancelada.');
         }
-
 
     }
 }

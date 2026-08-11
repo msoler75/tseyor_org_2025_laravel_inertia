@@ -2,18 +2,21 @@
 
 namespace App\Models;
 
+use App\Notifications\InscripcionAsignada;
+use App\Notifications\InscripcionReasignada;
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Carbon\Carbon;
-use Laravel\Scout\Searchable;
 use Illuminate\Support\Facades\Log;
+use Laravel\Scout\Searchable;
+use Venturecraft\Revisionable\RevisionableTrait;
 
 class Inscripcion extends Model
 {
     use CrudTrait;
+    use RevisionableTrait;
     use Searchable;
-    use \Venturecraft\Revisionable\RevisionableTrait;
 
     protected $table = 'inscripciones';
 
@@ -32,13 +35,13 @@ class Inscripcion extends Model
         'fecha_asignacion',
         'ultima_notificacion',
         'ultima_actividad',
-        'notas'
+        'notas',
     ];
 
     protected $casts = [
         'fecha_asignacion' => 'datetime',
         'ultima_notificacion' => 'datetime',
-        'ultima_actividad' => 'datetime'
+        'ultima_actividad' => 'datetime',
     ];
 
     /**
@@ -94,6 +97,7 @@ class Inscripcion extends Model
             static::$globalSuppressAssignmentNotifications = false;
         }
     }
+
     /**
      * Relación con el usuario asignado
      */
@@ -123,7 +127,6 @@ class Inscripcion extends Model
         return config('inscripciones.estados');
     }
 
-
     /**
      * Obtiene los estados no elegibles desde configuración
      */
@@ -147,7 +150,7 @@ class Inscripcion extends Model
                 // Añadir la nota directamente (se guardará en el mismo proceso de save)
                 $fecha = now()->format('d/m/Y H:i');
                 $nota = "- {$fecha} - {$actor}: Cambiado de '{$estadoAnterior}' a '{$estadoNuevo}'";
-                $model->notas = ($model->notas ? $model->notas . "\n" : '') . $nota;
+                $model->notas = ($model->notas ? $model->notas."\n" : '').$nota;
             }
 
             // Cambio de tutor (user_id)
@@ -162,34 +165,34 @@ class Inscripcion extends Model
                 // Si se está asignando un tutor y el estado original era 'nueva',
                 // actualizar el estado a 'asignada' automáticamente (si no se cambió explícitamente el estado).
                 $estadoAnterior = $model->getOriginal('estado');
-                if ($userNuevoId && $estadoAnterior === 'nueva' && !$model->isDirty('estado')) {
+                if ($userNuevoId && $estadoAnterior === 'nueva' && ! $model->isDirty('estado')) {
                     $model->estado = 'asignada';
                     // Añadir nota de cambio de estado implícito
                     $fechaEstado = now()->format('d/m/Y H:i');
                     $notaEstado = "- {$fechaEstado} - {$actor}: Cambiado de 'nueva' a 'asignada'";
-                    $model->notas = ($model->notas ? $model->notas . "\n" : '') . $notaEstado;
+                    $model->notas = ($model->notas ? $model->notas."\n" : '').$notaEstado;
                 }
 
-                if ($userNuevoId && !$userAnteriorId) {
-                    $nuevoNombre = \App\Models\User::find($userNuevoId)?->name ?? 'Usuario desconocido';
-                    $notaUser = "- " . now()->format('d/m/Y H:i') . " - {$actor}: Asignado a {$nuevoNombre}";
+                if ($userNuevoId && ! $userAnteriorId) {
+                    $nuevoNombre = User::find($userNuevoId)?->name ?? 'Usuario desconocido';
+                    $notaUser = '- '.now()->format('d/m/Y H:i')." - {$actor}: Asignado a {$nuevoNombre}";
                     // Registrar fecha de asignación cuando se asigna por primera vez
                     $model->fecha_asignacion = now();
                 } elseif ($userNuevoId && $userAnteriorId && $userNuevoId !== $userAnteriorId) {
-                    $nombreAnterior = \App\Models\User::find($userAnteriorId)?->name ?? 'Usuario desconocido';
-                    $nuevoNombre = \App\Models\User::find($userNuevoId)?->name ?? 'Usuario desconocido';
-                    $notaUser = "- " . now()->format('d/m/Y H:i') . " - {$actor}: Reasignado de {$nombreAnterior} a {$nuevoNombre}";
+                    $nombreAnterior = User::find($userAnteriorId)?->name ?? 'Usuario desconocido';
+                    $nuevoNombre = User::find($userNuevoId)?->name ?? 'Usuario desconocido';
+                    $notaUser = '- '.now()->format('d/m/Y H:i')." - {$actor}: Reasignado de {$nombreAnterior} a {$nuevoNombre}";
                     // Al reasignar, actualizar fecha_asignacion
                     $model->fecha_asignacion = now();
-                } elseif (!$userNuevoId) {
-                    $nombreAnterior = \App\Models\User::find($userAnteriorId)?->name ?? 'Usuario desconocido';
-                    $notaUser = "- " . now()->format('d/m/Y H:i') . " - {$actor}: Desasignado (antes {$nombreAnterior})";
+                } elseif (! $userNuevoId) {
+                    $nombreAnterior = User::find($userAnteriorId)?->name ?? 'Usuario desconocido';
+                    $notaUser = '- '.now()->format('d/m/Y H:i')." - {$actor}: Desasignado (antes {$nombreAnterior})";
                 } else {
                     $notaUser = null;
                 }
 
-                if (!empty($notaUser)) {
-                    $model->notas = ($model->notas ? $model->notas . "\n" : '') . $notaUser;
+                if (! empty($notaUser)) {
+                    $model->notas = ($model->notas ? $model->notas."\n" : '').$notaUser;
                 }
 
                 // Enviar notificaciones: nuevo tutor y, si procede, tutor anterior
@@ -197,31 +200,32 @@ class Inscripcion extends Model
                     && empty($model->suppress_assignment_notifications)
                     && empty(static::$globalSuppressAssignmentNotifications)) {
                     try {
-                        $usuario = \App\Models\User::find($userNuevoId);
+                        $usuario = User::find($userNuevoId);
                         if ($usuario) {
-                            $usuario->notify(new \App\Notifications\InscripcionAsignada($model));
+                            $usuario->notify(new InscripcionAsignada($model));
                             // Marcar ultima_notificacion para persistir en el mismo save
                             $model->ultima_notificacion = now();
                         }
                     } catch (\Exception $e) {
-                        Log::channel('inscripciones')->error('Error enviando notificación de asignación: ' . $e->getMessage());
+                        Log::channel('inscripciones')->error('Error enviando notificación de asignación: '.$e->getMessage());
                     }
                 }
 
                 if ($userAnteriorId && $userNuevoId && $userAnteriorId !== $userNuevoId) {
                     try {
-                        $usuarioPrevio = \App\Models\User::find($userAnteriorId);
-                        $usuarioNuevo = \App\Models\User::find($userNuevoId);
+                        $usuarioPrevio = User::find($userAnteriorId);
+                        $usuarioNuevo = User::find($userNuevoId);
                         if ($usuarioPrevio && $usuarioNuevo) {
-                            $usuarioPrevio->notify(new \App\Notifications\InscripcionReasignada($model, $usuarioNuevo));
+                            $usuarioPrevio->notify(new InscripcionReasignada($model, $usuarioNuevo));
                         }
                     } catch (\Exception $e) {
-                        Log::channel('inscripciones')->error('Error notificando al tutor anterior sobre reasignación: ' . $e->getMessage());
+                        Log::channel('inscripciones')->error('Error notificando al tutor anterior sobre reasignación: '.$e->getMessage());
                     }
                 }
             }
         });
     }
+
     /**
      * Verifica si necesita seguimiento automático
      */
@@ -238,12 +242,12 @@ class Inscripcion extends Model
      */
     public function proximaNotificacion(): ?Carbon
     {
-        if (!$this->necesitaSeguimiento()) {
+        if (! $this->necesitaSeguimiento()) {
             return null;
         }
 
         // Si nunca se ha enviado notificación, es tiempo de enviar la primera
-        if (!$this->ultima_notificacion) {
+        if (! $this->ultima_notificacion) {
             return now()->subMinute(); // Devolver una fecha en el pasado para que se procese
         }
 
@@ -264,8 +268,8 @@ class Inscripcion extends Model
 
         $nuevaNota = "- {$fecha} - {$usuario}: {$mensaje}";
 
-        $notasActuales = $this->notas ? $this->notas . "\n" : '';
-        $this->notas = $notasActuales . $nuevaNota;
+        $notasActuales = $this->notas ? $this->notas."\n" : '';
+        $this->notas = $notasActuales.$nuevaNota;
 
         // Solo actualizar ultima_actividad si es una actividad real del tutor
         if ($esActividadTutor) {
@@ -274,8 +278,6 @@ class Inscripcion extends Model
 
         $this->save();
     }
-
-
 
     /**
      * Marca una actividad real del tutor (comentarios, cambios manuales, etc.)
@@ -286,13 +288,10 @@ class Inscripcion extends Model
         $this->save();
     }
 
-
     public function getEstadoEtiquetaAttribute(): string
     {
         $etiquetas = config('inscripciones.etiquetas_estados', []);
+
         return $etiquetas[$this->estado] ?? $this->estado;
     }
-
-
-
 }

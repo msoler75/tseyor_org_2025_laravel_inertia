@@ -36,18 +36,18 @@ class InscripcionesAsignadas extends Notification implements ShouldQueue
     {
         $urlGestion = route('inscripciones.mis-asignaciones');
         $count = count($this->inscripciones);
-        Log::channel('notificaciones')->info('[InscripcionesAsignadas] Enviando a: ' . ($notifiable->email ?? 'sin email') . ' | Nombre: ' . $notifiable->name . ' Total: ' . $count);
+        Log::channel('notificaciones')->info('[InscripcionesAsignadas] Enviando a: '.($notifiable->email ?? 'sin email').' | Nombre: '.$notifiable->name.' Total: '.$count);
 
         $mail = (new MailMessage)
-            ->subject('Nuevas inscripciones asignadas (' . $count . ')')
-            ->greeting('¡Hola ' . $notifiable->name . '!')
-            ->line('Se te han asignado ' . $count . ' nuevas inscripciones a cursos.')
+            ->subject('Nuevas inscripciones asignadas ('.$count.')')
+            ->greeting('¡Hola '.$notifiable->name.'!')
+            ->line('Se te han asignado '.$count.' nuevas inscripciones a cursos.')
             ->line('Revisa y gestiona las inscripciones desde el siguiente enlace:')
             ->action('Gestionar Inscripciones', $urlGestion)
             ->line('Resumen de inscripciones asignadas:');
 
         foreach ($this->inscripciones as $inscripcion) {
-            $mail->line('— ' . ($inscripcion['nombre'] ?? 'Sin nombre'));
+            $mail->line('— '.($inscripcion['nombre'] ?? 'Sin nombre'));
         }
 
         $mail->line('Por favor, contacta con las personas inscritas lo antes posible y actualiza el estado de cada inscripción.')

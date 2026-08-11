@@ -2,26 +2,34 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Backpack\CRUD\app\Http\Controllers\CrudController;
-use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
-use Illuminate\Support\Facades\Storage;
-use App\Services\WordImport;
 use App\Models\Noticia;
+use App\Services\WordImport;
+use App\Traits\CrudContenido;
+use Backpack\CRUD\app\Http\Controllers\CrudController;
+use Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
+use Backpack\CRUD\app\Library\CrudPanel\CrudPanel;
+use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
+use Backpack\ReviseOperation\ReviseOperation;
+use Illuminate\Validation\Rule;
 
 /**
  * Class NoticiaCrudController
- * @package App\Http\Controllers\Admin
- * @property-read \Backpack\CRUD\app\Library\CrudPanel\CrudPanel $crud
+ *
+ * @property-read CrudPanel $crud
  */
 class NoticiaCrudController extends CrudController
 {
-    use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
-    use \Backpack\ReviseOperation\ReviseOperation;
-    use \App\Traits\CrudContenido;
+    use CreateOperation;
+    use CrudContenido;
+    use DeleteOperation;
+    use ListOperation;
+    use ReviseOperation;
+    use ShowOperation;
+    use UpdateOperation;
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
@@ -30,8 +38,8 @@ class NoticiaCrudController extends CrudController
      */
     public function setup()
     {
-        CRUD::setModel(\App\Models\Noticia::class);
-        CRUD::setRoute(config('backpack.base.route_prefix') . '/noticia');
+        CRUD::setModel(Noticia::class);
+        CRUD::setRoute(config('backpack.base.route_prefix').'/noticia');
         CRUD::setEntityNameStrings('noticia', 'noticias');
     }
 
@@ -39,6 +47,7 @@ class NoticiaCrudController extends CrudController
      * Define what happens when the List operation is loaded.
      *
      * @see  https://backpackforlaravel.com/docs/crud-operation-list-entries
+     *
      * @return void
      */
     protected function setupListOperation()
@@ -46,20 +55,19 @@ class NoticiaCrudController extends CrudController
         $this->crud->addColumn([
             'name' => 'id',
             'label' => 'id',
-            'type' => 'number'
+            'type' => 'number',
         ]);
 
         $this->crud->addColumn([
             'name' => 'titulo',
             'label' => 'Título',
-            'type' => 'text'
+            'type' => 'text',
         ]);
-
 
         $this->crud->addColumn([
             'name' => 'updated_at',
             'label' => 'Modificado',
-            'type' => 'datetime'
+            'type' => 'datetime',
         ]);
 
         $this->crud->addColumn([
@@ -67,10 +75,9 @@ class NoticiaCrudController extends CrudController
             'label' => 'Imagen',
             'type' => 'image',
             'value' => function ($entry) {
-                return $entry->imagen . '?mh=25';
-            }
+                return $entry->imagen.'?mh=25';
+            },
         ]);
-
 
         /* $this->crud->addColumn([
             'name'  => 'categoria',
@@ -85,7 +92,7 @@ class NoticiaCrudController extends CrudController
             'type' => 'text',
             'value' => function ($entry) {
                 return $entry->visibilidad == 'P' ? '✔️ Publicado' : '⚠️ Borrador';
-            }
+            },
         ]);
 
         CRUD::addButtonFromView('top', 'import_create', 'import_create', 'end');
@@ -99,6 +106,7 @@ class NoticiaCrudController extends CrudController
      * Define what happens when the Create operation is loaded.
      *
      * @see https://backpackforlaravel.com/docs/crud-operation-create
+     *
      * @return void
      */
     protected function setupCreateOperation()
@@ -106,7 +114,7 @@ class NoticiaCrudController extends CrudController
         $this->crud->setValidation(
             [
                 'titulo' => 'required|min:8',
-                'slug' => ['nullable', 'regex:/^[a-z0-9\-]+$/', \Illuminate\Validation\Rule::unique('noticias', 'slug')->ignore($this->crud->getCurrentEntryId())],
+                'slug' => ['nullable', 'regex:/^[a-z0-9\-]+$/', Rule::unique('noticias', 'slug')->ignore($this->crud->getCurrentEntryId())],
                 'descripcion' => 'max:400',
                 'texto' => 'required|max:65000',
             ],
@@ -115,7 +123,6 @@ class NoticiaCrudController extends CrudController
             ]
         );
 
-
         // $this->crud->setValidation(EntradaRequest::class);
         CRUD::setFromDb(); // set fields from db columns.
 
@@ -123,7 +130,6 @@ class NoticiaCrudController extends CrudController
          * Fields can be defined using the fluent syntax:
          * - CRUD::field('price')->type('number');
          */
-
         $folder = $this->getMediaFolder();
 
         CRUD::field('descripcion')->type('textarea')->attributes(['maxlength' => 400]);
@@ -137,7 +143,7 @@ class NoticiaCrudController extends CrudController
         // se tiene que poner el atributo step para que no dé error el input al definir los segundos
         CRUD::field('published_at')->label('Fecha publicación')->type('datetime')->attributes(['step' => 1])
             ->wrapper([
-                'class' => 'form-group col-md-3'
+                'class' => 'form-group col-md-3',
             ]);
     }
 
@@ -145,6 +151,7 @@ class NoticiaCrudController extends CrudController
      * Define what happens when the Update operation is loaded.
      *
      * @see https://backpackforlaravel.com/docs/crud-operation-update
+     *
      * @return void
      */
     protected function setupUpdateOperation()
@@ -152,20 +159,18 @@ class NoticiaCrudController extends CrudController
         $this->setupCreateOperation();
     }
 
-
     public function show($id)
     {
         $noticia = Noticia::find($id);
+
         return $noticia->visibilidad == 'P' ? redirect("/noticias/$id") : redirect("/noticias/$id?borrador");
     }
-
-
 
     public function importCreate()
     {
         $contenido = Noticia::create([
-            "titulo" => "Importado de " . $_FILES['file']['name'] . "_" . substr(str_shuffle('0123456789'), 0, 5),
-            "texto" => ""
+            'titulo' => 'Importado de '.$_FILES['file']['name'].'_'.substr(str_shuffle('0123456789'), 0, 5),
+            'texto' => '',
         ]);
 
         return $this->importUpdate($contenido->id);
@@ -177,7 +182,7 @@ class NoticiaCrudController extends CrudController
 
         try {
             // inicializa el importador en base a $_FILES
-            $imported = new WordImport();
+            $imported = new WordImport;
 
             // copia las imágenes desde la carpeta temporal al directorio destino, sobreescribiendo las anteriores en la carpeta
             $imported->copyImagesTo($this->getMediaFolder($contenido), true);
@@ -188,11 +193,11 @@ class NoticiaCrudController extends CrudController
             $contenido->save();
 
             return response()->json([
-                "id" => $contenido->id
+                'id' => $contenido->id,
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
-                "error" => $e->getMessage()
+                'error' => $e->getMessage(),
             ], 500);
         }
     }

@@ -2,13 +2,20 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Backpack\CRUD\app\Http\Controllers\CrudController;
-use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
-use Illuminate\Support\Facades\Storage;
-use App\Services\WordImport;
-use App\Models\Comunicado;
 use App\Http\Requests\StoreComunicadoRequest;
 use App\Jobs\ProcesarAudios;
+use App\Models\Comunicado;
+use App\Services\WordImport;
+use App\Traits\CrudContenido;
+use Backpack\CRUD\app\Http\Controllers\CrudController;
+use Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
+use Backpack\CRUD\app\Library\CrudPanel\CrudPanel;
+use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
+use Backpack\ReviseOperation\ReviseOperation;
 use Illuminate\Support\Facades\Log;
 
 // esto permite testar la conversión de audio al guardar el comunicado
@@ -16,18 +23,18 @@ define('TESTAR_CONVERTIDOR_AUDIO2', false);
 
 /**
  * Class ComunicadoCrudController
- * @package App\Http\Controllers\Admin
- * @property-read \Backpack\CRUD\app\Library\CrudPanel\CrudPanel $crud
+ *
+ * @property-read CrudPanel $crud
  */
 class ComunicadoCrudController extends CrudController
 {
-    use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
-    use \Backpack\ReviseOperation\ReviseOperation;
-    use \App\Traits\CrudContenido;
+    use CreateOperation;
+    use CrudContenido;
+    use DeleteOperation;
+    use ListOperation;
+    use ReviseOperation;
+    use ShowOperation;
+    use UpdateOperation;
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
@@ -37,7 +44,7 @@ class ComunicadoCrudController extends CrudController
     public function setup()
     {
         CRUD::setModel(Comunicado::class);
-        CRUD::setRoute(config('backpack.base.route_prefix') . '/comunicado');
+        CRUD::setRoute(config('backpack.base.route_prefix').'/comunicado');
         CRUD::setEntityNameStrings('comunicado', 'comunicados');
     }
 
@@ -45,6 +52,7 @@ class ComunicadoCrudController extends CrudController
      * Define what happens when the List operation is loaded.
      *
      * @see  https://backpackforlaravel.com/docs/crud-operation-list-entries
+     *
      * @return void
      */
     protected function setupListOperation()
@@ -55,19 +63,17 @@ class ComunicadoCrudController extends CrudController
          * Columns can be defined using the fluent syntax:
          * - CRUD::column('price')->type('number');
          */
-
         $this->crud->addColumn([
             'name' => 'id',
             'label' => 'id',
-            'type' => 'number'
+            'type' => 'number',
         ]);
 
         $this->crud->addColumn([
             'name' => 'titulo',
             'label' => 'Título',
-            'type' => 'text'
+            'type' => 'text',
         ]);
-
 
         $this->crud->addColumn([
             'name' => 'updated_at',
@@ -87,8 +93,8 @@ class ComunicadoCrudController extends CrudController
             'label' => 'Numero',
             'type' => 'text',
             'wrapper' => [
-                'class' => 'form-group col-md-3'
-            ]
+                'class' => 'form-group col-md-3',
+            ],
         ]);
 
         $this->crud->addColumn([
@@ -97,7 +103,7 @@ class ComunicadoCrudController extends CrudController
             'type' => 'text',
             'value' => function ($entry) {
                 return $entry->visibilidad == 'P' ? '✔️ Publicado' : '⚠️ Borrador';
-            }
+            },
         ]);
 
         CRUD::addButtonFromView('top', 'import_create', 'import_create', 'end');
@@ -111,6 +117,7 @@ class ComunicadoCrudController extends CrudController
      * Define what happens when the Create operation is loaded.
      *
      * @see https://backpackforlaravel.com/docs/crud-operation-create
+     *
      * @return void
      */
     protected function setupCreateOperation()
@@ -136,14 +143,14 @@ class ComunicadoCrudController extends CrudController
         CRUD::field([
             'name' => 'numero',
             'wrapper' => [
-                'class' => 'form-group col-md-3'
-            ]
+                'class' => 'form-group col-md-3',
+            ],
         ]);
 
         CRUD::field([
             // select_from_array
             'name' => 'categoria',
-            'label' => "Categoría",
+            'label' => 'Categoría',
             'type' => 'select_from_array',
             'options' => ['0' => 'General', '1' => 'TAP', '2' => 'Doce del Muulasterio', '3' => 'Muul'],
             'allows_null' => false,
@@ -151,7 +158,7 @@ class ComunicadoCrudController extends CrudController
             // 'allows_multiple' => true, // OPTIONAL; needs you to cast this to array in your model;
 
             'wrapper' => [
-                'class' => 'form-group col-md-3'
+                'class' => 'form-group col-md-3',
             ],
         ]);
 
@@ -168,7 +175,7 @@ class ComunicadoCrudController extends CrudController
         CRUD::field('ano')->type('hidden');
 
         CRUD::field('fecha_comunicado')->wrapper([
-            'class' => 'form-group col-md-3'
+            'class' => 'form-group col-md-3',
         ]);
 
         // CRUD::field('audios')->type('json');
@@ -190,7 +197,7 @@ class ComunicadoCrudController extends CrudController
                 'acceptedFiles' => '.mp3,.mpeg,.mpg,.mp4,.m4a,.wav,.opus,.flac,.wma,.aac,.ogg,.au',
                 'addRemoveLinks' => true,
                 'dictRemoveFileConfirmation' => '¿Quieres eliminar este archivo?',
-                'dictRemoveFile' => 'Eliminar'
+                'dictRemoveFile' => 'Eliminar',
             ],
             // 'disk' => 'public',
             /*'type' => 'upload_multple',
@@ -224,7 +231,6 @@ class ComunicadoCrudController extends CrudController
 
         CRUD::field('visibilidad')->type('visibilidad');
 
-
         Comunicado::saved(function ($comunicado) {
             // Aquí puedes escribir tu lógica personalizada
             // que se ejecutará después de crear o actualizar un comunicado.
@@ -246,11 +252,11 @@ class ComunicadoCrudController extends CrudController
         });
     }
 
-
     /**
      * Define what happens when the Update operation is loaded.
      *
      * @see https://backpackforlaravel.com/docs/crud-operation-update
+     *
      * @return void
      */
     protected function setupUpdateOperation()
@@ -258,11 +264,10 @@ class ComunicadoCrudController extends CrudController
         $this->setupCreateOperation();
     }
 
-
-
     public function show($id)
     {
         $comunicado = Comunicado::find($id);
+
         return $comunicado->visibilidad == 'P' ? redirect("/comunicados/$id") : redirect("/comunicados/$id?borrador");
     }
 
@@ -316,14 +321,13 @@ class ComunicadoCrudController extends CrudController
     public function importCreate()
     {
         $contenido = Comunicado::create([
-            "titulo" => "Importado de " . $_FILES['file']['name'] . "_" . substr(str_shuffle('0123456789'), 0, 5),
-            "texto" => "",
-            "ano" => date('Y')
+            'titulo' => 'Importado de '.$_FILES['file']['name'].'_'.substr(str_shuffle('0123456789'), 0, 5),
+            'texto' => '',
+            'ano' => date('Y'),
         ]);
 
         return $this->importUpdate($contenido->id);
     }
-
 
     public function importUpdate($id)
     {
@@ -331,7 +335,7 @@ class ComunicadoCrudController extends CrudController
 
         try {
             // inicializa el importador en base a $_FILES
-            $imported = new WordImport();
+            $imported = new WordImport;
 
             // copia las imágenes desde la carpeta temporal al directorio destino, sobreescribiendo las anteriores en la carpeta
             $imported->copyImagesTo($this->getMediaFolder($contenido), true);
@@ -339,12 +343,12 @@ class ComunicadoCrudController extends CrudController
             // ahora las imagenes están con la nueva ubicación
             $contenido->texto = $imported->content;
 
-            if (!$contenido->imagen || $contenido->imagen == "/almacen/medios/logos/sello_tseyor_64.png") {
+            if (! $contenido->imagen || $contenido->imagen == '/almacen/medios/logos/sello_tseyor_64.png') {
                 $guias = ['Shilcars', 'Rasbek', 'Melcor', 'Noiwanak', 'Aumnor', 'Aium Om', 'Orjaín', 'Mo', 'Rhaum', 'Jalied'];
-                $regex = "/\b(" . implode("|", $guias) . ")\b/";
+                $regex = "/\b(".implode('|', $guias).")\b/";
                 if (preg_match($regex, $contenido->texto, $matches)) {
                     // Log::info("guia encontrado:" . print_r($matches, true));
-                    $guia =  strtolower(str_replace(["í", " "], ["i", ""], $matches[0]));
+                    $guia = strtolower(str_replace(['í', ' '], ['i', ''], $matches[0]));
                     $contenido->imagen = "/almacen/medios/guias/$guia.jpg";
                 }
             }
@@ -355,11 +359,11 @@ class ComunicadoCrudController extends CrudController
             $contenido->save();
 
             return response()->json([
-                "id" => $contenido->id
+                'id' => $contenido->id,
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
-                "error" => $e->getMessage()
+                'error' => $e->getMessage(),
             ], 500);
         }
     }

@@ -2,24 +2,33 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Backpack\CRUD\app\Http\Controllers\CrudController;
-use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 use App\Models\Guia;
+use App\Traits\CrudContenido;
+use Backpack\CRUD\app\Http\Controllers\CrudController;
+use Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
+use Backpack\CRUD\app\Library\CrudPanel\CrudPanel;
+use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
+use Backpack\ReviseOperation\ReviseOperation;
+use Illuminate\Validation\Rule;
 
 /**
  * Class GuiaCrudController
- * @package App\Http\Controllers\Admin
- * @property-read \Backpack\CRUD\app\Library\CrudPanel\CrudPanel $crud
+ *
+ * @property-read CrudPanel $crud
  */
 class GuiaCrudController extends CrudController
 {
-    use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
-    use \Backpack\ReviseOperation\ReviseOperation;
-    use \App\Traits\CrudContenido;
+    use CreateOperation;
+    use CrudContenido;
+    use DeleteOperation;
+    use ListOperation;
+    use ReviseOperation;
+    use ShowOperation;
+    use UpdateOperation;
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
@@ -29,7 +38,7 @@ class GuiaCrudController extends CrudController
     public function setup()
     {
         CRUD::setModel(Guia::class);
-        CRUD::setRoute(config('backpack.base.route_prefix') . '/guia');
+        CRUD::setRoute(config('backpack.base.route_prefix').'/guia');
         CRUD::setEntityNameStrings('guia', 'guias');
     }
 
@@ -37,6 +46,7 @@ class GuiaCrudController extends CrudController
      * Define what happens when the List operation is loaded.
      *
      * @see  https://backpackforlaravel.com/docs/crud-operation-list-entries
+     *
      * @return void
      */
     protected function setupListOperation()
@@ -47,13 +57,11 @@ class GuiaCrudController extends CrudController
          * Columns can be defined using the fluent syntax:
          * - CRUD::column('price')->type('number');
          */
+        CRUD::column('nombre')->type('text');
 
+        CRUD::column('descripcion')->type('text');
 
-         CRUD::column('nombre')->type('text');
-
-         CRUD::column('descripcion')->type('text');
-
-         CRUD::column('imagen')->type('image');
+        CRUD::column('imagen')->type('image');
 
     }
 
@@ -61,15 +69,16 @@ class GuiaCrudController extends CrudController
      * Define what happens when the Create operation is loaded.
      *
      * @see https://backpackforlaravel.com/docs/crud-operation-create
+     *
      * @return void
      */
     protected function setupCreateOperation()
     {
-         $this->crud->setValidation([
+        $this->crud->setValidation([
             'nombre' => 'required|min:2',
-            'slug' => [ 'nullable', 'regex:/^[a-z0-9\-]+$/', \Illuminate\Validation\Rule::unique('guias', 'slug')->ignore($this->crud->getCurrentEntryId()) ],
+            'slug' => ['nullable', 'regex:/^[a-z0-9\-]+$/', Rule::unique('guias', 'slug')->ignore($this->crud->getCurrentEntryId())],
             'descripcion' => 'required|max:65000',
-            'imagen' =>'required'
+            'imagen' => 'required',
         ]);
         CRUD::setFromDb(); // set fields from db columns.
 
@@ -77,20 +86,19 @@ class GuiaCrudController extends CrudController
          * Fields can be defined using the fluent syntax:
          * - CRUD::field('price')->type('number');
          */
+        CRUD::field('descripcion')->type('text');
 
-         CRUD::field('descripcion')->type('text');
-
-         CRUD::field([   // select_from_array
-            'name'        => 'categoria',
-            'label'       => "Categoría",
-            'type'        => 'select_from_array',
-            'options'     => ['H1' => 'H1', 'H2' => 'H2', 'H3'=>'H3', 'Desconocido'=>'Desconocido', 'Otros' => 'Otros'],
+        CRUD::field([   // select_from_array
+            'name' => 'categoria',
+            'label' => 'Categoría',
+            'type' => 'select_from_array',
+            'options' => ['H1' => 'H1', 'H2' => 'H2', 'H3' => 'H3', 'Desconocido' => 'Desconocido', 'Otros' => 'Otros'],
             'allows_null' => false,
-            'default'     => 'H2',
+            'default' => 'H2',
             // 'allows_multiple' => true, // OPTIONAL; needs you to cast this to array in your model;
 
-            'wrapper'   => [
-                'class'      => 'form-group col-md-3'
+            'wrapper' => [
+                'class' => 'form-group col-md-3',
             ],
         ]);
 
@@ -113,6 +121,7 @@ class GuiaCrudController extends CrudController
      * Define what happens when the Update operation is loaded.
      *
      * @see https://backpackforlaravel.com/docs/crud-operation-update
+     *
      * @return void
      */
     protected function setupUpdateOperation()
@@ -120,10 +129,10 @@ class GuiaCrudController extends CrudController
         $this->setupCreateOperation();
     }
 
-
     public function show($id)
     {
         $guia = Guia::findOrFail($id);
+
         return $guia->visibilidad == 'P' ? redirect("/guias/$id") : redirect("/guias/$id?borrador");
     }
 }

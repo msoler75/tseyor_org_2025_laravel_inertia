@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Log;
 class TiempoEjecucion
 {
     private $startTime;
+
     private $string;
 
     public function __construct($string)
@@ -21,7 +22,7 @@ class TiempoEjecucion
         $totalDuration = $endTime - $this->startTime;
 
         // Registrar el tiempo transcurrido en el registro de Laravel
-        Log::info($this->string . ': ' . $totalDuration . ' segundos');
+        Log::info($this->string.': '.$totalDuration.' segundos');
 
         return $totalDuration;
     }

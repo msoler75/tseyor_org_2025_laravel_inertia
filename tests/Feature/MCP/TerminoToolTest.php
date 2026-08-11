@@ -2,11 +2,14 @@
 
 namespace Tests\Feature\MCP;
 
+use App\Http\Controllers\TerminosController;
+use App\Models\Termino;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class TerminoToolTest extends McpFeatureTestCase
 {
     use DatabaseTransactions;
+
     public function test_info_termino()
     {
         $result = $this->callMcpTool('info', ['entidad' => 'termino']);
@@ -24,21 +27,21 @@ class TerminoToolTest extends McpFeatureTestCase
 
     public function test_listar_terminos()
     {
-        $pp = \App\Http\Controllers\TerminosController::$ITEMS_POR_PAGINA;
-        \App\Models\Termino::withoutEvents(function () use ($pp) {
+        $pp = TerminosController::$ITEMS_POR_PAGINA;
+        Termino::withoutEvents(function () use ($pp) {
             for ($i = 0; $i < $pp + 3; $i++) {
-                \App\Models\Termino::create([
-                    'nombre' => 'Termino ' . $i,
-                    'slug' => 'termino-' . $i . '-' . uniqid(),
-                    'descripcion' => 'Desc ' . $i,
-                    'texto' => 'Texto ' . $i,
+                Termino::create([
+                    'nombre' => 'Termino '.$i,
+                    'slug' => 'termino-'.$i.'-'.uniqid(),
+                    'descripcion' => 'Desc '.$i,
+                    'texto' => 'Texto '.$i,
                     'ref_terminos' => '',
                     'ref_libros' => '',
                     'visibilidad' => 'P',
                 ]);
             }
         });
-        $this->makeAllSearchable(\App\Models\Termino::class);
+        $this->makeAllSearchable(Termino::class);
         $result = $this->callMcpTool('listar', ['entidad' => 'termino']);
         $this->assertIsArray($result);
         $this->assertArrayHasKey('listado', $result);
@@ -62,16 +65,16 @@ class TerminoToolTest extends McpFeatureTestCase
 
     public function test_ver_termino()
     {
-        $termino = \App\Models\Termino::create([
+        $termino = Termino::create([
             'nombre' => 'Termino Test',
-            'slug' => 'termino-test-' . uniqid(),
+            'slug' => 'termino-test-'.uniqid(),
             'descripcion' => 'Desc',
             'texto' => 'Texto',
             'ref_terminos' => '',
             'ref_libros' => '',
             'visibilidad' => 'P',
         ]);
-        $result = $this->callMcpTool('ver', ['entidad'=>'termino', 'slug' => $termino->slug]);
+        $result = $this->callMcpTool('ver', ['entidad' => 'termino', 'slug' => $termino->slug]);
         $this->assertIsArray($result);
         $this->assertArrayHasKey('termino', $result);
         $this->assertEquals($termino->slug, $result['termino']['slug'] ?? $result['termino']->slug ?? null);
@@ -83,14 +86,14 @@ class TerminoToolTest extends McpFeatureTestCase
             'entidad' => 'termino',
             'data' => [
                 'nombre' => 'Nuevo Termino',
-                'slug' => 'nuevo-termino-' . uniqid(),
+                'slug' => 'nuevo-termino-'.uniqid(),
                 'descripcion' => 'Descripción de prueba',
                 'texto' => 'Texto de prueba',
                 'ref_terminos' => '',
                 'ref_libros' => '',
                 'visibilidad' => 'P',
             ],
-            'token' => config('mcp-server.tokens.admin')
+            'token' => config('mcp-server.tokens.admin'),
         ];
         $this->callMcpTool('crear', $params);
         $this->assertDatabaseHas('terminos', ['slug' => $params['data']['slug']]);
@@ -98,9 +101,9 @@ class TerminoToolTest extends McpFeatureTestCase
 
     public function test_editar_termino()
     {
-        $termino = \App\Models\Termino::create([
+        $termino = Termino::create([
             'nombre' => 'Editar Termino',
-            'slug' => 'editar-termino-' . uniqid(),
+            'slug' => 'editar-termino-'.uniqid(),
             'descripcion' => 'Desc',
             'texto' => 'Texto',
             'ref_terminos' => '',
@@ -112,9 +115,9 @@ class TerminoToolTest extends McpFeatureTestCase
             'entidad' => 'termino',
             'id' => $termino->id,
             'data' => [
-                'descripcion' => $nuevaDescripcion
+                'descripcion' => $nuevaDescripcion,
             ],
-            'token' => config('mcp-server.tokens.admin')
+            'token' => config('mcp-server.tokens.admin'),
         ];
         $this->callMcpTool('editar', $params);
         $this->assertDatabaseHas('terminos', ['id' => $termino->id, 'descripcion' => $nuevaDescripcion]);
@@ -122,9 +125,9 @@ class TerminoToolTest extends McpFeatureTestCase
 
     public function test_eliminar_termino()
     {
-        $termino = \App\Models\Termino::create([
+        $termino = Termino::create([
             'nombre' => 'Eliminar Termino',
-            'slug' => 'eliminar-termino-' . uniqid(),
+            'slug' => 'eliminar-termino-'.uniqid(),
             'descripcion' => 'Desc',
             'texto' => 'Texto',
             'ref_terminos' => '',
@@ -135,7 +138,7 @@ class TerminoToolTest extends McpFeatureTestCase
             'entidad' => 'termino',
             'id' => $termino->id,
             'force' => true,
-            'token' => config('mcp-server.tokens.admin')
+            'token' => config('mcp-server.tokens.admin'),
         ];
         $this->callMcpTool('eliminar', $params);
         $this->assertDatabaseMissing('terminos', ['id' => $termino->id]);

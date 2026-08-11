@@ -8,26 +8,26 @@ return [
                 'name' => 'buscar',
                 'type' => 'string',
                 'required' => false,
-                'description' => 'Texto a buscar en los centros. Ejemplo: "Andalucía"'
+                'description' => 'Texto a buscar en los centros. Ejemplo: "Andalucía"',
             ],
             [
                 'name' => 'pais',
                 'type' => 'string',
                 'required' => false,
-                'description' => 'Filtrar por país. Ejemplo: "ES"'
+                'description' => 'Filtrar por país. Ejemplo: "ES"',
             ],
             [
                 'name' => 'ano',
                 'type' => 'integer',
                 'required' => false,
-                'description' => 'Filtrar por año. Ejemplo: 2023'
+                'description' => 'Filtrar por año. Ejemplo: 2023',
             ],
             [
                 'name' => 'orden',
                 'type' => 'string',
                 'required' => false,
-                'description' => 'Orden de resultados: "recientes", "cronologico", "relevancia". Ejemplo: "cronologico"'
-            ]
+                'description' => 'Orden de resultados: "recientes", "cronologico", "relevancia". Ejemplo: "cronologico"',
+            ],
         ],
         'campos' => [
             'nombre' => ['type' => 'string', 'description' => 'Nombre del centro'],
@@ -38,7 +38,7 @@ return [
             'libros' => ['type' => 'int', 'description' => 'Número de libros asociados'],
             'poblacion' => ['type' => 'string', 'description' => 'Población'],
             'pais' => ['type' => 'string', 'description' => 'Código de país'],
-            'contacto_id' => ['type' => 'int', 'description' => 'ID del contacto asociado']
-        ]
+            'contacto_id' => ['type' => 'int', 'description' => 'ID del contacto asociado'],
+        ],
     ],
 ];

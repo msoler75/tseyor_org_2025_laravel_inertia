@@ -2,22 +2,30 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\Acl;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
+use Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
+use Backpack\CRUD\app\Library\CrudPanel\CrudPanel;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
+use Backpack\ReviseOperation\ReviseOperation;
 
 /**
  * Class AclCrudController
- * @package App\Http\Controllers\Admin
- * @property-read \Backpack\CRUD\app\Library\CrudPanel\CrudPanel $crud
+ *
+ * @property-read CrudPanel $crud
  */
 class AclCrudController extends CrudController
 {
-    use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
-    use \Backpack\ReviseOperation\ReviseOperation;
+    use CreateOperation;
+    use DeleteOperation;
+    use ListOperation;
+    use ReviseOperation;
+    use ShowOperation;
+    use UpdateOperation;
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
@@ -26,37 +34,33 @@ class AclCrudController extends CrudController
      */
     public function setup()
     {
-        CRUD::setModel(\App\Models\Acl::class);
-        CRUD::setRoute(config('backpack.base.route_prefix') . '/acl');
+        CRUD::setModel(Acl::class);
+        CRUD::setRoute(config('backpack.base.route_prefix').'/acl');
         CRUD::setEntityNameStrings('Lista de acceso', 'Listas de acceso');
     }
-
-
 
     /**
      * Define what happens when the List operation is loaded.
      *
      * @see  https://backpackforlaravel.com/docs/crud-operation-list-entries
+     *
      * @return void
      */
     protected function setupListOperation()
     {
-        //CRUD::setFromDb(); // set columns from db columns.
+        // CRUD::setFromDb(); // set columns from db columns.
 
         /**
          * Columns can be defined using the fluent syntax:
          * - CRUD::column('price')->type('number');
          */
-
-
-
         $this->crud->addColumn([
             'name' => 'RutaNodo',
             'label' => 'Ruta',
             'model' => 'App\Models\Nodo',
             'searchLogic' => function ($query, $column, $searchTerm) {
                 $query->orWhereHas('nodo', function ($q) use ($searchTerm) {
-                    $q->where('ruta', 'like', '%' . $searchTerm . '%');
+                    $q->where('ruta', 'like', '%'.$searchTerm.'%');
                 });
             },
             'orderable' => true,
@@ -64,9 +68,8 @@ class AclCrudController extends CrudController
                 return $query->leftJoin('nodos', 'nodos_acl.nodo_id', '=', 'nodos.id')
                     ->orderBy('nodos.ubicacion', $columnDirection)->select('nodos_acl.*');
             },
-            'limit' => 200
+            'limit' => 200,
         ]);
-
 
         $this->crud->addColumn([
             'label' => 'Creado en',
@@ -86,7 +89,6 @@ class AclCrudController extends CrudController
             'orderable' => true,
         ]);
 
-
         $this->crud->addColumn([
             'name' => 'verbos',
             'label' => 'Verbos',
@@ -97,6 +99,7 @@ class AclCrudController extends CrudController
      * Define what happens when the Create operation is loaded.
      *
      * @see https://backpackforlaravel.com/docs/crud-operation-create
+     *
      * @return void
      */
     protected function setupCreateOperation()
@@ -108,7 +111,6 @@ class AclCrudController extends CrudController
          * Fields can be defined using the fluent syntax:
          * - CRUD::field('price')->type('number');
          */
-
         CRUD::field('nodo_id')->type('select')->attribute('ruta');
         CRUD::field('user_id')->type('select');
         CRUD::field('group_id')->type('select');
@@ -121,6 +123,7 @@ class AclCrudController extends CrudController
      * Define what happens when the Update operation is loaded.
      *
      * @see https://backpackforlaravel.com/docs/crud-operation-update
+     *
      * @return void
      */
     protected function setupUpdateOperation()
@@ -132,27 +135,26 @@ class AclCrudController extends CrudController
          * Fields can be defined using the fluent syntax:
          * - CRUD::field('price')->type('number');
          */
-
-        CRUD::field('nodo_id')->type('hidden');//->attributes(['readonly'=>'1']);
-        CRUD::field('user_id')->type('hidden');//->attributes(['readonly'=>'1']);
-        CRUD::field('group_id')->type('hidden');//->attributes(['readonly'=>'1']);
+        CRUD::field('nodo_id')->type('hidden'); // ->attributes(['readonly'=>'1']);
+        CRUD::field('user_id')->type('hidden'); // ->attributes(['readonly'=>'1']);
+        CRUD::field('group_id')->type('hidden'); // ->attributes(['readonly'=>'1']);
 
         CRUD::field([
             'name' => 'RutaNodo',
             'label' => 'Ruta',
-            'attributes' => ['disabled' => 'disabled']
+            'attributes' => ['disabled' => 'disabled'],
         ]);
 
         CRUD::field([
             'name' => 'NombreUsuario',
             'label' => 'Usuario',
-            'attributes' => ['disabled' => 'disabled']
+            'attributes' => ['disabled' => 'disabled'],
         ]);
 
         CRUD::field([
             'name' => 'NombreGrupo',
             'label' => 'Grupo',
-            'attributes' => ['disabled' => 'disabled']
+            'attributes' => ['disabled' => 'disabled'],
         ]);
 
         CRUD::field('verbos')->makeLast();

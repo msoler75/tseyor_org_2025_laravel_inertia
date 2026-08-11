@@ -1,5 +1,20 @@
 <?php
 
+use App\MCP\Tools\AnunciarMantenimientoTool;
+use App\MCP\Tools\BuscarTool;
+use App\MCP\Tools\ConsultarMantenimientoTool;
+use App\MCP\Tools\CrearTool;
+use App\MCP\Tools\EditarTool;
+use App\MCP\Tools\EliminarTool;
+use App\MCP\Tools\InfoTool;
+use App\MCP\Tools\ListarTool;
+use App\MCP\Tools\VerTool;
+use OPGG\LaravelMcpServer\Services\PromptService\Examples\WelcomePrompt;
+use OPGG\LaravelMcpServer\Services\ResourceService\Examples\LogFileResource;
+use OPGG\LaravelMcpServer\Services\ResourceService\Examples\LogFileTemplate;
+use OPGG\LaravelMcpServer\Services\ResourceService\Examples\UserListResource;
+use OPGG\LaravelMcpServer\Services\ResourceService\Examples\UserResourceTemplate;
+
 /**
  * Laravel MCP Server Configuration
  *
@@ -271,15 +286,15 @@ return [
         // App\MCP\Tools\Sms\SendMessageTool::class,
         // App\MCP\Tools\External\PaymentProcessorTool::class,
 
-        \App\MCP\Tools\VerTool::class,
-        \App\MCP\Tools\ListarTool::class,
-        \App\MCP\Tools\BuscarTool::class,
-        \App\MCP\Tools\CrearTool::class,
-        \App\MCP\Tools\EditarTool::class,
-        \App\MCP\Tools\EliminarTool::class,
-        \App\MCP\Tools\InfoTool::class,
-        \App\MCP\Tools\ConsultarMantenimientoTool::class,
-        \App\MCP\Tools\AnunciarMantenimientoTool::class,
+        VerTool::class,
+        ListarTool::class,
+        BuscarTool::class,
+        CrearTool::class,
+        EditarTool::class,
+        EliminarTool::class,
+        InfoTool::class,
+        ConsultarMantenimientoTool::class,
+        AnunciarMantenimientoTool::class,
 
     ],
 
@@ -327,8 +342,8 @@ return [
     // Static Resources - Fixed data sources with known URIs
     'resources' => [
         // Example resource - Remove in production
-        \OPGG\LaravelMcpServer\Services\ResourceService\Examples\LogFileResource::class,
-        \OPGG\LaravelMcpServer\Services\ResourceService\Examples\UserListResource::class,
+        LogFileResource::class,
+        UserListResource::class,
 
         // ===== REGISTER YOUR STATIC RESOURCES BELOW =====
         // Examples:
@@ -341,8 +356,8 @@ return [
     // Resource Templates - Dynamic resources using URI patterns
     'resource_templates' => [
         // Example template - Remove in production
-        \OPGG\LaravelMcpServer\Services\ResourceService\Examples\LogFileTemplate::class,
-        \OPGG\LaravelMcpServer\Services\ResourceService\Examples\UserResourceTemplate::class,
+        LogFileTemplate::class,
+        UserResourceTemplate::class,
 
         // ===== REGISTER YOUR RESOURCE TEMPLATES BELOW =====
         // Examples:
@@ -423,7 +438,7 @@ return [
     */
     'prompts' => [
         // Example prompt - Remove in production
-        \OPGG\LaravelMcpServer\Services\PromptService\Examples\WelcomePrompt::class,
+        WelcomePrompt::class,
 
         // ===== REGISTER YOUR CUSTOM PROMPTS BELOW =====
         // Examples:
@@ -449,12 +464,11 @@ return [
         // App\MCP\Prompts\AnalyticsDashboardPrompt::class,
     ],
 
-
     // control de acceso
     'tokens' => [
         // Usa valores seguros y cámbialos en producción
         'admin' => env('MCP_TOKEN_ADMIN', 'omitir_en_produccion'), // para los test, omitir en producción
     ],
 
-    'jwt_secret_prefix' => env('MCP_JWT_SECRET_PREFIX', '')
+    'jwt_secret_prefix' => env('MCP_JWT_SECRET_PREFIX', ''),
 ];

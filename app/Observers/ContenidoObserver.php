@@ -20,6 +20,7 @@ class ContenidoObserver
             if ($contenido->isDirty('visibilidad')) {
                 $this->desactivarEnlacesRelacionados($contenido);
             }
+
             return;
         }
 
@@ -45,14 +46,14 @@ class ContenidoObserver
                 'og_descripcion' => $seoData['og_descripcion'],
                 'og_imagen' => $seoData['og_imagen'] ?? null,
                 'twitter_imagen' => $seoData['twitter_imagen'] ?? null,
-                'updated_at' => now()
+                'updated_at' => now(),
             ]);
 
             Log::info('Enlace corto actualizado desde Contenido', [
                 'contenido_id' => $contenido->id,
                 'enlace_codigo' => $enlace->codigo,
                 'titulo' => $contenido->titulo,
-                'tipo' => 'contenido_interno'
+                'tipo' => 'contenido_interno',
             ]);
         }
     }
@@ -66,12 +67,12 @@ class ContenidoObserver
             ->where('activo', true)
             ->update([
                 'activo' => false,
-                'updated_at' => now()
+                'updated_at' => now(),
             ]);
 
         Log::info('Enlaces cortos desactivados por cambio de visibilidad', [
             'contenido_id' => $contenido->id,
-            'nueva_visibilidad' => $contenido->visibilidad
+            'nueva_visibilidad' => $contenido->visibilidad,
         ]);
     }
 
@@ -84,11 +85,11 @@ class ContenidoObserver
         EnlaceCorto::where('contenido_id', $contenido->id)
             ->update([
                 'activo' => false,
-                'updated_at' => now()
+                'updated_at' => now(),
             ]);
 
         Log::info('Enlaces cortos desactivados por eliminación de contenido', [
-            'contenido_id' => $contenido->id
+            'contenido_id' => $contenido->id,
         ]);
     }
 

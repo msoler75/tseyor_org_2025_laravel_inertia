@@ -40,18 +40,17 @@ class CambioPassword extends Notification implements ShouldQueue
         $user = $notifiable;
         $userUrl = url('/user/profile');
         $subject = 'Se ha cambiado tu acceso';
-        Log::channel('notificaciones')->info('[CambioPassword] Enviando a: ' . $user->email . ' | Nombre: ' . $user->name . ' | Asunto: ' . $subject . ' | Nueva password: ' . $this->password);
+        Log::channel('notificaciones')->info('[CambioPassword] Enviando a: '.$user->email.' | Nombre: '.$user->name.' | Asunto: '.$subject.' | Nueva password: '.$this->password);
 
         return (new MailMessage)
             ->subject($subject)
-            ->greeting('¡Hola ' . $user->name . '!')
+            ->greeting('¡Hola '.$user->name.'!')
             ->line('Se ha generado una nueva contraseña para tu cuenta:')
             ->line($this->password)
             ->line('También puedes cambiar la contraseña en tu cuenta web. Inicia sesión y ve a la sección de configuración de tu cuenta para modificarla.')
             ->action('Acceder a tu cuenta', $userUrl);
-            //->line('Si no has solicitado este cambio, es posible que alguien haya intentado acceder a tu cuenta.');
+        // ->line('Si no has solicitado este cambio, es posible que alguien haya intentado acceder a tu cuenta.');
     }
-
 
     /**
      * Get the array representation of the notification.
@@ -62,7 +61,7 @@ class CambioPassword extends Notification implements ShouldQueue
     {
         return [
             'user' => ['nombre' => $notifiable->name, 'id' => $notifiable->id],
-            'password' => $this->password
+            'password' => $this->password,
         ];
     }
 }

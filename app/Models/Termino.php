@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
+use App\Pigmalion\Markdown;
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
-use App\Models\ContenidoBaseModel;
 use Laravel\Scout\Searchable;
 
 class Termino extends ContenidoBaseModel
@@ -20,10 +20,8 @@ class Termino extends ContenidoBaseModel
         'texto',
         'ref_terminos',
         'ref_libros',
-        'visibilidad'
+        'visibilidad',
     ];
-
-
 
     /**
      * Searchable: Get the indexable data array for the model.
@@ -35,7 +33,7 @@ class Termino extends ContenidoBaseModel
         return [
             'id' => $this->id,
             'title' => $this->nombre,
-            'content' => \App\Pigmalion\Markdown::removeMarkdown($this->texto),
+            'content' => Markdown::removeMarkdown($this->texto),
         ];
     }
 
@@ -46,7 +44,6 @@ class Termino extends ContenidoBaseModel
     {
         return $this->visibilidad == 'P';
     }
-
 
     /**
      * Función heredable de ContenidoBaseModel para la busqueda global

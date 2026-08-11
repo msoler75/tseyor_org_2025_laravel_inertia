@@ -2,17 +2,16 @@
 
 namespace App\Models;
 
-use Backpack\CRUD\app\Models\Traits\CrudTrait;
-use App\Models\ContenidoBaseModel;
-use Laravel\Scout\Searchable;
+use App\Pigmalion\Markdown;
 use App\Traits\EsCategorizable;
-
+use Backpack\CRUD\app\Models\Traits\CrudTrait;
+use Laravel\Scout\Searchable;
 
 class Publicacion extends ContenidoBaseModel
 {
     use CrudTrait;
-    use Searchable;
     use EsCategorizable;
+    use Searchable;
 
     protected $table = 'publicaciones';
 
@@ -26,13 +25,12 @@ class Publicacion extends ContenidoBaseModel
         'published_at',
         'visibilidad',
         'user_id',
-        'equipo_id'
+        'equipo_id',
     ];
 
     protected $dates = [
         'published_at',
     ];
-
 
     public function user()
     {
@@ -43,8 +41,6 @@ class Publicacion extends ContenidoBaseModel
     {
         return $this->belongsTo(Equipo::class, 'equipo_id', 'id');
     }
-
-
 
     // accesors
     public function getNombreUsuarioAttribute()
@@ -57,12 +53,9 @@ class Publicacion extends ContenidoBaseModel
         return $this->equipo->nombre; // Reemplaza `nombre` por el nombre del atributo que contiene el nombre del grupo en tu modelo `Grupo`
     }
 
+    // SCOUT
 
-
-      // SCOUT
-
-
-     /**
+    /**
      * Solo se indexa si acaso está publicado
      */
     public function shouldBeSearchable(): bool
@@ -70,8 +63,7 @@ class Publicacion extends ContenidoBaseModel
         return $this->visibilidad == 'P';
     }
 
-
-   /**
+    /**
      * Get the indexable data array for the model.
      *
      * @return array<string, mixed>
@@ -82,7 +74,7 @@ class Publicacion extends ContenidoBaseModel
             'id' => $this->id, // <- Always include the primary key
             'title' => $this->titulo,
             'description' => $this->descripcion,
-            'content' => \App\Pigmalion\Markdown::removeMarkdown($this->texto),
+            'content' => Markdown::removeMarkdown($this->texto),
         ];
     }
 }

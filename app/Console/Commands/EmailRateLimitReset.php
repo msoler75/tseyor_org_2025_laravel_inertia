@@ -26,9 +26,10 @@ class EmailRateLimitReset extends Command
      */
     public function handle(): int
     {
-        if (!$this->option('force')) {
-            if (!$this->confirm('This will reset the email rate limiter cache. Continue?')) {
+        if (! $this->option('force')) {
+            if (! $this->confirm('This will reset the email rate limiter cache. Continue?')) {
                 $this->info('Operation cancelled.');
+
                 return Command::SUCCESS;
             }
         }

@@ -12,7 +12,7 @@ return [
     'contentClass' => 'col-md-12',
 
     // Automatically add all columns from the db table?
-    'setFromDb'  => true,
+    'setFromDb' => true,
 
     // Automatically add created_at and updated_at columns, if model has timestamps?
     'timestamps' => true,
@@ -25,5 +25,5 @@ return [
     'tabsEnabled' => false,
 
     // When using tabbed forms (create & update), what kind of tabs would you like?
-    'tabsType' => 'horizontal', //options: horizontal, vertical
+    'tabsType' => 'horizontal', // options: horizontal, vertical
 ];

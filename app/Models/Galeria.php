@@ -3,12 +3,7 @@
 namespace App\Models;
 
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
-use App\Models\ContenidoBaseModel;
-use App\Models\Nodo;
-use App\Models\GaleriaItem;
 use Laravel\Scout\Searchable;
-use App\Pigmalion\StorageItem;
-
 
 class Galeria extends ContenidoBaseModel
 {
@@ -20,7 +15,7 @@ class Galeria extends ContenidoBaseModel
         'slug',
         'descripcion',
         'ruta',
-        'imagen'
+        'imagen',
     ];
 
     public function items()
@@ -37,7 +32,7 @@ class Galeria extends ContenidoBaseModel
             return $this->imagen;
         }
 
-        $primerItem = $this->items()->whereHas('nodo', function($query) {
+        $primerItem = $this->items()->whereHas('nodo', function ($query) {
             $query->where('es_carpeta', 0);
         })->first();
 
@@ -47,24 +42,26 @@ class Galeria extends ContenidoBaseModel
     public function releerCarpeta()
     {
         $path = $this->ruta;
-        if (!$path) return;
+        if (! $path) {
+            return;
+        }
 
         // Primero, indexar archivos físicos que no estén en la base de datos
         $this->indexarArchivosFisicos($path);
 
         // Luego buscar nodos en la base de datos
-        $nodos = Nodo::where('ubicacion', 'like', $path . '/%')
-                     ->where('es_carpeta', 0)
-                     ->get();
+        $nodos = Nodo::where('ubicacion', 'like', $path.'/%')
+            ->where('es_carpeta', 0)
+            ->get();
 
         // Obtener el orden máximo actual para añadir nuevos al final
         $maxOrden = $this->items()->max('orden') ?? 0;
         $orden = $maxOrden + 1;
         foreach ($nodos as $nodo) {
             $existing = GaleriaItem::where('galeria_id', $this->id)
-                                   ->where('nodo_id', $nodo->id)
-                                   ->first();
-            if (!$existing) {
+                ->where('nodo_id', $nodo->id)
+                ->first();
+            if (! $existing) {
                 GaleriaItem::create([
                     'galeria_id' => $this->id,
                     'nodo_id' => $nodo->id,
@@ -87,9 +84,9 @@ class Galeria extends ContenidoBaseModel
 
     private function indexarArchivosFisicos($basePath)
     {
-        $fullPath = storage_path('app/' . $basePath);
+        $fullPath = storage_path('app/'.$basePath);
 
-        if (!is_dir($fullPath)) {
+        if (! is_dir($fullPath)) {
             return;
         }
 
@@ -98,7 +95,7 @@ class Galeria extends ContenidoBaseModel
         foreach ($files as $file) {
             // Verificar si ya existe un nodo para este archivo
             $existing = Nodo::where('ubicacion', $file['ubicacion'])->first();
-            if (!$existing) {
+            if (! $existing) {
                 Nodo::create([
                     'ubicacion' => $file['ubicacion'],
                     'permisos' => '0644',
@@ -120,8 +117,8 @@ class Galeria extends ContenidoBaseModel
                 continue;
             }
 
-            $fullPath = $directory . DIRECTORY_SEPARATOR . $item;
-            $relativePath = $basePath . '/' . $item;
+            $fullPath = $directory.DIRECTORY_SEPARATOR.$item;
+            $relativePath = $basePath.'/'.$item;
 
             if (is_dir($fullPath)) {
                 // Es una carpeta, procesar recursivamente

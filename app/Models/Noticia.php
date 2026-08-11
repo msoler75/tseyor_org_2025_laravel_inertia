@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
-use Backpack\CRUD\app\Models\Traits\CrudTrait;
-use App\Models\ContenidoBaseModel;
-use Laravel\Scout\Searchable;
+use App\Pigmalion\Markdown;
 use App\Traits\TieneImagen;
+use Backpack\CRUD\app\Models\Traits\CrudTrait;
+use Laravel\Scout\Searchable;
 
 class Noticia extends ContenidoBaseModel
 {
@@ -20,7 +20,7 @@ class Noticia extends ContenidoBaseModel
         'texto',
         'imagen',
         'published_at',
-        'visibilidad'
+        'visibilidad',
     ];
 
     protected $dates = [
@@ -39,11 +39,7 @@ class Noticia extends ContenidoBaseModel
     }
     */
 
-
-
-
-
-  /**
+    /**
      * Solo se indexa si acaso está publicado
      */
     public function shouldBeSearchable(): bool
@@ -51,7 +47,7 @@ class Noticia extends ContenidoBaseModel
         return $this->visibilidad == 'P';
     }
 
-   /**
+    /**
      * Get the indexable data array for the model.
      *
      * @return array<string, mixed>
@@ -62,7 +58,7 @@ class Noticia extends ContenidoBaseModel
             'id' => $this->id, // <- Always include the primary key
             'title' => $this->titulo,
             'description' => $this->descripcion,
-            'content' => \App\Pigmalion\Markdown::removeMarkdown($this->texto),
+            'content' => Markdown::removeMarkdown($this->texto),
         ];
     }
 }

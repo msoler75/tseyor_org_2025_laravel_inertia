@@ -2,11 +2,14 @@
 
 namespace Tests\Feature\MCP;
 
+use App\Http\Controllers\TutorialesController;
+use App\Models\Tutorial;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class TutorialToolTest extends McpFeatureTestCase
 {
     use DatabaseTransactions;
+
     public function test_info_tutorial()
     {
         $result = $this->callMcpTool('info', ['entidad' => 'tutorial']);
@@ -24,19 +27,19 @@ class TutorialToolTest extends McpFeatureTestCase
 
     public function test_listar_tutoriales()
     {
-        $pp = \App\Http\Controllers\TutorialesController::$ITEMS_POR_PAGINA;
+        $pp = TutorialesController::$ITEMS_POR_PAGINA;
         for ($i = 0; $i < $pp + 5; $i++) {
-            \App\Models\Tutorial::create([
-                'titulo' => 'Tutorial ' . $i,
-                'slug' => 'tutorial-' . $i . '-' . uniqid(),
+            Tutorial::create([
+                'titulo' => 'Tutorial '.$i,
+                'slug' => 'tutorial-'.$i.'-'.uniqid(),
                 'categoria' => 'general',
-                'descripcion' => 'Desc ' . $i,
-                'texto' => 'Texto ' . $i,
-                'video' => 'https://video' . $i . '.com',
+                'descripcion' => 'Desc '.$i,
+                'texto' => 'Texto '.$i,
+                'video' => 'https://video'.$i.'.com',
                 'visibilidad' => 'P',
             ]);
         }
-        $this->makeAllSearchable(\App\Models\Tutorial::class);
+        $this->makeAllSearchable(Tutorial::class);
         $result = $this->callMcpTool('listar', ['entidad' => 'tutorial']);
         $this->assertIsArray($result);
         // fwrite(STDERR, print_r($result, true));
@@ -61,9 +64,9 @@ class TutorialToolTest extends McpFeatureTestCase
 
     public function test_ver_tutorial()
     {
-        $tutorial = \App\Models\Tutorial::create([
+        $tutorial = Tutorial::create([
             'titulo' => 'Tutorial Test',
-            'slug' => 'tutorial-test-' . uniqid(),
+            'slug' => 'tutorial-test-'.uniqid(),
             'categoria' => 'general',
             'descripcion' => 'Desc',
             'texto' => 'Texto',
@@ -82,14 +85,14 @@ class TutorialToolTest extends McpFeatureTestCase
             'entidad' => 'tutorial',
             'data' => [
                 'titulo' => 'Nuevo Tutorial',
-                'slug' => 'nuevo-tutorial-' . uniqid(),
+                'slug' => 'nuevo-tutorial-'.uniqid(),
                 'categoria' => 'general',
                 'descripcion' => 'Descripción de prueba',
                 'texto' => 'Texto de prueba',
                 'video' => 'https://nuevo-tutorial.com',
                 'visibilidad' => 'P',
             ],
-            'token' => config('mcp-server.tokens.admin')
+            'token' => config('mcp-server.tokens.admin'),
         ];
         $this->callMcpTool('crear', $params);
         $this->assertDatabaseHas('tutoriales', ['slug' => $params['data']['slug']]);
@@ -97,9 +100,9 @@ class TutorialToolTest extends McpFeatureTestCase
 
     public function test_editar_tutorial()
     {
-        $tutorial = \App\Models\Tutorial::create([
+        $tutorial = Tutorial::create([
             'titulo' => 'Editar Tutorial',
-            'slug' => 'editar-tutorial-' . uniqid(),
+            'slug' => 'editar-tutorial-'.uniqid(),
             'categoria' => 'general',
             'descripcion' => 'Desc',
             'texto' => 'Texto',
@@ -111,9 +114,9 @@ class TutorialToolTest extends McpFeatureTestCase
             'entidad' => 'tutorial',
             'id' => $tutorial->id,
             'data' => [
-                'descripcion' => $nuevaDescripcion
+                'descripcion' => $nuevaDescripcion,
             ],
-            'token' => config('mcp-server.tokens.admin')
+            'token' => config('mcp-server.tokens.admin'),
         ];
         $this->callMcpTool('editar', $params);
         $this->assertDatabaseHas('tutoriales', ['id' => $tutorial->id, 'descripcion' => $nuevaDescripcion]);
@@ -121,9 +124,9 @@ class TutorialToolTest extends McpFeatureTestCase
 
     public function test_eliminar_tutorial()
     {
-        $tutorial = \App\Models\Tutorial::create([
+        $tutorial = Tutorial::create([
             'titulo' => 'Eliminar Tutorial',
-            'slug' => 'eliminar-tutorial-' . uniqid(),
+            'slug' => 'eliminar-tutorial-'.uniqid(),
             'categoria' => 'general',
             'descripcion' => 'Desc',
             'texto' => 'Texto',
@@ -134,7 +137,7 @@ class TutorialToolTest extends McpFeatureTestCase
             'entidad' => 'tutorial',
             'id' => $tutorial->id,
             'force' => true,
-            'token' => config('mcp-server.tokens.admin')
+            'token' => config('mcp-server.tokens.admin'),
         ];
         $this->callMcpTool('eliminar', $params);
         $this->assertDatabaseMissing('tutoriales', ['id' => $tutorial->id]);

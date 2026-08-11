@@ -2,31 +2,39 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Backpack\CRUD\app\Http\Controllers\CrudController;
-use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 use App\Http\Requests\UserStoreCrudRequest as StoreRequest;
 use App\Http\Requests\UserUpdateCrudRequest as UpdateRequest;
-use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use App\Notifications\CambioPassword;
+use Backpack\CRUD\app\Http\Controllers\CrudController;
+use Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
+use Backpack\CRUD\app\Library\CrudPanel\CrudPanel;
+use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
+use Backpack\ReviseOperation\ReviseOperation;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Hash;
 
 /**
  * Class UserCrudController
- * @package App\Http\Controllers\Admin
- * @property-read \Backpack\CRUD\app\Library\CrudPanel\CrudPanel $crud
+ *
+ * @property-read CrudPanel $crud
  */
 class UserCrudController extends CrudController
 {
-    use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation {
+    use CreateOperation {
         store as traitStore;
     }
-    use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation {
+    use DeleteOperation;
+    use ListOperation;
+    use ReviseOperation;
+    use ShowOperation;
+    use UpdateOperation {
         update as traitUpdate;
     }
-    use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
-    use \Backpack\ReviseOperation\ReviseOperation;
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
@@ -35,8 +43,8 @@ class UserCrudController extends CrudController
      */
     public function setup()
     {
-        CRUD::setModel(\App\Models\User::class);
-        CRUD::setRoute(config('backpack.base.route_prefix') . '/user');
+        CRUD::setModel(User::class);
+        CRUD::setRoute(config('backpack.base.route_prefix').'/user');
         CRUD::setEntityNameStrings('usuario', 'usuarios');
     }
 
@@ -44,6 +52,7 @@ class UserCrudController extends CrudController
      * Define what happens when the List operation is loaded.
      *
      * @see  https://backpackforlaravel.com/docs/crud-operation-list-entries
+     *
      * @return void
      */
     protected function setupListOperation()
@@ -64,12 +73,12 @@ class UserCrudController extends CrudController
 
         $this->crud->addColumn(
             [ // n-n relationship (with pivot table)
-                'label'     => trans('backpack::permissionmanager.roles'), // Table column heading
-                'type'      => 'select_multiple',
-                'name'      => 'roles', // the method that defines the relationship in your Model
-                'entity'    => 'roles', // the method that defines the relationship in your Model
+                'label' => trans('backpack::permissionmanager.roles'), // Table column heading
+                'type' => 'select_multiple',
+                'name' => 'roles', // the method that defines the relationship in your Model
+                'entity' => 'roles', // the method that defines the relationship in your Model
                 'attribute' => 'name', // foreign key attribute that is shown to user
-                'model'     => config('permission.models.role'), // foreign key model
+                'model' => config('permission.models.role'), // foreign key model
             ]
         );
 
@@ -80,16 +89,11 @@ class UserCrudController extends CrudController
          * Columns can be defined using the fluent syntax:
          * - CRUD::column('price')->type('number');
          */
-
-         CRUD::addButtonFromView('line', 'generate_password', 'generate_password', 'end');
+        CRUD::addButtonFromView('line', 'generate_password', 'generate_password', 'end');
 
         CRUD::setOperationSetting('lineButtonsAsDropdown', true);
 
-
-
     }
-
-
 
     public function password($user_id)
     {
@@ -97,24 +101,24 @@ class UserCrudController extends CrudController
 
         $user = User::finrOrFail($user_id);
 
-        $words = array(
-            "amor", "mente", "observar", "trascendente", "unidad", "cambio", "divulgar", "armonizar", "equilibrio", "muul", "baksaj", "diversidad", "celeste", "kundalini", "grupal", "cielo",
-            "ritmo", "equidad", "infinito", "trinidad", "estrella", "plasma", "salud", "ong", "mundo", "utg", "universidad", "sandalia", "baston", "protege", "manto",
-            "movimiento", "claridad", "humildad", "hermandad", "confianza", "camino", "predica", "corazon", "estelar", "cayado", "baculo", "ancestral", "libertad", "libre",
-            "uno", "dos", "tres", "cuatro", "cinco", "seis", "siete", "ocho", "nueve", "diez", "once", "doce", "trece", "intruso", "dispersion", "cyborg", "crea", "crear", "voluntario", "forzado",
-            "auto", "autoctono", "oriundo", "primigenio", "aguila", "holograma", "ilusion", "fantasia", "apego", "desapego", "sombra", "sombras", "piensa",
-            "pancreas", "pan",  "vino", "sangre", "tierra", "linfatico", "reconocer", "cristo", "cosmico", "interior", "proteccion", "alcanzar", "tutelar", "replica", "replicas", "realidad", "mundos",
-            "h1", "h2", "h3", "aium", "rasbek", "shilcars", "melcor", "orjain", "noiwanak", "jalied", "melinus", "mo", "rhaum", "seiph", "orsil", "aumnor", "leer", "asumir", "vaciar",
-            "odres", "fractales", "mezclar", "lodo", "agua", "limpiar", "ejemplo", "peques", "sanar", "agregado", "transformar", "transformarse", "cambiar",
-            "monje", "pensamiento", "espejo", "testo", "transmutar", "luz", "rompui", "om", "pedir", "neent", "aum", "retro", "retroalimenta", "sinhio", "paraguas", "protector", "cafe",
-            "prometeo", "fractal", "xendra", "orbe", "esfera", "arte", "ciencia", "espiritual", "espiritualidad", "ondulatorio", "terapia", "retiro", "guerrero", "prior",
-            "norte", "este", "oeste", "sur", "",
-            "trascendente", "abiotica", "norte", "oscuridad", "entropia", "feliz", "romper", "beh", "sayab", "tseek", "suut", "kat", "oksah", "ich", "grihal"
-        );
+        $words = [
+            'amor', 'mente', 'observar', 'trascendente', 'unidad', 'cambio', 'divulgar', 'armonizar', 'equilibrio', 'muul', 'baksaj', 'diversidad', 'celeste', 'kundalini', 'grupal', 'cielo',
+            'ritmo', 'equidad', 'infinito', 'trinidad', 'estrella', 'plasma', 'salud', 'ong', 'mundo', 'utg', 'universidad', 'sandalia', 'baston', 'protege', 'manto',
+            'movimiento', 'claridad', 'humildad', 'hermandad', 'confianza', 'camino', 'predica', 'corazon', 'estelar', 'cayado', 'baculo', 'ancestral', 'libertad', 'libre',
+            'uno', 'dos', 'tres', 'cuatro', 'cinco', 'seis', 'siete', 'ocho', 'nueve', 'diez', 'once', 'doce', 'trece', 'intruso', 'dispersion', 'cyborg', 'crea', 'crear', 'voluntario', 'forzado',
+            'auto', 'autoctono', 'oriundo', 'primigenio', 'aguila', 'holograma', 'ilusion', 'fantasia', 'apego', 'desapego', 'sombra', 'sombras', 'piensa',
+            'pancreas', 'pan',  'vino', 'sangre', 'tierra', 'linfatico', 'reconocer', 'cristo', 'cosmico', 'interior', 'proteccion', 'alcanzar', 'tutelar', 'replica', 'replicas', 'realidad', 'mundos',
+            'h1', 'h2', 'h3', 'aium', 'rasbek', 'shilcars', 'melcor', 'orjain', 'noiwanak', 'jalied', 'melinus', 'mo', 'rhaum', 'seiph', 'orsil', 'aumnor', 'leer', 'asumir', 'vaciar',
+            'odres', 'fractales', 'mezclar', 'lodo', 'agua', 'limpiar', 'ejemplo', 'peques', 'sanar', 'agregado', 'transformar', 'transformarse', 'cambiar',
+            'monje', 'pensamiento', 'espejo', 'testo', 'transmutar', 'luz', 'rompui', 'om', 'pedir', 'neent', 'aum', 'retro', 'retroalimenta', 'sinhio', 'paraguas', 'protector', 'cafe',
+            'prometeo', 'fractal', 'xendra', 'orbe', 'esfera', 'arte', 'ciencia', 'espiritual', 'espiritualidad', 'ondulatorio', 'terapia', 'retiro', 'guerrero', 'prior',
+            'norte', 'este', 'oeste', 'sur', '',
+            'trascendente', 'abiotica', 'norte', 'oscuridad', 'entropia', 'feliz', 'romper', 'beh', 'sayab', 'tseek', 'suut', 'kat', 'oksah', 'ich', 'grihal',
+        ];
 
         $index = mt_rand(0, count($words) - 1);
 
-        $password = $words[$index] . '.' . mt_rand(1000, 9999);
+        $password = $words[$index].'.'.mt_rand(1000, 9999);
         \Log::info("nueva contraseña para {$user->name}: $password");
 
         $user->update(['password' => bcrypt($password)]);
@@ -124,11 +128,11 @@ class UserCrudController extends CrudController
         return response()->json(['user' => $user->name, 'password' => $password]);
     }
 
-
     /**
      * Define what happens when the Create operation is loaded.
      *
      * @see https://backpackforlaravel.com/docs/crud-operation-create
+     *
      * @return void
      */
     protected function setupCreateOperation()
@@ -156,6 +160,7 @@ class UserCrudController extends CrudController
      * Define what happens when the Update operation is loaded.
      *
      * @see https://backpackforlaravel.com/docs/crud-operation-update
+     *
      * @return void
      */
     protected function setupUpdateOperation()
@@ -163,13 +168,13 @@ class UserCrudController extends CrudController
         /*$this->crud->setValidation([
             'name' => 'required|min:2',
         ]);*/
-        //CRUD::setFromDb(); // set fields from db columns.
+        // CRUD::setFromDb(); // set fields from db columns.
 
-        //CRUD::field('password')->hint('Escribe una contraseña solo si deseas cambiarla.');
+        // CRUD::field('password')->hint('Escribe una contraseña solo si deseas cambiarla.');
 
         $this->crud->setValidation(UpdateRequest::class);
         $this->addUserFields();
-        //dd($this->crud->entry);
+        // dd($this->crud->entry);
 
         // CRUD::field('profile_photo_url')->type('text');
 
@@ -191,7 +196,7 @@ class UserCrudController extends CrudController
     /**
      * Store a newly created resource in the database.
      *
-     * @return \Illuminate\Http\RedirectResponse
+     * @return RedirectResponse
      */
     public function store()
     {
@@ -209,7 +214,7 @@ class UserCrudController extends CrudController
     /**
      * Update the specified resource in the database.
      *
-     * @return \Illuminate\Http\RedirectResponse
+     * @return RedirectResponse
      */
     public function update()
     {
@@ -271,89 +276,87 @@ class UserCrudController extends CrudController
     {
         $this->crud->addFields([
             [
-                'name'  => 'name',
+                'name' => 'name',
                 'label' => trans('backpack::permissionmanager.name'),
-                'type'  => 'text',
+                'type' => 'text',
             ],
             [
-                'name'  => 'email',
+                'name' => 'email',
                 'label' => trans('backpack::permissionmanager.email'),
-                'type'  => 'email',
+                'type' => 'email',
             ],
             [
-                'name'  => 'password',
+                'name' => 'password',
                 'label' => trans('backpack::permissionmanager.password'),
-                'type'  => 'password',
+                'type' => 'password',
             ],
             [
-                'name'  => 'password_confirmation',
+                'name' => 'password_confirmation',
                 'label' => trans('backpack::permissionmanager.password_confirmation'),
-                'type'  => 'password',
+                'type' => 'password',
             ],
             [
-                'name'  => 'profile_photo_path',
+                'name' => 'profile_photo_path',
                 'label' => 'Imagen',
-                'type'  => 'image_cover',
+                'type' => 'image_cover',
                 'attributes' => ['folder' => 'profile-photos'],
             ],
             [
-                'name'  => 'frase',
+                'name' => 'frase',
                 'label' => 'Frase',
-                'type'  => 'text',
+                'type' => 'text',
             ],
             [
-                'name'              => 'GruposJSON',
-                'label'             => 'Grupos',
+                'name' => 'GruposJSON',
+                'label' => 'Grupos',
                 // 'labelOption'       => 'nombre',
-                'type'              => 'select_model',
+                'type' => 'select_model',
                 'model' => 'grupo',
                 'options' => null,
-                'multiple' => true
+                'multiple' => true,
             ],
             [
                 'name' => 'contacto',
                 'label' => 'Contacto',
                 'allows_null' => true,
                 'type' => 'select',
-                'attribute'    => 'nombre',
-                'model'       => 'App\Models\Contacto',
-                'wrapper'   => [
-                    'class'      => 'form-group col-md-4'
-                ]
+                'attribute' => 'nombre',
+                'model' => 'App\Models\Contacto',
+                'wrapper' => [
+                    'class' => 'form-group col-md-4',
+                ],
             ],
             [
                 // two interconnected entities
-                'label'             => trans('backpack::permissionmanager.user_role_permission'),
+                'label' => trans('backpack::permissionmanager.user_role_permission'),
                 'field_unique_name' => 'user_role_permission',
-                'type'              => 'checklist_dependency',
-                'name'              => 'roles,permissions',
-                'subfields'         => [
+                'type' => 'checklist_dependency',
+                'name' => 'roles,permissions',
+                'subfields' => [
                     'primary' => [
-                        'label'            => trans('backpack::permissionmanager.roles'),
-                        'name'             => 'roles', // the method that defines the relationship in your Model
-                        'entity'           => 'roles', // the method that defines the relationship in your Model
+                        'label' => trans('backpack::permissionmanager.roles'),
+                        'name' => 'roles', // the method that defines the relationship in your Model
+                        'entity' => 'roles', // the method that defines the relationship in your Model
                         'entity_secondary' => 'permissions', // the method that defines the relationship in your Model
-                        'attribute'        => 'name', // foreign key attribute that is shown to user
-                        'model'            => config('permission.models.role'), // foreign key model
-                        'pivot'            => true, // on create&update, do you need to add/delete pivot table entries?]
-                        'number_columns'   => 3, //can be 1,2,3,4,6
+                        'attribute' => 'name', // foreign key attribute that is shown to user
+                        'model' => config('permission.models.role'), // foreign key model
+                        'pivot' => true, // on create&update, do you need to add/delete pivot table entries?]
+                        'number_columns' => 3, // can be 1,2,3,4,6
                     ],
                     'secondary' => [
-                        'label'          => mb_ucfirst(trans('backpack::permissionmanager.permission_plural')),
-                        'name'           => 'permissions', // the method that defines the relationship in your Model
-                        'entity'         => 'permissions', // the method that defines the relationship in your Model
+                        'label' => mb_ucfirst(trans('backpack::permissionmanager.permission_plural')),
+                        'name' => 'permissions', // the method that defines the relationship in your Model
+                        'entity' => 'permissions', // the method that defines the relationship in your Model
                         'entity_primary' => 'roles', // the method that defines the relationship in your Model
-                        'attribute'      => 'name', // foreign key attribute that is shown to user
-                        'model'          => config('permission.models.permission'), // foreign key model
-                        'pivot'          => true, // on create&update, do you need to add/delete pivot table entries?]
-                        'number_columns' => 3, //can be 1,2,3,4,6
+                        'attribute' => 'name', // foreign key attribute that is shown to user
+                        'model' => config('permission.models.permission'), // foreign key model
+                        'pivot' => true, // on create&update, do you need to add/delete pivot table entries?]
+                        'number_columns' => 3, // can be 1,2,3,4,6
                     ],
                 ],
-            ]
+            ],
         ]);
     }
-
-
 
     /* protected function setupShowOperation()
     {
@@ -361,7 +364,6 @@ class UserCrudController extends CrudController
        CRUD::column('email_verified_at')->type('text');
        CRUD::column('profile_photo_url')->type('image');
     } */
-
 
     public function show($id)
     {

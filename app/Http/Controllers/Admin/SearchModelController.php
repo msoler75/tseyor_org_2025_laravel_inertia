@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Illuminate\Http\Request;
 use Illuminate\Database\Schema\Builder;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Gate;
 
@@ -24,7 +24,7 @@ class SearchModelController extends Controller
 
         // Verificar si el modelo es válido (por seguridad)
         $validModels = ['Libro', 'Grupo', 'Equipo', 'Nodo', 'User']; // Agrega aquí los nombres de los modelos válidos para la búsqueda
-        if (!in_array($model, $validModels)) {
+        if (! in_array($model, $validModels)) {
             return response()->json(['error' => 'Modelo no válido'], 400);
         }
 
@@ -37,6 +37,7 @@ class SearchModelController extends Controller
                 ->orderBy('name')
                 ->take(32)
                 ->get();
+
             return response()->json(['results' => $results]);
         }
 
@@ -73,7 +74,7 @@ class SearchModelController extends Controller
 
     protected function resolveClassName(string $model): string
     {
-        return 'App\\Models\\' . $model;
+        return 'App\\Models\\'.$model;
     }
 
     protected function getExistingFields(string $modelClass, array $fields): array
@@ -86,6 +87,7 @@ class SearchModelController extends Controller
                 $existingFields[] = $field;
             }
         }
+
         return $existingFields;
     }
 }

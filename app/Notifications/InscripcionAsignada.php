@@ -2,12 +2,13 @@
 
 namespace App\Notifications;
 
+use App\Models\Inscripcion;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-use App\Models\Inscripcion;
 use Illuminate\Support\Facades\Log;
+
 class InscripcionAsignada extends Notification implements ShouldQueue
 {
     use Queueable;
@@ -40,18 +41,18 @@ class InscripcionAsignada extends Notification implements ShouldQueue
         $urlGestion = route('inscripciones.mis-asignaciones');
         $urlTutorial = 'https://tseyor.org/tutoriales/sistema-web-de-supervision-de-inscripciones-a-cursos';
 
-        Log::channel('notificaciones')->info('[InscripcionAsignada] Enviando a: ' . ($notifiable->email ?? 'sin email') . ' | Nombre: ' . $notifiable->name . ' | Inscripción: ' . $this->inscripcion->nombre);
+        Log::channel('notificaciones')->info('[InscripcionAsignada] Enviando a: '.($notifiable->email ?? 'sin email').' | Nombre: '.$notifiable->name.' | Inscripción: '.$this->inscripcion->nombre);
 
         return (new MailMessage)
-            ->subject('Nueva inscripción asignada - ' . $this->inscripcion->nombre)
-            ->greeting('¡Hola ' . $notifiable->name . '!')
+            ->subject('Nueva inscripción asignada - '.$this->inscripcion->nombre)
+            ->greeting('¡Hola '.$notifiable->name.'!')
             ->line('Se te ha asignado una nueva inscripción a curso.')
             ->line('**Datos del inscrito:**')
-            ->line('• Nombre: ' . $this->inscripcion->nombre)
-            ->line('• Email: ' . $this->inscripcion->email)
-            ->line('• Teléfono: ' . ($this->inscripcion->telefono ?? 'No especificado'))
-            ->line('• Ciudad: ' . ($this->inscripcion->ciudad ?? 'No especificada'))
-            ->line('• Comentario: ' . ($this->inscripcion->comentario ?? '--'))
+            ->line('• Nombre: '.$this->inscripcion->nombre)
+            ->line('• Email: '.$this->inscripcion->email)
+            ->line('• Teléfono: '.($this->inscripcion->telefono ?? 'No especificado'))
+            ->line('• Ciudad: '.($this->inscripcion->ciudad ?? 'No especificada'))
+            ->line('• Comentario: '.($this->inscripcion->comentario ?? '--'))
             ->line('Por favor, por la ley de protección de datos recuerda que los datos del alumno son confidenciales y solo para uso de los tutores responsables.')
             ->line('Ahora puedes gestionar la inscripción en el siguiente enlace:')
             ->action('Gestionar Inscripciones', $urlGestion)
@@ -77,7 +78,7 @@ class InscripcionAsignada extends Notification implements ShouldQueue
             'inscripcion_id' => $this->inscripcion->id,
             'nombre' => $this->inscripcion->nombre,
             'email' => $this->inscripcion->email,
-            'tipo' => 'inscripcion_asignada'
+            'tipo' => 'inscripcion_asignada',
         ];
     }
 }

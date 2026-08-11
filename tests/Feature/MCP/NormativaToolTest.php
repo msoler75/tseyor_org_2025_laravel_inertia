@@ -2,11 +2,13 @@
 
 namespace Tests\Feature\MCP;
 
+use App\Models\Normativa;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class NormativaToolTest extends McpFeatureTestCase
 {
     use DatabaseTransactions;
+
     public function test_info_normativa()
     {
         $result = $this->callMcpTool('info', ['entidad' => 'normativa']);
@@ -20,7 +22,7 @@ class NormativaToolTest extends McpFeatureTestCase
         $this->assertIsArray($normativa['parametros_listar']);
         $this->assertIsArray($normativa['campos']);
         $campos_esperados = [
-            'titulo', 'slug', 'descripcion', 'texto', 'published_at', 'visibilidad'
+            'titulo', 'slug', 'descripcion', 'texto', 'published_at', 'visibilidad',
         ];
         foreach ($campos_esperados as $campo) {
             $this->assertArrayHasKey($campo, $normativa['campos'], "Falta el campo '$campo'");
@@ -34,19 +36,19 @@ class NormativaToolTest extends McpFeatureTestCase
     public function test_listar_normativas()
     {
         $pp = 12; // NormativasController usa paginate(12)
-        \App\Models\Normativa::withoutEvents(function () use ($pp) {
+        Normativa::withoutEvents(function () use ($pp) {
             for ($i = 0; $i < $pp + 4; $i++) {
-                \App\Models\Normativa::create([
-                    'titulo' => 'Normativa ' . $i,
-                    'slug' => 'normativa-' . $i . '-' . uniqid(),
-                    'descripcion' => 'Desc ' . $i,
-                    'texto' => 'Texto ' . $i,
+                Normativa::create([
+                    'titulo' => 'Normativa '.$i,
+                    'slug' => 'normativa-'.$i.'-'.uniqid(),
+                    'descripcion' => 'Desc '.$i,
+                    'texto' => 'Texto '.$i,
                     'published_at' => now()->toDateString(),
                     'visibilidad' => 'P',
                 ]);
             }
         });
-        $this->makeAllSearchable(\App\Models\Normativa::class);
+        $this->makeAllSearchable(Normativa::class);
         $result = $this->callMcpTool('listar', ['entidad' => 'normativa']);
         $this->assertIsArray($result);
         $this->assertArrayHasKey('listado', $result);
@@ -71,15 +73,15 @@ class NormativaToolTest extends McpFeatureTestCase
 
     public function test_ver_normativa()
     {
-        $normativa = \App\Models\Normativa::create([
+        $normativa = Normativa::create([
             'titulo' => 'Normativa Test',
-            'slug' => 'normativa-test-' . uniqid(),
+            'slug' => 'normativa-test-'.uniqid(),
             'descripcion' => 'Desc',
             'texto' => 'Texto',
             'published_at' => now()->toDateString(),
             'visibilidad' => 'P',
         ]);
-        $result = $this->callMcpTool('ver', ['entidad'=>'normativa', 'slug' => $normativa->slug]);
+        $result = $this->callMcpTool('ver', ['entidad' => 'normativa', 'slug' => $normativa->slug]);
         $this->assertIsArray($result);
         $this->assertArrayHasKey('normativa', $result);
         $this->assertEquals($normativa->slug, $result['normativa']['slug'] ?? $result['normativa']->slug ?? null);
@@ -91,13 +93,13 @@ class NormativaToolTest extends McpFeatureTestCase
             'entidad' => 'normativa',
             'data' => [
                 'titulo' => 'Nueva Normativa',
-                'slug' => 'nueva-normativa-' . uniqid(),
+                'slug' => 'nueva-normativa-'.uniqid(),
                 'descripcion' => 'Descripción de prueba',
                 'texto' => 'Texto de prueba',
                 'published_at' => now()->toDateString(),
                 'visibilidad' => 'P',
             ],
-            'token' => config('mcp-server.tokens.admin')
+            'token' => config('mcp-server.tokens.admin'),
         ];
         $this->callMcpTool('crear', $params);
         $this->assertDatabaseHas('normativas', ['slug' => $params['data']['slug']]);
@@ -105,9 +107,9 @@ class NormativaToolTest extends McpFeatureTestCase
 
     public function test_editar_normativa()
     {
-        $normativa = \App\Models\Normativa::create([
+        $normativa = Normativa::create([
             'titulo' => 'Editar Normativa',
-            'slug' => 'editar-normativa-' . uniqid(),
+            'slug' => 'editar-normativa-'.uniqid(),
             'descripcion' => 'Desc',
             'texto' => 'Texto',
             'published_at' => now()->toDateString(),
@@ -118,9 +120,9 @@ class NormativaToolTest extends McpFeatureTestCase
             'entidad' => 'normativa',
             'id' => $normativa->id,
             'data' => [
-                'descripcion' => $nuevaDescripcion
+                'descripcion' => $nuevaDescripcion,
             ],
-            'token' => config('mcp-server.tokens.admin')
+            'token' => config('mcp-server.tokens.admin'),
         ];
         $this->callMcpTool('editar', $params);
         $this->assertDatabaseHas('normativas', ['id' => $normativa->id, 'descripcion' => $nuevaDescripcion]);
@@ -128,9 +130,9 @@ class NormativaToolTest extends McpFeatureTestCase
 
     public function test_eliminar_normativa()
     {
-        $normativa = \App\Models\Normativa::create([
+        $normativa = Normativa::create([
             'titulo' => 'Eliminar Normativa',
-            'slug' => 'eliminar-normativa-' . uniqid(),
+            'slug' => 'eliminar-normativa-'.uniqid(),
             'descripcion' => 'Desc',
             'texto' => 'Texto',
             'published_at' => now()->toDateString(),
@@ -140,7 +142,7 @@ class NormativaToolTest extends McpFeatureTestCase
             'entidad' => 'normativa',
             'id' => $normativa->id,
             'force' => true,
-            'token' => config('mcp-server.tokens.admin')
+            'token' => config('mcp-server.tokens.admin'),
         ];
         $this->callMcpTool('eliminar', $params);
         $this->assertDatabaseMissing('normativas', ['id' => $normativa->id]);

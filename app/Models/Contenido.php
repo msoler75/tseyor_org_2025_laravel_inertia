@@ -2,15 +2,18 @@
 
 namespace App\Models;
 
+use App\Pigmalion\ContenidoHelper;
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
-use Laravel\Scout\Searchable;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Laravel\Scout\Searchable;
 
 class Contenido extends Model
 {
     use CrudTrait;
     use Searchable;
-    use \Illuminate\Database\Eloquent\SoftDeletes;
+    use SoftDeletes;
 
     protected $fillable = [
         'coleccion',
@@ -21,7 +24,7 @@ class Contenido extends Model
         'texto_busqueda',
         'imagen',
         'fecha',
-        'visibilidad'
+        'visibilidad',
     ];
 
     protected $dates = [
@@ -36,9 +39,8 @@ class Contenido extends Model
         parent::boot();
 
         static::saved(function (Contenido $contenido) {
-            \App\Pigmalion\ContenidoHelper::onContenidoSaved($contenido);
+            ContenidoHelper::onContenidoSaved($contenido);
         });
-
 
     }
 
@@ -55,19 +57,18 @@ class Contenido extends Model
     }
     */
 
-
     /**
      * Solo se indexa si acaso está publicado
      */
     public function shouldBeSearchable(): bool
     {
-        return $this->visibilidad == 'P' && !$this->deleted_at;
+        return $this->visibilidad == 'P' && ! $this->deleted_at;
     }
-
 
     /**
      * Get the indexable data array for the model.
      *a
+     *
      * @return array<string, mixed>
      */
     public function toSearchableArray(): array
@@ -80,18 +81,20 @@ class Contenido extends Model
         ];
     }
 
+    public function getUrlAttribute()
+    {
+        if ($this->coleccion == 'paginas') {
+            return '/'.$this->slug_ref;
+        }
 
-    public function getUrlAttribute() {
-        if($this->coleccion=='paginas')
-        return "/". $this->slug_ref;
-    return "/" . $this->coleccion . "/" . ($this->slug_ref ?  $this->slug_ref: $this->id_ref);
+        return '/'.$this->coleccion.'/'.($this->slug_ref ? $this->slug_ref : $this->id_ref);
     }
 
     /**
      * Scope para filtrar contenido publicado
      *
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @param  Builder  $query
+     * @return Builder
      */
     public function scopePublicado($query)
     {

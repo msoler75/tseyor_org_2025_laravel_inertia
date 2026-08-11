@@ -2,9 +2,9 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
 use App\Models\RadioItem;
 use App\Pigmalion\StorageItem;
+use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 
 class VerificarDuracionesRadio extends Command
@@ -19,7 +19,9 @@ class VerificarDuracionesRadio extends Command
                         {--per-page=100 : Número de elementos por página}
                         {--page=1 : Página a procesar (empieza en 1)}
                         {--all : Actualizar todas las duraciones, no solo las problemáticas}
-                        {--id= : Procesar solo el elemento con este ID específico}';    /**
+                        {--id= : Procesar solo el elemento con este ID específico}';
+
+    /**
      * The console command description.
      *
      * @var string
@@ -40,19 +42,22 @@ class VerificarDuracionesRadio extends Command
         // Validar parámetros de paginación
         if ($perPage <= 0) {
             $this->error("El parámetro 'per-page' debe ser mayor que 0");
+
             return;
         }
 
         if ($page <= 0) {
             $this->error("El parámetro 'page' debe ser mayor que 0");
+
             return;
         }
 
         // Si se especifica un ID, procesar solo ese elemento
         if ($idEspecifico) {
             $elemento = RadioItem::find($idEspecifico);
-            if (!$elemento) {
+            if (! $elemento) {
                 $this->error("No se encontró elemento con ID: {$idEspecifico}");
+
                 return;
             }
 
@@ -68,14 +73,15 @@ class VerificarDuracionesRadio extends Command
                     $duracionAnterior = $elemento->duracion;
                     $elemento->update(['duracion' => $nuevaDuracion]);
                     $this->info("  ✓ Duración actualizada: {$duracionAnterior} → {$nuevaDuracion} segundos");
-                } else if ($nuevaDuracion > 0) {
+                } elseif ($nuevaDuracion > 0) {
                     $this->line("  ✓ Duración correcta: {$nuevaDuracion} segundos");
                 } else {
-                    $this->error("  ✗ No se pudo calcular duración válida");
+                    $this->error('  ✗ No se pudo calcular duración válida');
                 }
             } else {
-                $this->info("Modo verificación (sin --fix). No se realizaron cambios.");
+                $this->info('Modo verificación (sin --fix). No se realizaron cambios.');
             }
+
             return;
         }
 
@@ -91,10 +97,10 @@ class VerificarDuracionesRadio extends Command
             $query = RadioItem::query();
         } else {
             // Obtener solo elementos con duración problemática
-            $query = RadioItem::where(function($q) {
+            $query = RadioItem::where(function ($q) {
                 $q->where('duracion', '<=', 0)
-                  ->orWhere('duracion', '>', 86400)
-                  ->orWhereNull('duracion');
+                    ->orWhere('duracion', '>', 86400)
+                    ->orWhereNull('duracion');
             });
         }
 
@@ -108,6 +114,7 @@ class VerificarDuracionesRadio extends Command
             } else {
                 $this->info('No se encontraron elementos con duraciones problemáticas.');
             }
+
             return;
         }
 
@@ -119,6 +126,7 @@ class VerificarDuracionesRadio extends Command
 
         if ($page > $totalPaginas) {
             $this->error("La página {$page} no existe. Hay {$totalPaginas} páginas disponibles.");
+
             return;
         }
 
@@ -146,8 +154,8 @@ class VerificarDuracionesRadio extends Command
                 // Verificar si el archivo existe antes de intentar calcular duración
                 $archivoExiste = $this->verificarExistenciaArchivo($elemento->url);
 
-                if (!$archivoExiste) {
-                    $this->line("  ⚠ Archivo no disponible localmente - omitiendo");
+                if (! $archivoExiste) {
+                    $this->line('  ⚠ Archivo no disponible localmente - omitiendo');
                     $omitidos++;
                 } else {
                     try {
@@ -166,16 +174,16 @@ class VerificarDuracionesRadio extends Command
                                 $sinCambios++;
                             }
                         } else {
-                            $this->error("  ✗ No se pudo calcular duración válida");
+                            $this->error('  ✗ No se pudo calcular duración válida');
                             $errores++;
                         }
                     } catch (\Exception $e) {
-                        $this->error("  ✗ Error: " . $e->getMessage());
+                        $this->error('  ✗ Error: '.$e->getMessage());
                         $errores++;
                     }
                 }
             } else {
-                $this->line("  (Usar --fix para corregir)");
+                $this->line('  (Usar --fix para corregir)');
             }
 
             $this->line('');
@@ -190,18 +198,18 @@ class VerificarDuracionesRadio extends Command
 
             if ($page < $totalPaginas) {
                 $siguientePagina = $page + 1;
-                $this->line("");
-                $this->info("Para procesar la siguiente página, ejecuta:");
-                $this->line("php artisan radio:verificar-duraciones --fix --page={$siguientePagina} --per-page={$perPage}" . ($all ? " --all" : ""));
+                $this->line('');
+                $this->info('Para procesar la siguiente página, ejecuta:');
+                $this->line("php artisan radio:verificar-duraciones --fix --page={$siguientePagina} --per-page={$perPage}".($all ? ' --all' : ''));
             } else {
-                $this->line("");
-                $this->info("✅ Has completado todas las páginas disponibles.");
+                $this->line('');
+                $this->info('✅ Has completado todas las páginas disponibles.');
             }
         } else {
             if ($all) {
-                $this->info("Para recalcular todas las duraciones, ejecuta el comando con --fix --all");
+                $this->info('Para recalcular todas las duraciones, ejecuta el comando con --fix --all');
             } else {
-                $this->info("Para corregir las duraciones, ejecuta el comando con --fix");
+                $this->info('Para corregir las duraciones, ejecuta el comando con --fix');
             }
         }
     }
@@ -213,6 +221,7 @@ class VerificarDuracionesRadio extends Command
     {
         try {
             $mp3File = $this->resolverRutaArchivo($url);
+
             return $mp3File && file_exists($mp3File);
         } catch (\Exception $e) {
             return false;
@@ -228,27 +237,28 @@ class VerificarDuracionesRadio extends Command
             // Manejar diferentes tipos de URLs
             $mp3File = $this->resolverRutaArchivo($url);
 
-            if (!$mp3File || !file_exists($mp3File)) {
+            if (! $mp3File || ! file_exists($mp3File)) {
                 throw new \Exception("Archivo no encontrado: {$mp3File}");
             }
 
-            $this->line("    Analizando archivo: " . basename($mp3File));
+            $this->line('    Analizando archivo: '.basename($mp3File));
 
             // Usar SOLO ffprobe (más preciso y confiable)
             $duracionFfprobe = $this->calcularDuracionConFfprobe($mp3File);
             if ($duracionFfprobe > 0) {
                 $this->line("    ✓ Duración calculada con ffprobe: {$duracionFfprobe} segundos");
+
                 return $duracionFfprobe;
             }
 
             // Si ffprobe falla, no hay alternativa confiable
-            $this->line("    ⚠ ffprobe no pudo calcular la duración - manteniendo valor actual");
+            $this->line('    ⚠ ffprobe no pudo calcular la duración - manteniendo valor actual');
 
         } catch (\Exception $e) {
-            $this->error("    ✗ Error general: " . $e->getMessage());
-            Log::error("Error calculando duración", [
+            $this->error('    ✗ Error general: '.$e->getMessage());
+            Log::error('Error calculando duración', [
                 'url' => $url,
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ]);
         }
 
@@ -268,6 +278,7 @@ class VerificarDuracionesRadio extends Command
                     $rutaPublica = public_path($path);
                     if (file_exists($rutaPublica)) {
                         $this->line("    Encontrado archivo local: {$rutaPublica}");
+
                         return $rutaPublica;
                     }
                 }
@@ -276,6 +287,7 @@ class VerificarDuracionesRadio extends Command
             // Si es una URL completa, usar StorageItem
             if (str_starts_with($url, 'http')) {
                 $loc = new StorageItem($url);
+
                 return $loc->getPath();
             }
 
@@ -289,10 +301,12 @@ class VerificarDuracionesRadio extends Command
 
             // Intentar con StorageItem de todas formas
             $loc = new StorageItem($url);
+
             return $loc->getPath();
 
         } catch (\Exception $e) {
-            $this->line("    ⚠ Error resolviendo ruta: " . $e->getMessage());
+            $this->line('    ⚠ Error resolviendo ruta: '.$e->getMessage());
+
             return null;
         }
     }
@@ -306,8 +320,9 @@ class VerificarDuracionesRadio extends Command
             // Detectar la ruta de ffprobe según el sistema operativo
             $ffprobePath = $this->detectarRutaFfprobe();
 
-            if (!$ffprobePath) {
-                $this->line("    ⚠ ffprobe no encontrado en el sistema");
+            if (! $ffprobePath) {
+                $this->line('    ⚠ ffprobe no encontrado en el sistema');
+
                 return 0;
             }
 
@@ -318,7 +333,7 @@ class VerificarDuracionesRadio extends Command
                 $mp3File
             );
 
-            $this->line("    Ejecutando: " . $command);
+            $this->line('    Ejecutando: '.$command);
 
             $output = shell_exec($command);
 
@@ -331,11 +346,11 @@ class VerificarDuracionesRadio extends Command
                     $this->line("    ⚠ Duración fuera de rango: {$duracion}");
                 }
             } else {
-                $this->line("    ⚠ Output de ffprobe inválido: " . ($output ?: 'vacío'));
+                $this->line('    ⚠ Output de ffprobe inválido: '.($output ?: 'vacío'));
             }
 
         } catch (\Exception $e) {
-            $this->line("    ⚠ Error con ffprobe: " . $e->getMessage());
+            $this->line('    ⚠ Error con ffprobe: '.$e->getMessage());
         }
 
         return 0;
@@ -386,6 +401,7 @@ class VerificarDuracionesRadio extends Command
         foreach ($rutasCandidatas as $ruta) {
             if ($this->verificarFfprobe($ruta)) {
                 $this->line("    ✓ ffprobe encontrado en: {$ruta}");
+
                 return $ruta;
             }
         }
@@ -401,19 +417,19 @@ class VerificarDuracionesRadio extends Command
         try {
             // Si es una ruta absoluta o relativa, verificar que el archivo existe
             if (str_contains($ruta, '/') || str_contains($ruta, '\\')) {
-                if (!file_exists($ruta)) {
+                if (! file_exists($ruta)) {
                     return false;
                 }
             }
 
             // Probar ejecutar ffprobe con un comando simple
             $command = sprintf('"%s" -version 2>%s', $ruta, PHP_OS_FAMILY === 'Windows' ? 'nul' : '/dev/null');
-            
+
             $output = shell_exec($command);
-            
+
             // Si el comando se ejecuta y contiene información de ffprobe, es válido
             return $output && str_contains(strtolower($output), 'ffprobe');
-            
+
         } catch (\Exception $e) {
             return false;
         }

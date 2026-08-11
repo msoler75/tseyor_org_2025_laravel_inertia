@@ -18,7 +18,7 @@ class ImageHasher
      */
     public static function hash(string $imagePath): string
     {
-        if (!file_exists($imagePath)) {
+        if (! file_exists($imagePath)) {
             return '';
         }
 
@@ -33,7 +33,7 @@ class ImageHasher
             return '';
         }
 
-        if (!$image) {
+        if (! $image) {
             return '';
         }
 
@@ -42,6 +42,7 @@ class ImageHasher
 
         if ($width < 2 || $height < 2) {
             imagedestroy($image);
+
             return '';
         }
 
@@ -52,7 +53,7 @@ class ImageHasher
         $hash = 0;
         for ($y = 0; $y < 8; $y++) {
             for ($x = 0; $x < 8; $x++) {
-                $left  = self::gray(imagecolorat($resized, $x,     $y));
+                $left = self::gray(imagecolorat($resized, $x, $y));
                 $right = self::gray(imagecolorat($resized, $x + 1, $y));
 
                 if ($left > $right) {
@@ -69,10 +70,10 @@ class ImageHasher
     private static function gray(int $rgb): int
     {
         $r = ($rgb >> 16) & 0xFF;
-        $g = ($rgb >> 8)  & 0xFF;
-        $b =  $rgb        & 0xFF;
+        $g = ($rgb >> 8) & 0xFF;
+        $b = $rgb & 0xFF;
 
-        return (int)($r * 0.299 + $g * 0.587 + $b * 0.114);
+        return (int) ($r * 0.299 + $g * 0.587 + $b * 0.114);
     }
 
     public static function distance(string $hash1, string $hash2): int
@@ -100,14 +101,14 @@ class ImageHasher
      */
     public static function dimensions(string $imagePath): ?array
     {
-        if (!file_exists($imagePath)) {
+        if (! file_exists($imagePath)) {
             return null;
         }
 
         try {
             $size = @getimagesize($imagePath);
             if ($size && $size[0] > 0 && $size[1] > 0) {
-                return [(int)$size[0], (int)$size[1]];
+                return [(int) $size[0], (int) $size[1]];
             }
         } catch (\Throwable $e) {
         }
@@ -121,7 +122,7 @@ class ImageHasher
      * Size is NOT checked — guide photos often appear as thumbnails
      * in the text, 20x smaller than the canonical.
      *
-     * @param float $ratioTol Max aspect ratio deviation (default 0.05 = ±5%)
+     * @param  float  $ratioTol  Max aspect ratio deviation (default 0.05 = ±5%)
      */
     public static function similarDimensions(
         int $w1,
@@ -139,17 +140,17 @@ class ImageHasher
     /**
      * Extract resized RGB pixel array from an image.
      *
-     * @param string $imagePath Filesystem path
-     * @param int    $targetW   Target width in pixels
-     * @param int    $targetH   Target height in pixels
-     * @return array<int, array{0:int,1:int,2:int}>|null  Flat [r,g,b] tuples
+     * @param  string  $imagePath  Filesystem path
+     * @param  int  $targetW  Target width in pixels
+     * @param  int  $targetH  Target height in pixels
+     * @return array<int, array{0:int,1:int,2:int}>|null Flat [r,g,b] tuples
      */
     public static function extractPixels(
         string $imagePath,
         int $targetW,
         int $targetH
     ): ?array {
-        if (!file_exists($imagePath)) {
+        if (! file_exists($imagePath)) {
             return null;
         }
 
@@ -164,7 +165,7 @@ class ImageHasher
             return null;
         }
 
-        if (!$image) {
+        if (! $image) {
             return null;
         }
 
@@ -173,6 +174,7 @@ class ImageHasher
 
         if ($width < 1 || $height < 1) {
             imagedestroy($image);
+
             return null;
         }
 
@@ -186,8 +188,8 @@ class ImageHasher
                 $c = imagecolorat($resized, $x, $y);
                 $pixels[] = [
                     ($c >> 16) & 0xFF,
-                    ($c >> 8)  & 0xFF,
-                     $c        & 0xFF,
+                    ($c >> 8) & 0xFF,
+                    $c & 0xFF,
                 ];
             }
         }
@@ -200,9 +202,9 @@ class ImageHasher
     /**
      * Pre-compute pixels for a set of canonical images.
      *
-     * @param array $canonicals Raw canonicals with 'path', 'tipo' keys
-     * @param int   $targetW    Target width for pixel extraction
-     * @param int   $targetH    Target height (calculated from AR for guides)
+     * @param  array  $canonicals  Raw canonicals with 'path', 'tipo' keys
+     * @param  int  $targetW  Target width for pixel extraction
+     * @param  int  $targetH  Target height (calculated from AR for guides)
      * @return array Enriched with 'pixels', 'width', 'height', 'ratio'
      */
     public static function precomputeCanonicals(
@@ -214,7 +216,7 @@ class ImageHasher
 
         foreach ($canonicals as $c) {
             $sti = new StorageItem($c['path']);
-            if (!$sti->exists()) {
+            if (! $sti->exists()) {
                 continue;
             }
 
@@ -225,7 +227,7 @@ class ImageHasher
 
             [$w, $h] = $dims;
 
-            $th = $targetH ?? (int)round($targetW * $h / $w);
+            $th = $targetH ?? (int) round($targetW * $h / $w);
 
             $pixels = self::extractPixels($sti->path, $targetW, $th);
             if ($pixels === null) {
@@ -249,10 +251,10 @@ class ImageHasher
      * Compare a target image against pre-computed canonical pixel arrays,
      * with early termination.
      *
-     * @param string $imagePath  Target image path
-     * @param array  $canonicals Pre-computed canonicals with 'pixels' key
-     * @param float  $threshold  Min similarity % (e.g., 95.0)
-     * @return array|null        Best match + similarity
+     * @param  string  $imagePath  Target image path
+     * @param  array  $canonicals  Pre-computed canonicals with 'pixels' key
+     * @param  float  $threshold  Min similarity % (e.g., 95.0)
+     * @return array|null Best match + similarity
      */
     public static function findBestColorMatch(
         string $imagePath,
@@ -297,9 +299,9 @@ class ImageHasher
     /**
      * Compare two equally-sized pixel arrays with early termination.
      *
-     * @param array $pixels1   Target pixel array [[r,g,b], ...]
-     * @param array $pixels2   Canonical pixel array [[r,g,b], ...]
-     * @param float $threshold Min similarity %
+     * @param  array  $pixels1  Target pixel array [[r,g,b], ...]
+     * @param  array  $pixels2  Canonical pixel array [[r,g,b], ...]
+     * @param  float  $threshold  Min similarity %
      * @return float 0-100 similarity
      */
     private static function comparePixelArrays(array $pixels1, array $pixels2, float $threshold): float
@@ -311,7 +313,7 @@ class ImageHasher
 
         $maxPerPixel = 3 * 255;
         $maxTotalDiff = $count * $maxPerPixel;
-        $allowedDiff = (int)((1.0 - $threshold / 100.0) * $maxTotalDiff);
+        $allowedDiff = (int) ((1.0 - $threshold / 100.0) * $maxTotalDiff);
         $diff = 0;
 
         for ($i = 0; $i < $count; $i++) {
@@ -335,7 +337,7 @@ class ImageHasher
         array $canonicals,
         int $threshold = 3
     ): ?array {
-        if (!file_exists($imagePath)) {
+        if (! file_exists($imagePath)) {
             return null;
         }
 

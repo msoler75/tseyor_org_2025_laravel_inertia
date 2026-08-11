@@ -2,8 +2,9 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
+use Illuminate\Support\Facades\Gate;
+
 // use App\Policies\EquipoPolicy;
 
 class AuthServiceProvider extends ServiceProvider
@@ -15,7 +16,7 @@ class AuthServiceProvider extends ServiceProvider
      */
     protected $policies = [
         //
-         // Equipo::class=>EquipoPolicy::class
+        // Equipo::class=>EquipoPolicy::class
     ];
 
     /**

@@ -1,10 +1,10 @@
 <?php
+
 // MCPController.php
+
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
 
 class MCPController extends Controller
@@ -27,7 +27,7 @@ class MCPController extends Controller
         }
 
         // b) Si no se obtuvo tool, intentar por input tradicional (form, query, etc)
-        if (!$tool) {
+        if (! $tool) {
             $tool = $request->input('tool') ?? $request->input('method');
         }
         if (empty($params)) {
@@ -35,7 +35,7 @@ class MCPController extends Controller
         }
 
         // c) Compatibilidad extra: si tool sigue sin estar, buscar en query string
-        if (!$tool) {
+        if (! $tool) {
             $tool = $request->query('tool') ?? $request->query('method');
         }
         if (empty($params)) {
@@ -47,9 +47,9 @@ class MCPController extends Controller
 
         // Si no se recibe 'tool', asumir 'initialize' por defecto (para compatibilidad MCP)
         // 1. Si tool es null y params contiene handshake MCP, asumir 'initialize' (mantener params)
-        if (!$tool && (isset($params['protocolVersion']) || isset($params['clientInfo']))) {
+        if (! $tool && (isset($params['protocolVersion']) || isset($params['clientInfo']))) {
             $tool = 'initialize';
-        } else if (!$tool) {
+        } elseif (! $tool) {
             // 2. Si tool es null y params está vacío, asumir 'initialize' y params vacíos
             $tool = 'initialize';
             $params = [];
@@ -90,7 +90,7 @@ class MCPController extends Controller
             'initialize' => ['App\Http\Controllers\MCPController', 'mcp_initialize'],
         ];
 
-        if (!isset($toolMap[$tool])) {
+        if (! isset($toolMap[$tool])) {
             return response()->json(['error' => 'Tool no encontrada'], 404);
         }
 
@@ -107,18 +107,20 @@ class MCPController extends Controller
             if (isset($params['protocolVersion'])) {
                 $result['protocolVersion'] = $params['protocolVersion'];
             }
+
             return response(json_encode($result), 200)
                 ->header('Content-Type', 'application/json');
         }
 
-        if (!class_exists($class) || !method_exists($class, $method)) {
+        if (! class_exists($class) || ! method_exists($class, $method)) {
             return response()->json(['error' => 'Tool handler no implementado'], 500);
         }
 
         try {
             // Instanciar la clase y llamar al método como de instancia
-            $instance = new $class();
+            $instance = new $class;
             $result = $instance->$method($params);
+
             // Respuesta ultra estricta: solo el array plano, status 200, Content-Type exacto
             return response(json_encode($result), 200)
                 ->header('Content-Type', 'application/json');
@@ -127,21 +129,20 @@ class MCPController extends Controller
                 'tool' => $tool,
                 'params' => $params,
                 'message' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
+                'trace' => $e->getTraceAsString(),
             ]);
+
             return response()->json([
                 'error' => 'Excepción en tool',
                 'message' => $e->getMessage(),
-                'trace' => config('app.debug') ? $e->getTrace() : null
+                'trace' => config('app.debug') ? $e->getTrace() : null,
             ], 500)->header('Content-Type', 'application/json');
         }
     }
 
-
-
     public function mcp_initialize($params = [])
     {
-        $capabilities = include __DIR__ . '/capabilities.php';
+        $capabilities = include __DIR__.'/capabilities.php';
         $response = [
             'name' => 'Teyor MCP Server',
             'version' => '1.0.0',
@@ -150,6 +151,7 @@ class MCPController extends Controller
         if (isset($params['protocolVersion'])) {
             $response['protocolVersion'] = $params['protocolVersion'];
         }
+
         return $response;
     }
 }

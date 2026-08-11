@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Api;
 
 // use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Comentario;
+use Illuminate\Http\Request;
 
 class ComentariosController extends Controller
 {
@@ -15,14 +15,13 @@ class ComentariosController extends Controller
         // $user = $request->user();
         // dd($user);
 
+        $url = $request->input('url') ?? '';
 
-
-        $url = $request->input('url') ?? "";
-
-        if (!$url)
+        if (! $url) {
             return response()->json([
-                'error' => 'debe especificar url'
+                'error' => 'debe especificar url',
             ], 400);
+        }
 
         $esAdministrador = optional(auth()->user())->can('administrar social');
 
@@ -35,7 +34,6 @@ class ComentariosController extends Controller
             ->select('comentarios.*', 'users.name as user_name', 'users.profile_photo_path as user_photo', 'eliminado')
             ->get()
             ->toArray();
-
 
         // funciones auxiliares
         function buscar_respuestas($comentarios, $comentario_id)
@@ -61,9 +59,9 @@ class ComentariosController extends Controller
                 'autor' => [
                     'id' => $comentario['user_id'],
                     'nombre' => $comentario['user_name'],
-                    'imagen' => $comentario['user_photo']
+                    'imagen' => $comentario['user_photo'],
                 ],
-                'respuestas' => []
+                'respuestas' => [],
             ];
 
             // Buscamos y agregamos las respuestas al comentario anidado
@@ -79,7 +77,7 @@ class ComentariosController extends Controller
         $arbol_comentarios = [];
 
         foreach ($comentarios as $idx => $comment) {
-            if (!$comment['respuesta_a']) { // Si es un comentario raíz
+            if (! $comment['respuesta_a']) { // Si es un comentario raíz
                 $comentario = [
                     'id' => $comment['id'],
                     'texto' => $comment['texto'],
@@ -88,9 +86,9 @@ class ComentariosController extends Controller
                     'autor' => [
                         'id' => $comment['user_id'],
                         'nombre' => $comment['user_name'],
-                        'imagen' => $comment['user_photo']
+                        'imagen' => $comment['user_photo'],
                     ],
-                    'respuestas' => []
+                    'respuestas' => [],
                 ];
 
                 // Buscamos y agregamos las respuestas al comentario raíz
@@ -106,16 +104,15 @@ class ComentariosController extends Controller
 
         return response()->json([
             'comentarios' => $arbol_comentarios,
-            'puedeAdministrar' => $esAdministrador
+            'puedeAdministrar' => $esAdministrador,
         ], 200);
     }
-
 
     public function create(Request $request)
     {
         $user = auth()->user();
 
-        if(!$user) {
+        if (! $user) {
             return response()->json(['error' => 'No autorizado'], 401);
         }
 
@@ -123,16 +120,16 @@ class ComentariosController extends Controller
         $respuesta_a = $request->respuesta_a ?? null;
         $texto = $request->texto;
 
-        if (!$texto || !$url) {
+        if (! $texto || ! $url) {
             return response()->json(['error' => 'Faltan parámetros'], 400);
         }
 
         // dd(Auth::user());
-        //dd($url);
+        // dd($url);
 
-         /* return response()->json(
-            [],
-            404
+        /* return response()->json(
+           [],
+           404
         ); */
 
         $comentario = new Comentario;
@@ -148,18 +145,17 @@ class ComentariosController extends Controller
         );
     }
 
-
     public function unpublish(Request $request, $id)
     {
         $comentario = Comentario::findOrFail($id);
 
-        if (!$comentario) {
+        if (! $comentario) {
             return response()->json(['error' => 'Comentario no encontrado'], 404);
         }
 
         $esAdministrador = optional(auth()->user())->can('administrar social');
 
-        if(!$esAdministrador) {
+        if (! $esAdministrador) {
             return response()->json(['error' => 'No autorizado'], 403);
         }
 
@@ -176,13 +172,13 @@ class ComentariosController extends Controller
     {
         $comentario = Comentario::findOrFail($id);
 
-        if (!$comentario) {
+        if (! $comentario) {
             return response()->json(['error' => 'Comentario no encontrado'], 404);
         }
 
         $esAdministrador = optional(auth()->user())->can('administrar social');
 
-        if(!$esAdministrador) {
+        if (! $esAdministrador) {
             return response()->json(['error' => 'No autorizado'], 403);
         }
 
@@ -195,7 +191,6 @@ class ComentariosController extends Controller
         );
     }
 }
-
 
 /*
 

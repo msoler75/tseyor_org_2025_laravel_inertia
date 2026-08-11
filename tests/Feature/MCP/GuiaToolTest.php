@@ -2,11 +2,14 @@
 
 namespace Tests\Feature\MCP;
 
+use App\Http\Controllers\GuiasController;
+use App\Models\Guia;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class GuiaToolTest extends McpFeatureTestCase
 {
     use DatabaseTransactions;
+
     public function test_info_guia()
     {
         $result = $this->callMcpTool('info', ['entidad' => 'guia']);
@@ -20,7 +23,7 @@ class GuiaToolTest extends McpFeatureTestCase
         $this->assertIsArray($guia['parametros_listar']);
         $this->assertIsArray($guia['campos']);
         $campos_esperados = [
-            'nombre', 'slug', 'categoria', 'descripcion', 'texto', 'imagen', 'bibliografia', 'libros', 'visibilidad'
+            'nombre', 'slug', 'categoria', 'descripcion', 'texto', 'imagen', 'bibliografia', 'libros', 'visibilidad',
         ];
         foreach ($campos_esperados as $campo) {
             $this->assertArrayHasKey($campo, $guia['campos'], "Falta el campo '$campo'");
@@ -33,21 +36,21 @@ class GuiaToolTest extends McpFeatureTestCase
 
     public function test_listar_guias()
     {
-        $pp = \App\Http\Controllers\GuiasController::$ITEMS_POR_PAGINA;
+        $pp = GuiasController::$ITEMS_POR_PAGINA;
         for ($i = 0; $i < $pp + 2; $i++) {
-            \App\Models\Guia::create([
-                'nombre' => 'Guia ' . $i,
-                'slug' => 'guia-' . $i . '-' . uniqid(),
+            Guia::create([
+                'nombre' => 'Guia '.$i,
+                'slug' => 'guia-'.$i.'-'.uniqid(),
                 'categoria' => 'tecnica',
-                'descripcion' => 'Desc ' . $i,
-                'texto' => 'Texto ' . $i,
-                'imagen' => '/img/guia' . $i . '.jpg',
+                'descripcion' => 'Desc '.$i,
+                'texto' => 'Texto '.$i,
+                'imagen' => '/img/guia'.$i.'.jpg',
                 'bibliografia' => '',
                 'libros' => '',
                 'visibilidad' => 'P',
             ]);
         }
-        $this->makeAllSearchable(\App\Models\Guia::class);
+        $this->makeAllSearchable(Guia::class);
         $result = $this->callMcpTool('listar', ['entidad' => 'guia']);
         $this->assertIsArray($result);
         $this->assertArrayHasKey('listado', $result);
@@ -71,9 +74,9 @@ class GuiaToolTest extends McpFeatureTestCase
 
     public function test_ver_guia()
     {
-        $guia = \App\Models\Guia::create([
+        $guia = Guia::create([
             'nombre' => 'Guia Test',
-            'slug' => 'guia-test-' . uniqid(),
+            'slug' => 'guia-test-'.uniqid(),
             'categoria' => 'tecnica',
             'descripcion' => 'Desc',
             'texto' => 'Texto',
@@ -82,7 +85,7 @@ class GuiaToolTest extends McpFeatureTestCase
             'libros' => '',
             'visibilidad' => 'P',
         ]);
-        $result = $this->callMcpTool('ver', ['entidad'=>'guia', 'slug' => $guia->slug]);
+        $result = $this->callMcpTool('ver', ['entidad' => 'guia', 'slug' => $guia->slug]);
         $this->assertIsArray($result);
         $this->assertArrayHasKey('guia', $result);
         $this->assertEquals($guia->slug, $result['guia']['slug'] ?? $result['guia']->slug ?? null);
@@ -94,7 +97,7 @@ class GuiaToolTest extends McpFeatureTestCase
             'entidad' => 'guia',
             'data' => [
                 'nombre' => 'Nueva Guia',
-                'slug' => 'nueva-guia-' . uniqid(),
+                'slug' => 'nueva-guia-'.uniqid(),
                 'categoria' => 'tecnica',
                 'descripcion' => 'Descripción de prueba',
                 'texto' => 'Texto de prueba',
@@ -103,7 +106,7 @@ class GuiaToolTest extends McpFeatureTestCase
                 'libros' => '',
                 'visibilidad' => 'P',
             ],
-            'token' => config('mcp-server.tokens.admin')
+            'token' => config('mcp-server.tokens.admin'),
         ];
         $this->callMcpTool('crear', $params);
         $this->assertDatabaseHas('guias', ['slug' => $params['data']['slug']]);
@@ -111,9 +114,9 @@ class GuiaToolTest extends McpFeatureTestCase
 
     public function test_editar_guia()
     {
-        $guia = \App\Models\Guia::create([
+        $guia = Guia::create([
             'nombre' => 'Editar Guia',
-            'slug' => 'editar-guia-' . uniqid(),
+            'slug' => 'editar-guia-'.uniqid(),
             'categoria' => 'tecnica',
             'descripcion' => 'Desc',
             'texto' => 'Texto',
@@ -127,9 +130,9 @@ class GuiaToolTest extends McpFeatureTestCase
             'entidad' => 'guia',
             'id' => $guia->id,
             'data' => [
-                'descripcion' => $nuevaDescripcion
+                'descripcion' => $nuevaDescripcion,
             ],
-            'token' => config('mcp-server.tokens.admin')
+            'token' => config('mcp-server.tokens.admin'),
         ];
         $this->callMcpTool('editar', $params);
         $this->assertDatabaseHas('guias', ['id' => $guia->id, 'descripcion' => $nuevaDescripcion]);
@@ -137,9 +140,9 @@ class GuiaToolTest extends McpFeatureTestCase
 
     public function test_eliminar_guia()
     {
-        $guia = \App\Models\Guia::create([
+        $guia = Guia::create([
             'nombre' => 'Eliminar Guia',
-            'slug' => 'eliminar-guia-' . uniqid(),
+            'slug' => 'eliminar-guia-'.uniqid(),
             'categoria' => 'tecnica',
             'descripcion' => 'Desc',
             'texto' => 'Texto',
@@ -152,7 +155,7 @@ class GuiaToolTest extends McpFeatureTestCase
             'entidad' => 'guia',
             'id' => $guia->id,
             'force' => true,
-            'token' => config('mcp-server.tokens.admin')
+            'token' => config('mcp-server.tokens.admin'),
         ];
         $this->callMcpTool('eliminar', $params);
         $this->assertDatabaseMissing('guias', ['id' => $guia->id]);

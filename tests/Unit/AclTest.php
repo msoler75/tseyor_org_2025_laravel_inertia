@@ -1,22 +1,21 @@
 <?php
 
-
 namespace Tests\Unit;
 
 use App\Models\Acl;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Log;
 
-class AclTest extends BaseTest {
-
-
+class AclTest extends BaseTest
+{
     protected function getAcl($nodo_id, $verbos, $values = [])
     {
         // $faker = \Faker\Factory::create();
-        $acl =Acl::where('nodo_id', $nodo_id)->first();
-        if (!$acl)
+        $acl = Acl::where('nodo_id', $nodo_id)->first();
+        if (! $acl) {
             $acl = Acl::create(['nodo_id' => $nodo_id, 'verbos' => $verbos]);
+        }
         $reset_values = [
             'user_id' => null,
             'group_id' => null,
@@ -25,20 +24,21 @@ class AclTest extends BaseTest {
         $update = array_merge($reset_values, $values);
         // \Log::info("update nodo {$nodo->id}",['values'=>$values, 'update'=>$update]);
         $acl->update($update);
+
         return $acl;
     }
-
 
     // Prueba el método from para obtener ACLs tanto para usuario como para grupo.
 
     public function test_acl_from_user()
     {
-        $user = $this->getUser("TestUser");
-        $grupo = $this->getGrupo("TestGroup");
+        $user = $this->getUser('TestUser');
+        $grupo = $this->getGrupo('TestGroup');
 
-        //$user->grupos()->detach();
-        if(!$user->enGrupo($grupo->id))
+        // $user->grupos()->detach();
+        if (! $user->enGrupo($grupo->id)) {
             $user->grupos()->attach($grupo->id);
+        }
 
         // remueve todos los acl del usuario $user:
         Acl::where('user_id', $user->id)->delete();
@@ -53,12 +53,12 @@ class AclTest extends BaseTest {
         Acl::create([
             'nodo_id' => $nodo1->id,
             'user_id' => $user->id,
-            'verbos' => 'leer,escribir'
+            'verbos' => 'leer,escribir',
         ]);
         Acl::create([
             'nodo_id' => $nodo2->id,
             'group_id' => $grupo->id,
-            'verbos' => 'leer,ejecutar'
+            'verbos' => 'leer,ejecutar',
         ]);
 
         $acls = Acl::from($user);
@@ -70,11 +70,10 @@ class AclTest extends BaseTest {
         $this->assertFalse($acls->contains('nodo_id', $nodo3->id));
     }
 
-
     //  Prueba el método from con verbos específicos
     public function test_acl_from_user_with_verbos()
     {
-        $user = $this->getUser("TestUser2");
+        $user = $this->getUser('TestUser2');
         $nodo = $this->getNodo('/archivos/acl_test3');
 
         // remueve todos los acl del usuario $user:
@@ -83,7 +82,7 @@ class AclTest extends BaseTest {
         Acl::create([
             'nodo_id' => $nodo->id,
             'user_id' => $user->id,
-            'verbos' => 'leer,escribir'
+            'verbos' => 'leer,escribir',
         ]);
 
         $this->assertCount(1, Acl::from($user));
@@ -96,10 +95,9 @@ class AclTest extends BaseTest {
     // Prueba el método inNodes para obtener ACLs para nodos específicos.
     public function test_acl_in_nodes()
     {
-        $user1 = $this->getUser("TestUser4");
-        $user2 = $this->getUser("TestUser5");
-        $grupo = $this->getGrupo("TestGroup2");
-
+        $user1 = $this->getUser('TestUser4');
+        $user2 = $this->getUser('TestUser5');
+        $grupo = $this->getGrupo('TestGroup2');
 
         $nodo1 = $this->getNodo('/archivos/acl_test5');
         $nodo2 = $this->getNodo('/archivos/acl_test6');
@@ -112,13 +110,13 @@ class AclTest extends BaseTest {
         Acl::create([
             'nodo_id' => $nodo1->id,
             'user_id' => $user1->id,
-            'verbos' => 'leer,escribir'
+            'verbos' => 'leer,escribir',
         ]);
 
         Acl::create([
             'nodo_id' => $nodo2->id,
             'group_id' => $grupo->id,
-            'verbos' => 'leer,ejecutar'
+            'verbos' => 'leer,ejecutar',
         ]);
 
         $acls = Acl::inNodes([$nodo1->id, $nodo2->id]);
@@ -128,12 +126,11 @@ class AclTest extends BaseTest {
         $this->assertEquals($grupo->nombre, $acls->last()->grupo);
     }
 
-
     // Verifica que los accessors funcionan correctamente
     public function test_acl_accessors()
     {
-        $user = $this->getUser("TestUser6");
-        $grupo = $this->getGrupo("TestGroup3");
+        $user = $this->getUser('TestUser6');
+        $grupo = $this->getGrupo('TestGroup3');
         $nodo = $this->getNodo('/archivos/acl_test7');
 
         // borra todos los acls
@@ -143,23 +140,22 @@ class AclTest extends BaseTest {
             'nodo_id' => $nodo->id,
             'user_id' => $user->id,
             'group_id' => $grupo->id,
-            'verbos' => 'leer'
+            'verbos' => 'leer',
         ]);
 
-        Log::info('acl', ['nodo'=>$nodo->toArray(), 'acl'=>$acl->toArray()]);
+        Log::info('acl', ['nodo' => $nodo->toArray(), 'acl' => $acl->toArray()]);
 
         $this->assertEquals($nodo->ubicacion, $acl->ruta_nodo);
         $this->assertEquals($user->name, $acl->nombre_usuario);
         $this->assertEquals($grupo->nombre, $acl->nombre_grupo);
     }
 
-
     /**
      * Prueba la obtención de ACLs para un usuario sin permisos
      */
     public function test_acl_from_user_without_permissions()
     {
-        $user = $this->getUser("UserWithoutPermissions");
+        $user = $this->getUser('UserWithoutPermissions');
 
         // Asegurarse de que no hay ACLs para este usuario
         Acl::where('user_id', $user->id)->delete();
@@ -174,9 +170,9 @@ class AclTest extends BaseTest {
      */
     public function test_acl_from_user_with_multiple_groups()
     {
-        $user = $this->getUser("MultiGroupUser");
-        $grupo1 = $this->getGrupo("Group1");
-        $grupo2 = $this->getGrupo("Group2");
+        $user = $this->getUser('MultiGroupUser');
+        $grupo1 = $this->getGrupo('Group1');
+        $grupo2 = $this->getGrupo('Group2');
         $nodo1 = $this->getNodo('/archivos/acl/group1');
         $nodo2 = $this->getNodo('/archivos/acl/group2');
 
@@ -188,13 +184,13 @@ class AclTest extends BaseTest {
         Acl::create([
             'nodo_id' => $nodo1->id,
             'group_id' => $grupo1->id,
-            'verbos' => 'leer'
+            'verbos' => 'leer',
         ]);
 
         Acl::create([
             'nodo_id' => $nodo2->id,
             'group_id' => $grupo2->id,
-            'verbos' => 'escribir'
+            'verbos' => 'escribir',
         ]);
 
         $acls = Acl::from($user);
@@ -209,8 +205,8 @@ class AclTest extends BaseTest {
      */
     public function test_acl_user_verbos()
     {
-        $user = $this->getUser("PriorityUser");
-        $grupo = $this->getGrupo("PriorityGroup");
+        $user = $this->getUser('PriorityUser');
+        $grupo = $this->getGrupo('PriorityGroup');
         $nodo = $this->getNodo('/archivos/priority_test');
 
         $user->grupos()->sync([$grupo->id]);
@@ -219,17 +215,16 @@ class AclTest extends BaseTest {
         Acl::where('user_id', $user->id)->delete();
         Acl::where('group_id', $grupo->id)->delete();
 
-
         Acl::create([
             'nodo_id' => $nodo->id,
             'group_id' => $grupo->id,
-            'verbos' => 'leer'
+            'verbos' => 'leer',
         ]);
 
         Acl::create([
             'nodo_id' => $nodo->id,
             'user_id' => $user->id,
-            'verbos' => 'leer,escribir'
+            'verbos' => 'leer,escribir',
         ]);
 
         $acls = Acl::from($user, ['escribir']);
@@ -243,7 +238,7 @@ class AclTest extends BaseTest {
      */
     public function test_acl_caching()
     {
-        $user = $this->getUser("CacheUser");
+        $user = $this->getUser('CacheUser');
         $nodo = $this->getNodo('/archivos/cache_test');
 
         Acl::where('user_id', $user->id)->delete();
@@ -252,11 +247,10 @@ class AclTest extends BaseTest {
         // borramos toda la cache
         Cache::flush();
 
-
         Acl::create([
             'nodo_id' => $nodo->id,
             'user_id' => $user->id,
-            'verbos' => 'leer'
+            'verbos' => 'leer',
         ]);
 
         // Primera llamada, debería guardar en caché
@@ -298,7 +292,7 @@ class AclTest extends BaseTest {
      */
     public function test_acl_create_and_update()
     {
-        $user = $this->getUser("UpdateUser");
+        $user = $this->getUser('UpdateUser');
         $nodo = $this->getNodo('/archivos/update_test');
 
         Acl::where('user_id', $user->id)->delete();
@@ -306,7 +300,7 @@ class AclTest extends BaseTest {
         $acl = Acl::create([
             'nodo_id' => $nodo->id,
             'user_id' => $user->id,
-            'verbos' => 'leer'
+            'verbos' => 'leer',
         ]);
 
         $this->assertEquals('leer', $acl->verbos);
@@ -316,30 +310,28 @@ class AclTest extends BaseTest {
         $this->assertEquals('leer,escribir', $acl->fresh()->verbos);
     }
 
-
-
     /**
      * Prueba el acceso a una ruta hija desde un ACL padre
      */
-    public function test_acl_acceso_ruta_hija() {
+    public function test_acl_acceso_ruta_hija()
+    {
 
-        $coordinador = $this->getUser("Coordinador");
-        $user = $this->getUser("OtroUsuario");
+        $coordinador = $this->getUser('Coordinador');
+        $user = $this->getUser('OtroUsuario');
         $nodoPadre = $this->getNodo('/archivos/equipoX');
-        $nodoHijo =  $this->getNodo('/archivos/equipoX/carpeta1');
+        $nodoHijo = $this->getNodo('/archivos/equipoX/carpeta1');
 
         $acl = Acl::create([
             'nodo_id' => $nodoPadre->id,
             'group_id' => null,
             'user_id' => $coordinador->id,
-            'verbos' => 'escribir'
+            'verbos' => 'escribir',
         ]);
 
         $this->assertNotNull($acl);
 
         $this->actingAs($user);
         $this->assertFalse(Gate::allows('escribir', $nodoHijo));
-
 
         $this->actingAs($coordinador);
         $this->assertTrue(Gate::allows('escribir', $nodoHijo));

@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Controller;
+use App\Pigmalion\DeployHelper;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
-use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Log;
-use App\Pigmalion\DeployHelper;
 
 class CommandController extends Controller
 {
@@ -31,7 +31,7 @@ class CommandController extends Controller
         ],
         'exec' => [
             'ps aux',
-             'worker:stop',
+            'worker:stop',
             'worker:start',
             'inertia:start-ssr',
             'inertia:stop-ssr',
@@ -43,23 +43,24 @@ class CommandController extends Controller
     {
         $command = $request->input('command');
 
-        if (!$command) {
+        if (! $command) {
             return response()->json(['error' => 'Comando requerido'], 400);
         }
 
         // Sanitización adicional de entrada
         $command = trim($command);
         if (preg_match('/[;&|`$]/', $command)) {
-            Log::warning("Intento de inyección de comandos detectado", [
+            Log::warning('Intento de inyección de comandos detectado', [
                 'command' => $command,
                 'ip' => $request->ip(),
-                'user_agent' => $request->userAgent()
+                'user_agent' => $request->userAgent(),
             ]);
+
             return response()->json(['error' => 'Caracteres no permitidos en el comando'], 400);
         }
 
         // Forzar HTTPS en producción
-        if (app()->environment('production') && !$request->secure()) {
+        if (app()->environment('production') && ! $request->secure()) {
             return response()->json(['error' => 'HTTPS requerido para acceso remoto'], 426);
         }
 
@@ -70,23 +71,23 @@ class CommandController extends Controller
         if ($providedToken) {
             // Verificar lista de IPs permitidas para acceso remoto
             $allowedIPs = DeployHelper::getAllowedIPs();
-            if (!in_array($request->ip(), $allowedIPs)) {
+            if (! in_array($request->ip(), $allowedIPs)) {
                 return response()->json(['error' => 'IP no autorizada para acceso remoto'], 403);
             }
 
-            if (!$deployToken || $providedToken !== $deployToken) {
+            if (! $deployToken || $providedToken !== $deployToken) {
                 return response()->json(['error' => 'Token de deploy inválido'], 403);
             }
 
             // Registrar automáticamente la IP del cliente remoto si no está en la lista
             $clientIP = $request->ip();
-            if (!in_array($clientIP, $allowedIPs)) {
+            if (! in_array($clientIP, $allowedIPs)) {
                 DeployHelper::addAllowedIP($clientIP, 'remote-client');
-                Log::info("IP registrada automáticamente para acceso remoto", ['ip' => $clientIP]);
+                Log::info('IP registrada automáticamente para acceso remoto', ['ip' => $clientIP]);
             }
         } else {
             // Si no hay token, verificar que el usuario esté autenticado y sea admin (name == 'admin')
-            if (!auth()->check() || auth()->user()->name !== 'admin') {
+            if (! auth()->check() || auth()->user()->name !== 'admin') {
                 return response()->json(['error' => 'Acceso denegado. Se requiere autenticación de administrador.'], 403);
             }
         }
@@ -100,34 +101,34 @@ class CommandController extends Controller
         $user = auth()->user();
         $ip = $request->ip();
         $userAgent = $request->userAgent();
-        $tokenUsed = !empty($request->header('X-Deploy-Token'));
+        $tokenUsed = ! empty($request->header('X-Deploy-Token'));
 
         // Log de auditoría
-        Log::info("Comando ejecutado remotamente", [
+        Log::info('Comando ejecutado remotamente', [
             'command' => $command,
             'ip' => $ip,
             'user_agent' => $userAgent,
             'token_used' => $tokenUsed,
             'user_id' => $user ? $user->id : null,
             'user_email' => $user ? $user->email : null,
-            'timestamp' => now()->toISOString()
+            'timestamp' => now()->toISOString(),
         ]);
 
         $command = urldecode($command);
         $parts = preg_split('/\s+/', $command, -1, PREG_SPLIT_NO_EMPTY);
         $baseCommand = $parts[0];
 
-        Log::info("Procesando comando", [
+        Log::info('Procesando comando', [
             'command' => $command,
             'baseCommand' => $baseCommand,
-            'parts' => $parts
+            'parts' => $parts,
         ]);
 
         // Verificar si el comando está permitido y determinar su tipo
         $commandType = $this->getCommandType($baseCommand);
 
         // Si no se encontró por comando base, verificar comando completo para casos como "pkill -f ssr" o "ps aux"
-        if (!$commandType && count($parts) >= 2) {
+        if (! $commandType && count($parts) >= 2) {
             $fullCommand = implode(' ', $parts);
             foreach ($this->allowedCommands['exec'] as $allowedCommand) {
                 if ($fullCommand === $allowedCommand) {
@@ -137,13 +138,13 @@ class CommandController extends Controller
             }
         }
 
-        Log::info("Tipo de comando determinado", [
+        Log::info('Tipo de comando determinado', [
             'baseCommand' => $baseCommand,
             'commandType' => $commandType,
-            'fullCommand' => $command
+            'fullCommand' => $command,
         ]);
 
-        if (!$commandType) {
+        if (! $commandType) {
             return response()->json(['error' => 'Comando no permitido'], 403);
         }
 
@@ -157,36 +158,37 @@ class CommandController extends Controller
             }
         } catch (\Exception $e) {
             // Log de error de auditoría
-            Log::error("Error al ejecutar comando - Auditoría", [
+            Log::error('Error al ejecutar comando - Auditoría', [
                 'command' => $command,
                 'error' => $e->getMessage(),
                 'ip' => request()->ip(),
                 'user_id' => auth()->id(),
-                'timestamp' => now()->toISOString()
+                'timestamp' => now()->toISOString(),
             ]);
 
             // Verificar si es un error de comando no encontrado
             if (strpos($e->getMessage(), 'does not exist') !== false) {
                 Log::warning("Comando Artisan no encontrado: {$baseCommand}", [
-                    'error' => $e->getMessage()
+                    'error' => $e->getMessage(),
                 ]);
 
                 return response()->json([
                     'status' => 'Comando no disponible',
                     'output' => "El comando '{$baseCommand}' no está disponible en el entorno web. Puede estar disponible solo en CLI.",
-                    'exitCode' => 1
+                    'exitCode' => 1,
                 ]);
             }
 
             Log::error("Error al ejecutar el comando: {$baseCommand}", [
                 'parameters' => $parameters,
                 'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
+                'trace' => $e->getTraceAsString(),
             ]);
+
             return response()->json([
                 'error' => 'Error al ejecutar el comando',
                 'message' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
+                'trace' => $e->getTraceAsString(),
             ], 500);
         }
     }
@@ -228,6 +230,7 @@ class CommandController extends Controller
                 $parameters[] = $part;
             }
         }
+
         return $parameters;
     }
 
@@ -241,20 +244,20 @@ class CommandController extends Controller
         } elseif ($baseCommand === 'inertia:stop-ssr') {
             $scriptPath = base_path('bash/ssr.sh');
             $deployUser = config('app.deploy_user');
-            $cmd = 'DEPLOY_USER=' . escapeshellarg($deployUser) . ' bash ' . escapeshellarg($scriptPath) . ' stop';
+            $cmd = 'DEPLOY_USER='.escapeshellarg($deployUser).' bash '.escapeshellarg($scriptPath).' stop';
         } elseif ($baseCommand === 'inertia:start-ssr') {
             $scriptPath = base_path('bash/ssr.sh');
             $deployUser = config('app.deploy_user');
-            $cmd = 'DEPLOY_USER=' . escapeshellarg($deployUser) . ' bash ' . escapeshellarg($scriptPath) . ' start';
+            $cmd = 'DEPLOY_USER='.escapeshellarg($deployUser).' bash '.escapeshellarg($scriptPath).' start';
         } elseif ($baseCommand === 'worker:stop') {
             $scriptPath = base_path('bash/worker-stop.sh');
             $deployUser = config('app.deploy_user');
-            $cmd = 'DEPLOY_USER=' . escapeshellarg($deployUser) . ' bash ' . escapeshellarg($scriptPath);
-        } elseif( $baseCommand === 'worker:start') {
+            $cmd = 'DEPLOY_USER='.escapeshellarg($deployUser).' bash '.escapeshellarg($scriptPath);
+        } elseif ($baseCommand === 'worker:start') {
             $scriptPath = base_path('bash/worker-start.sh');
             $deployUser = config('app.deploy_user');
-            $cmd = 'DEPLOY_USER=' . escapeshellarg($deployUser) . ' bash ' . escapeshellarg($scriptPath) . ' -q';
-    } elseif ($baseCommand === 'ps' && isset($parts[1]) && $parts[1] === 'aux') {
+            $cmd = 'DEPLOY_USER='.escapeshellarg($deployUser).' bash '.escapeshellarg($scriptPath).' -q';
+        } elseif ($baseCommand === 'ps' && isset($parts[1]) && $parts[1] === 'aux') {
             // adecuado en entornos BSD/Linux no interactivos
             $cmd = 'ps -ef';
         } else {
@@ -273,19 +276,19 @@ class CommandController extends Controller
                 $exitCode = $result['exitCode'];
                 $outputText = implode("\n", $output);
             } else {
-                exec($cmd . ' 2>&1', $output, $exitCode);
+                exec($cmd.' 2>&1', $output, $exitCode);
                 $outputText = implode("\n", $output);
             }
         } catch (\Exception $e) {
             Log::error("Error al ejecutar comando externo: {$cmd}", [
                 'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
+                'trace' => $e->getTraceAsString(),
             ]);
 
             return response()->json([
                 'error' => 'Error al ejecutar el comando',
-                'output' => "Error del sistema: {$e->getMessage()}" . ($outputText ? "\n\nSalida del comando:\n{$outputText}" : ''),
-                'exitCode' => 1
+                'output' => "Error del sistema: {$e->getMessage()}".($outputText ? "\n\nSalida del comando:\n{$outputText}" : ''),
+                'exitCode' => 1,
             ], 500);
         }
 
@@ -299,13 +302,13 @@ class CommandController extends Controller
 
             Log::error("Error de recursos del sistema detectado en comando: {$cmd}", [
                 'output' => $outputText,
-                'exitCode' => $exitCode
+                'exitCode' => $exitCode,
             ]);
 
             return response()->json([
                 'error' => 'Error del sistema',
-                'output' => 'El servidor no tiene recursos suficientes en este momento. Intenta de nuevo en unos segundos.' . ($outputText ? "\n\nSalida del comando:\n{$outputText}" : ''),
-                'exitCode' => $exitCode
+                'output' => 'El servidor no tiene recursos suficientes en este momento. Intenta de nuevo en unos segundos.'.($outputText ? "\n\nSalida del comando:\n{$outputText}" : ''),
+                'exitCode' => $exitCode,
             ], 503); // Service Unavailable
         }
 
@@ -316,13 +319,13 @@ class CommandController extends Controller
 
             Log::error("Error de memoria detectado en comando: {$cmd}", [
                 'output' => $outputText,
-                'exitCode' => $exitCode
+                'exitCode' => $exitCode,
             ]);
 
             return response()->json([
                 'error' => 'Error de memoria',
-                'output' => 'El servidor no tiene suficiente memoria disponible. Intenta de nuevo más tarde.' . ($outputText ? "\n\nSalida del comando:\n{$outputText}" : ''),
-                'exitCode' => $exitCode
+                'output' => 'El servidor no tiene suficiente memoria disponible. Intenta de nuevo más tarde.'.($outputText ? "\n\nSalida del comando:\n{$outputText}" : ''),
+                'exitCode' => $exitCode,
             ], 503);
         }
 
@@ -333,13 +336,13 @@ class CommandController extends Controller
 
             Log::error("Error de límite de procesos detectado en comando: {$cmd}", [
                 'output' => $outputText,
-                'exitCode' => $exitCode
+                'exitCode' => $exitCode,
             ]);
 
             return response()->json([
                 'error' => 'Error de procesos',
-                'output' => 'El servidor ha alcanzado el límite de procesos. Intenta de nuevo en unos minutos.' . ($outputText ? "\n\nSalida del comando:\n{$outputText}" : ''),
-                'exitCode' => $exitCode
+                'output' => 'El servidor ha alcanzado el límite de procesos. Intenta de nuevo en unos minutos.'.($outputText ? "\n\nSalida del comando:\n{$outputText}" : ''),
+                'exitCode' => $exitCode,
             ], 503);
         }
 
@@ -347,13 +350,13 @@ class CommandController extends Controller
         if (strpos($outputText, 'Permission denied') !== false) {
             Log::error("Error de permisos detectado en comando: {$cmd}", [
                 'output' => $outputText,
-                'exitCode' => $exitCode
+                'exitCode' => $exitCode,
             ]);
 
             return response()->json([
                 'error' => 'Error de permisos',
-                'output' => 'No tienes permisos suficientes para ejecutar este comando.' . ($outputText ? "\n\nSalida del comando:\n{$outputText}" : ''),
-                'exitCode' => $exitCode
+                'output' => 'No tienes permisos suficientes para ejecutar este comando.'.($outputText ? "\n\nSalida del comando:\n{$outputText}" : ''),
+                'exitCode' => $exitCode,
             ], 403);
         }
 
@@ -363,19 +366,19 @@ class CommandController extends Controller
             strpos($outputText, 'command not found') !== false) {
             Log::warning("Comando no disponible en entorno web: {$cmd}", [
                 'output' => $outputText,
-                'exitCode' => $exitCode
+                'exitCode' => $exitCode,
             ]);
 
             return response()->json([
                 'error' => 'Comando no disponible',
                 'output' => 'Este comando no está disponible en el entorno web actual. Puede estar disponible solo en línea de comandos (CLI).',
-                'exitCode' => $exitCode
+                'exitCode' => $exitCode,
             ], 404);
         }
 
         Log::info("Comando externo ejecutado: {$cmd}", [
             'output' => $outputText,
-            'exitCode' => $exitCode
+            'exitCode' => $exitCode,
         ]);
 
         // Para comandos como pkill, un exitCode mayor que 0 no siempre es un error
@@ -385,7 +388,7 @@ class CommandController extends Controller
         return response()->json([
             'status' => $status,
             'output' => $outputText ?: $this->getDefaultMessage($fullCommand),
-            'exitCode' => $exitCode
+            'exitCode' => $exitCode,
         ]);
     }
 
@@ -397,7 +400,7 @@ class CommandController extends Controller
         Log::info("Comando Artisan ejecutado: {$baseCommand}", [
             'parameters' => $parameters,
             'output' => $output,
-            'exitCode' => $exitCode
+            'exitCode' => $exitCode,
         ]);
 
         // Algunos comandos pueden retornar códigos diferentes de 0 sin ser errores críticos
@@ -406,7 +409,7 @@ class CommandController extends Controller
         return response()->json([
             'status' => $status,
             'output' => $output ?: "Comando {$baseCommand} ejecutado",
-            'exitCode' => $exitCode
+            'exitCode' => $exitCode,
         ]);
     }
 
@@ -415,12 +418,12 @@ class CommandController extends Controller
         $descriptors = [
             0 => ['pipe', 'r'], // stdin
             1 => ['pipe', 'w'], // stdout
-            2 => ['pipe', 'w']  // stderr
+            2 => ['pipe', 'w'],  // stderr
         ];
 
         $process = proc_open($cmd, $descriptors, $pipes);
 
-        if (!is_resource($process)) {
+        if (! is_resource($process)) {
             return ['output' => ['Error: No se pudo iniciar el proceso'], 'exitCode' => 1];
         }
 
@@ -436,7 +439,7 @@ class CommandController extends Controller
         $writeStreams = null;
         $exceptStreams = null;
 
-        while (!empty($readStreams)) {
+        while (! empty($readStreams)) {
             $timeout = $timeoutSeconds - (time() - $startTime);
             if ($timeout <= 0) {
                 // Timeout alcanzado
@@ -448,6 +451,7 @@ class CommandController extends Controller
                     fclose($pipes[2]);
                 }
                 proc_close($process);
+
                 return ['output' => ['Error: Timeout alcanzado'], 'exitCode' => 1];
             }
 
@@ -486,7 +490,7 @@ class CommandController extends Controller
 
         $exitCode = proc_close($process);
 
-        $fullOutput = $output . $error;
+        $fullOutput = $output.$error;
         $outputLines = explode("\n", trim($fullOutput));
 
         return ['output' => $outputLines, 'exitCode' => $exitCode];

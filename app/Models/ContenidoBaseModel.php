@@ -2,18 +2,20 @@
 
 namespace App\Models;
 
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\DB;
+use App\Pigmalion\ContenidoHelper;
+use App\Pigmalion\Markdown;
+use App\Pigmalion\StorageItem;
+use App\Services\ImageDeduplicationService;
+use App\Services\PDFGenerator;
+use App\Traits\BuscableTrait;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Log;
 use RalphJSmit\Laravel\SEO\Support\HasSEO;
 use RalphJSmit\Laravel\SEO\Support\SEOData;
-use Carbon\Carbon;
-use App\Pigmalion\ContenidoHelper;
-use App\Pigmalion\StorageItem;
-use App\Models\Favorito;
-use App\Pigmalion\Markdown;
-use App\Traits\BuscableTrait;
-
+use Venturecraft\Revisionable\RevisionableTrait;
 
 /*
  ContenidoBaseModel es un modelo básico que sirve para:
@@ -22,11 +24,10 @@ use App\Traits\BuscableTrait;
 
 class ContenidoBaseModel extends Model
 {
-    use HasSEO;
-    use \Venturecraft\Revisionable\RevisionableTrait;
-    use \Illuminate\Database\Eloquent\SoftDeletes;
     use BuscableTrait;
-
+    use HasSEO;
+    use RevisionableTrait;
+    use SoftDeletes;
 
     public $acortar_enlaces = true; // si es true, al guardar el contenido se crean enlaces cortos automáticos para URLs largas en el campo de texto
 
@@ -42,50 +43,47 @@ class ContenidoBaseModel extends Model
         parent::boot();
 
         static::saving(function ($model) {
-            Log::info("ContenidoBaseModel::saving");
+            Log::info('ContenidoBaseModel::saving');
             // Acciones antes de guardar el modelo
             ContenidoHelper::rellenarSlugImagenYDescripcion($model);
 
             // Deduplicar imagenes del texto: reemplazar copias locales del sello y guias
-            if ($model instanceof \App\Models\Comunicado) {
-                \App\Services\ImageDeduplicationService::deduplicate($model);
+            if ($model instanceof Comunicado) {
+                ImageDeduplicationService::deduplicate($model);
             }
         });
 
         static::saved(function ($model) {
-            Log::info("ContenidoBaseModel::saved" . get_class($model));
+            Log::info('ContenidoBaseModel::saved'.get_class($model));
             // Log::info("ContenidoBaseModel saved: ". substr($model->texto, 0, 1024));
             // si mueve alguna imagen, guardamos los cambios y salimos
             if (ContenidoHelper::moverImagenesContenido($model)) {
                 $model->saveQuietly();
-                Log::info("Se han movido imagenes de carpeta temp a destino para " . $model->getMorphClass() . "/" . $model->id);
+                Log::info('Se han movido imagenes de carpeta temp a destino para '.$model->getMorphClass().'/'.$model->id);
             }
 
             // acortar enlaces largos
-            if($model->acortar_enlaces && $model->texto) {
+            if ($model->acortar_enlaces && $model->texto) {
                 $texto = Markdown::acortarEnlacesMarkdown($model->texto);
-                if(!$texto != $model->texto)
-                {
+                if (! $texto != $model->texto) {
                     $model->texto = $texto;
                     $model->saveQuietly();
-                    Log::info("Se han acortado algunos enlaces");
+                    Log::info('Se han acortado algunos enlaces');
                 }
             }
 
             // Acciones después de que el modelo se haya guardado
             ContenidoHelper::guardarContenido($model);
 
-            if(method_exists($model, 'afterSave')) {
+            if (method_exists($model, 'afterSave')) {
                 $model->afterSave();
             }
         });
 
-
         static::deleted(function ($model) {
-            Log::info("ContenidoBaseModel::deleted");
+            Log::info('ContenidoBaseModel::deleted');
             ContenidoHelper::removerContenido($model);
         });
-
 
     }
 
@@ -107,7 +105,7 @@ class ContenidoBaseModel extends Model
         $imageUrl = config('seo.image.fallback');
 
         // Si existe imagen en el modelo, procesarla con StorageItem
-        if (!empty($this->imagen)) {
+        if (! empty($this->imagen)) {
             try {
                 $imagePath = $this->imagen;
 
@@ -131,14 +129,14 @@ class ContenidoBaseModel extends Model
                 }
             } catch (\Throwable $e) {
                 // Si hay error al procesar la imagen, usar fallback
-                Log::channel('http-errors')->debug('Error processing SEO image: ' . $e->getMessage());
+                Log::channel('http-errors')->debug('Error processing SEO image: '.$e->getMessage());
                 $imageUrl = config('seo.image.fallback');
             }
         }
 
         return new SEOData(
             title: $this->titulo ?? $this->nombre ?? $this->name,
-            description: $this->descripcion ?? mb_substr(strip_tags($this->texto ?? ""), 0, 400 - 3),
+            description: $this->descripcion ?? mb_substr(strip_tags($this->texto ?? ''), 0, 400 - 3),
             image: $imageUrl,
             author: $this->autor ?? 'tseyor',
             published_time: Carbon::createFromFormat('Y-m-d H:i:s', $this->published_at ?? $this->created_at) ?? null,
@@ -147,7 +145,6 @@ class ContenidoBaseModel extends Model
             // schema:
         );
     }
-
 
     /**
      * TNTSearch
@@ -163,56 +160,61 @@ class ContenidoBaseModel extends Model
      * @param bool ruta define si queremos el resultado en formato Ruta (relativa)
      * Carpeta temporal para medios (imágenes)
      */
-    public static function getCarpetaMediosTemp(bool $formatoRutaRelativa = false) : string
+    public static function getCarpetaMediosTemp(bool $formatoRutaRelativa = false): string
     {
         $folderCompleto = '/almacen/temp';
         StorageItem::ensureDirExists($folderCompleto);
-        if( $formatoRutaRelativa )
+        if ($formatoRutaRelativa) {
             return (new StorageItem($folderCompleto))->relativeLocation;
+        }
+
         return $folderCompleto;
     }
 
     /**
      * Carpeta para los medios del contenido (imágenes)
      */
-    public function getCarpetaMedios(bool $formatoRutaRelativa= false) : string
+    public function getCarpetaMedios(bool $formatoRutaRelativa = false): string
     {
         $coleccion = $this->getTable();
         $folderCompleto = $this->id ? "/almacen/medios/$coleccion/$this->id" : self::getCarpetaMediosTemp();
         StorageItem::ensureDirExists($folderCompleto);
-        if($formatoRutaRelativa)
+        if ($formatoRutaRelativa) {
             return (new StorageItem($folderCompleto))->relativeLocation;
+        }
+
         return $folderCompleto;
     }
 
     /**
-    * Para PDF
-    */
-
+     * Para PDF
+     */
     public function getPdfFilenameAttribute()
     {
-        return $this->identifiableName() . ' - TSEYOR.pdf';
+        return $this->identifiableName().' - TSEYOR.pdf';
     }
 
     public function getPdfPathAttribute()
     {
-        return 'pdf/' . $this->getTable() . '/' . $this->pdf_filename;
+        return 'pdf/'.$this->getTable().'/'.$this->pdf_filename;
     }
 
-    public function generatePdf() {
-        return \App\Services\PDFGenerator::generatePdf($this);
+    public function generatePdf()
+    {
+        return PDFGenerator::generatePdf($this);
     }
 
     /**
      * Comprueba si este contenido está marcado como favorito por un usuario.
      *
-     * @param int|null $userId Id del usuario (por defecto auth()->id())
-     * @return bool
+     * @param  int|null  $userId  Id del usuario (por defecto auth()->id())
      */
     public function isFavorito($userId = null): bool
     {
         $userId = $userId ?: auth()->id();
-        if (!$userId) return false;
+        if (! $userId) {
+            return false;
+        }
 
         // Usar siempre el nombre de la tabla como 'coleccion' y la clave primaria como 'id_ref'
         $coleccion = $this->getTable();
@@ -228,9 +230,9 @@ class ContenidoBaseModel extends Model
      * Scope para incluir el campo 'favorito' en la consulta principal para un usuario.
      * Añade un LEFT JOIN con la tabla favoritos filtrando por coleccion y user_id.
      *
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @param int|null $userId
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @param  Builder  $query
+     * @param  int|null  $userId
+     * @return Builder
      */
     public function scopeWithFavorito($query)
     {
@@ -250,6 +252,7 @@ class ContenidoBaseModel extends Model
                     // si la columna es exactamente 'id' (sin calificar) la reemplazamos
                     if ($col === 'id') {
                         $normalized[] = "$table.id";
+
                         continue;
                     }
                 }
@@ -261,17 +264,17 @@ class ContenidoBaseModel extends Model
             $columns = $query->getQuery()->columns;
         }
 
-        if (!$userId) {
+        if (! $userId) {
             // Añadimos solo la columna fija 0 como favorito (no sobrescribimos selects existentes)
             return $query->selectRaw('0 as favorito');
         }
 
         // LEFT JOIN favoritos ON favoritos.id_ref = <table>.id AND favoritos.coleccion = '<table>' AND favoritos.user_id = <userId>
         $query = $query->leftJoin('favoritos', function ($join) use ($table, $userId) {
-                $join->on('favoritos.id_ref', '=', "$table.id")
-                     ->where('favoritos.coleccion', '=', $table)
-                     ->where('favoritos.user_id', '=', $userId);
-            });
+            $join->on('favoritos.id_ref', '=', "$table.id")
+                ->where('favoritos.coleccion', '=', $table)
+                ->where('favoritos.user_id', '=', $userId);
+        });
 
         // Añadimos solo la columna calculada favorito, preservando cualquier select previo
         return $query->selectRaw('CASE WHEN favoritos.id IS NULL THEN 0 ELSE 1 END as favorito');
@@ -281,8 +284,8 @@ class ContenidoBaseModel extends Model
      * Lógica común para filtrar contenido con visibilidad 'P'
      * Solo aplica el filtro si el modelo tiene el campo 'visibilidad'
      *
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @param  Builder  $query
+     * @return Builder
      */
     private function scopeContenidoVisible($query)
     {
@@ -291,7 +294,7 @@ class ContenidoBaseModel extends Model
 
         // Si el modelo tiene 'visibilidad' en fillable, aplicamos el filtro
         if (in_array('visibilidad', $model->getFillable())) {
-            return $query->where($table . '.visibilidad', 'P');
+            return $query->where($table.'.visibilidad', 'P');
         }
 
         // Si no tiene el campo visibilidad, no aplicamos filtro
@@ -301,8 +304,8 @@ class ContenidoBaseModel extends Model
     /**
      * Scope para filtrar contenido publicado (masculino)
      *
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @param  Builder  $query
+     * @return Builder
      */
     public function scopePublicado($query)
     {
@@ -312,20 +315,19 @@ class ContenidoBaseModel extends Model
     /**
      * Scope para filtrar contenido publicada (femenino)
      *
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @param  Builder  $query
+     * @return Builder
      */
     public function scopePublicada($query)
     {
         return $this->scopeContenidoVisible($query);
     }
 
-
     /**
      * Scope para filtrar contenido en borrador
      *
-     * @param \Illuminate\Database\Eloquent\Builder $query
-     * @return \Illuminate\Database\Eloquent\Builder
+     * @param  Builder  $query
+     * @return Builder
      */
     public function scopeBorrador($query)
     {
@@ -334,11 +336,10 @@ class ContenidoBaseModel extends Model
 
         // Si el modelo tiene 'visibilidad' en fillable, aplicamos el filtro
         if (in_array('visibilidad', $model->getFillable())) {
-            return $query->where($table . '.visibilidad', 'B');
+            return $query->where($table.'.visibilidad', 'B');
         }
 
         // Si no tiene el campo visibilidad, no aplicamos filtro
         return $query;
     }
-
 }

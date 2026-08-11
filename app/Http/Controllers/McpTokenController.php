@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use Firebase\JWT\JWT;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Firebase\JWT\JWT;
-use Firebase\JWT\Key;
 
 class McpTokenController extends Controller
 {
@@ -23,7 +22,7 @@ class McpTokenController extends Controller
     public function generate(Request $request)
     {
         $user = Auth::user();
-        if (!$user) {
+        if (! $user) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
@@ -34,7 +33,7 @@ class McpTokenController extends Controller
             'iat' => time(),
             'exp' => time() + 60 * 60 * 24 * 30, // 30 días
         ];
-        $key = config('mcp-server.jwt_secret_prefix') . config('app.key');
+        $key = config('mcp-server.jwt_secret_prefix').config('app.key');
         $jwt = JWT::encode($payload, $key, 'HS256');
 
         return response()->json(['token' => $jwt]);

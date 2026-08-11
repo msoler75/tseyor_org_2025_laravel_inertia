@@ -2,6 +2,9 @@
 
 namespace App\Helpers;
 
+use SebastianBergmann\Diff\Differ;
+use SebastianBergmann\Diff\Output\DiffOnlyOutputBuilder;
+
 class DiffRenderer
 {
     public static function render(string $old, string $new): string
@@ -18,12 +21,12 @@ class DiffRenderer
 
         if ($old === '' || $old === null) {
             return '<pre style="color:#22863a;background:#e6ffe6;padding:8px;border-radius:4px;border-left:3px solid #2d8a2d;white-space:pre-wrap;word-break:break-word;font-family:monospace;font-size:0.875rem;margin:0">'
-                . e($new) . '</pre>';
+                .e($new).'</pre>';
         }
 
         if ($new === '' || $new === null) {
             return '<pre style="color:#cb2431;background:#ffe6e6;padding:8px;border-radius:4px;border-left:3px solid #c42b2b;white-space:pre-wrap;word-break:break-word;font-family:monospace;font-size:0.875rem;margin:0">'
-                . e($old) . '</pre>';
+                .e($old).'</pre>';
         }
 
         $oldLines = explode("\n", $old);
@@ -33,8 +36,8 @@ class DiffRenderer
             return self::renderInlineWordDiff($old, $new);
         }
 
-        $differ = new \SebastianBergmann\Diff\Differ(
-            new \SebastianBergmann\Diff\Output\DiffOnlyOutputBuilder("")
+        $differ = new Differ(
+            new DiffOnlyOutputBuilder('')
         );
 
         $diffArray = $differ->diffToArray($oldLines, $newLines);
@@ -47,6 +50,7 @@ class DiffRenderer
         $text = preg_replace('/\{[^}]*\}/', '', $text);
         $text = strip_tags($text);
         $text = str_replace(['*', '_', '\\'], '', $text);
+
         return $text;
     }
 
@@ -60,23 +64,27 @@ class DiffRenderer
             $normNew = str_replace('_', '*', $new);
             if (str_contains($normNew, $normOld)) {
                 $pos = mb_strpos($normNew, $normOld);
+
                 return e(mb_substr($new, 0, $pos))
-                    . self::renderDelimiterChange($old, mb_substr($new, $pos, mb_strlen($old)))
-                    . e(mb_substr($new, $pos + mb_strlen($old)));
+                    .self::renderDelimiterChange($old, mb_substr($new, $pos, mb_strlen($old)))
+                    .e(mb_substr($new, $pos + mb_strlen($old)));
             }
             if (str_contains($normOld, $normNew)) {
                 $pos = mb_strpos($normOld, $normNew);
+
                 return e(mb_substr($old, 0, $pos))
-                    . self::renderDelimiterChange(mb_substr($old, $pos, mb_strlen($new)), $new)
-                    . e(mb_substr($old, $pos + mb_strlen($new)));
+                    .self::renderDelimiterChange(mb_substr($old, $pos, mb_strlen($new)), $new)
+                    .e(mb_substr($old, $pos + mb_strlen($new)));
             }
             if (str_contains($new, $old)) {
                 $pos = mb_strpos($new, $old);
-                return e(mb_substr($new, 0, $pos)) . e($old) . e(mb_substr($new, $pos + mb_strlen($old)));
+
+                return e(mb_substr($new, 0, $pos)).e($old).e(mb_substr($new, $pos + mb_strlen($old)));
             }
             if (str_contains($old, $new)) {
                 $pos = mb_strpos($old, $new);
-                return e(mb_substr($old, 0, $pos)) . e($new) . e(mb_substr($old, $pos + mb_strlen($new)));
+
+                return e(mb_substr($old, 0, $pos)).e($new).e(mb_substr($old, $pos + mb_strlen($new)));
             }
             if (self::canUseCharDiff($old, $new)) {
                 return self::renderDelimiterChange($old, $new);
@@ -84,8 +92,8 @@ class DiffRenderer
         }
 
         if (self::similarityScore($old, $new) < 0.3) {
-            return '<del style="background:#ffeef0;color:#cb2431;text-decoration:none">' . e($old) . '</del>'
-                . '<ins style="background:#e6ffed;color:#22863a;text-decoration:none">' . e($new) . '</ins>';
+            return '<del style="background:#ffeef0;color:#cb2431;text-decoration:none">'.e($old).'</del>'
+                .'<ins style="background:#e6ffed;color:#22863a;text-decoration:none">'.e($new).'</ins>';
         }
 
         if (self::similarityScore($old, $new) > 0.70) {
@@ -95,8 +103,8 @@ class DiffRenderer
         $oldWords = self::splitWords($old);
         $newWords = self::splitWords($new);
 
-        $differ = new \SebastianBergmann\Diff\Differ(
-            new \SebastianBergmann\Diff\Output\DiffOnlyOutputBuilder("")
+        $differ = new Differ(
+            new DiffOnlyOutputBuilder('')
         );
 
         $diffArray = $differ->diffToArray($oldWords, $newWords);
@@ -107,10 +115,10 @@ class DiffRenderer
             $text = $entry[0];
             $type = $entry[1];
 
-            if ($type === \SebastianBergmann\Diff\Differ::REMOVED) {
-                $html .= '<del style="background:#ffeef0;color:#cb2431;text-decoration:none">' . e(self::vis($text)) . '</del>';
-            } elseif ($type === \SebastianBergmann\Diff\Differ::ADDED) {
-                $html .= '<ins style="background:#e6ffed;color:#22863a;text-decoration:none">' . e(self::vis($text)) . '</ins>';
+            if ($type === Differ::REMOVED) {
+                $html .= '<del style="background:#ffeef0;color:#cb2431;text-decoration:none">'.e(self::vis($text)).'</del>';
+            } elseif ($type === Differ::ADDED) {
+                $html .= '<ins style="background:#e6ffed;color:#22863a;text-decoration:none">'.e(self::vis($text)).'</ins>';
             } else {
                 $html .= e($text);
             }
@@ -130,8 +138,8 @@ class DiffRenderer
 
         for ($i = 0; $i < $total; $i++) {
             $type = $diffArray[$i][1];
-            $isChange = $type === \SebastianBergmann\Diff\Differ::REMOVED
-                     || $type === \SebastianBergmann\Diff\Differ::ADDED;
+            $isChange = $type === Differ::REMOVED
+                     || $type === Differ::ADDED;
 
             if ($isChange) {
                 $from = max(0, $i - $contextWindow);
@@ -154,8 +162,8 @@ class DiffRenderer
         while ($i < $count) {
             $idx = $result[$i];
             $type = $diffArray[$idx][1];
-            $isChange = $type === \SebastianBergmann\Diff\Differ::REMOVED
-                     || $type === \SebastianBergmann\Diff\Differ::ADDED;
+            $isChange = $type === Differ::REMOVED
+                     || $type === Differ::ADDED;
 
             if (! $isChange) {
                 $text = trim($diffArray[$idx][0]);
@@ -165,17 +173,18 @@ class DiffRenderer
                     $html .= '<span style="color:#6a737d">...</span><br>';
                 }
                 if (! $isBlankContext) {
-                    $html .= '<span style="color:#6a737d">  ' . e(rtrim($diffArray[$idx][0])) . '</span><br>';
+                    $html .= '<span style="color:#6a737d">  '.e(rtrim($diffArray[$idx][0])).'</span><br>';
                 }
                 $i++;
+
                 continue;
             }
 
             if ($i > 0) {
                 $prevIdx = $result[$i - 1];
                 $prevType = $diffArray[$prevIdx][1];
-                $prevIsChange = $prevType === \SebastianBergmann\Diff\Differ::REMOVED
-                             || $prevType === \SebastianBergmann\Diff\Differ::ADDED;
+                $prevIsChange = $prevType === Differ::REMOVED
+                             || $prevType === Differ::ADDED;
                 if (! $prevIsChange && $prevIdx < $idx - 1) {
                     $html .= '<span style="color:#6a737d">...</span><br>';
                 }
@@ -188,10 +197,10 @@ class DiffRenderer
                 $idx = $result[$i];
                 $t = $diffArray[$idx][1];
                 $raw = $diffArray[$idx][0];
-                if ($t === \SebastianBergmann\Diff\Differ::REMOVED) {
+                if ($t === Differ::REMOVED) {
                     $removedRaw[] = $raw;
                     $i++;
-                } elseif ($t === \SebastianBergmann\Diff\Differ::ADDED) {
+                } elseif ($t === Differ::ADDED) {
                     $addedRaw[] = $raw;
                     $i++;
                 } elseif (trim($raw) === '') {
@@ -207,7 +216,7 @@ class DiffRenderer
 
             foreach ($paired as $pair) {
                 if ($pair[0] !== null && $pair[1] !== null) {
-                    $html .= '<span style="color:#24292e">  ' . self::renderPairedWordDiff($pair[0], $pair[1]) . '</span><br>';
+                    $html .= '<span style="color:#24292e">  '.self::renderPairedWordDiff($pair[0], $pair[1]).'</span><br>';
                 } elseif ($pair[0] !== null) {
                     $outputRemoved[] = e(self::vis(rtrim($pair[0])));
                 } else {
@@ -217,12 +226,12 @@ class DiffRenderer
 
             if (! empty($outputRemoved)) {
                 foreach ($outputRemoved as $line) {
-                    $html .= '<span style="background:#ffeef0;color:#cb2431">- ' . $line . '</span><br>';
+                    $html .= '<span style="background:#ffeef0;color:#cb2431">- '.$line.'</span><br>';
                 }
             }
             if (! empty($outputAdded)) {
                 foreach ($outputAdded as $line) {
-                    $html .= '<span style="background:#e6ffed;color:#22863a">+ ' . $line . '</span><br>';
+                    $html .= '<span style="background:#e6ffed;color:#22863a">+ '.$line.'</span><br>';
                 }
             }
         }
@@ -279,6 +288,7 @@ class DiffRenderer
         if (str_contains($b, $a) || str_contains($a, $b)) {
             $shorter = min(mb_strlen($a), mb_strlen($b));
             $longer = max(mb_strlen($a), mb_strlen($b));
+
             return 0.6 + (0.4 * $shorter / $longer);
         }
 
@@ -305,11 +315,12 @@ class DiffRenderer
                 } else {
                     $pair = self::similarityScore($o, $n) > 0.85
                         ? self::renderCharDiff($o, $n)
-                        : '<del style="background:#ffeef0;color:#cb2431;text-decoration:none">' . e(self::vis($o)) . '</del>'
-                        . '<ins style="background:#e6ffed;color:#22863a;text-decoration:none">' . e(self::vis($n)) . '</ins>';
+                        : '<del style="background:#ffeef0;color:#cb2431;text-decoration:none">'.e(self::vis($o)).'</del>'
+                        .'<ins style="background:#e6ffed;color:#22863a;text-decoration:none">'.e(self::vis($n)).'</ins>';
                     $out .= $pair;
                 }
             }
+
             return $out;
         }
 
@@ -319,15 +330,17 @@ class DiffRenderer
         if ($oldStripped === $newStripped && $oldStripped !== '') {
             if (str_contains($newLine, $oldLine)) {
                 $pos = mb_strpos($newLine, $oldLine);
+
                 return e(mb_substr($newLine, 0, $pos))
-                    . e($oldLine)
-                    . e(mb_substr($newLine, $pos + mb_strlen($oldLine)));
+                    .e($oldLine)
+                    .e(mb_substr($newLine, $pos + mb_strlen($oldLine)));
             }
             if (str_contains($oldLine, $newLine)) {
                 $pos = mb_strpos($oldLine, $newLine);
+
                 return e(mb_substr($oldLine, 0, $pos))
-                    . e($newLine)
-                    . e(mb_substr($oldLine, $pos + mb_strlen($newLine)));
+                    .e($newLine)
+                    .e(mb_substr($oldLine, $pos + mb_strlen($newLine)));
             }
             $normOld = str_replace('_', '*', $oldLine);
             $normNew = str_replace('_', '*', $newLine);
@@ -335,13 +348,15 @@ class DiffRenderer
                 $pos = mb_strpos($normNew, $normOld);
                 $before = mb_substr($newLine, 0, $pos);
                 $after = mb_substr($newLine, $pos + mb_strlen($oldLine));
-                return e($before) . self::renderDelimiterChange($oldLine, mb_substr($newLine, $pos, mb_strlen($oldLine))) . e($after);
+
+                return e($before).self::renderDelimiterChange($oldLine, mb_substr($newLine, $pos, mb_strlen($oldLine))).e($after);
             }
             if (str_contains($normOld, $normNew)) {
                 $pos = mb_strpos($normOld, $normNew);
                 $before = mb_substr($oldLine, 0, $pos);
                 $after = mb_substr($oldLine, $pos + mb_strlen($newLine));
-                return e($before) . self::renderDelimiterChange(mb_substr($oldLine, $pos, mb_strlen($newLine)), $newLine) . e($after);
+
+                return e($before).self::renderDelimiterChange(mb_substr($oldLine, $pos, mb_strlen($newLine)), $newLine).e($after);
             }
             if (self::canUseCharDiff($oldLine, $newLine)) {
                 return self::renderDelimiterChange($oldLine, $newLine);
@@ -355,8 +370,8 @@ class DiffRenderer
         $oldWords = self::splitWords($oldLine);
         $newWords = self::splitWords($newLine);
 
-        $differ = new \SebastianBergmann\Diff\Differ(
-            new \SebastianBergmann\Diff\Output\DiffOnlyOutputBuilder("")
+        $differ = new Differ(
+            new DiffOnlyOutputBuilder('')
         );
 
         $diffArray = $differ->diffToArray($oldWords, $newWords);
@@ -368,25 +383,25 @@ class DiffRenderer
             $text = $entry[0];
             $type = $entry[1];
 
-            if ($type === \SebastianBergmann\Diff\Differ::REMOVED && ($text === '*' || $text === '_')) {
-                $buffer .= '<del style="background:#ffeef0;color:#cb2431;text-decoration:none">' . e(self::vis($text)) . '</del>';
-            } elseif ($type === \SebastianBergmann\Diff\Differ::ADDED && ($text === '*' || $text === '_')) {
+            if ($type === Differ::REMOVED && ($text === '*' || $text === '_')) {
+                $buffer .= '<del style="background:#ffeef0;color:#cb2431;text-decoration:none">'.e(self::vis($text)).'</del>';
+            } elseif ($type === Differ::ADDED && ($text === '*' || $text === '_')) {
                 if ($buffer !== '') {
-                    $buffer .= '<ins style="background:#e6ffed;color:#22863a;text-decoration:none">' . e(self::vis($text)) . '</ins>';
+                    $buffer .= '<ins style="background:#e6ffed;color:#22863a;text-decoration:none">'.e(self::vis($text)).'</ins>';
                     $out .= $buffer;
                     $buffer = '';
                 } else {
-                    $out .= '<ins style="background:#e6ffed;color:#22863a;text-decoration:none">' . e(self::vis($text)) . '</ins>';
+                    $out .= '<ins style="background:#e6ffed;color:#22863a;text-decoration:none">'.e(self::vis($text)).'</ins>';
                 }
             } else {
                 if ($buffer !== '') {
                     $out .= $buffer;
                     $buffer = '';
                 }
-                if ($type === \SebastianBergmann\Diff\Differ::REMOVED) {
-                    $out .= '<del style="background:#ffeef0;color:#cb2431;text-decoration:none">' . e(self::vis($text)) . '</del>';
-                } elseif ($type === \SebastianBergmann\Diff\Differ::ADDED) {
-                    $out .= '<ins style="background:#e6ffed;color:#22863a;text-decoration:none">' . e(self::vis($text)) . '</ins>';
+                if ($type === Differ::REMOVED) {
+                    $out .= '<del style="background:#ffeef0;color:#cb2431;text-decoration:none">'.e(self::vis($text)).'</del>';
+                } elseif ($type === Differ::ADDED) {
+                    $out .= '<ins style="background:#e6ffed;color:#22863a;text-decoration:none">'.e(self::vis($text)).'</ins>';
                 } else {
                     $out .= e($text);
                 }
@@ -420,13 +435,14 @@ class DiffRenderer
     {
         if (preg_match('/^(!?\[)(.*?)(\]\()(.*?)(\))$/u', $line, $m)) {
             return [
-                'bang'    => $m[1],
-                'alt'     => $m[2],
+                'bang' => $m[1],
+                'alt' => $m[2],
                 'urlOpen' => $m[3],
-                'url'     => $m[4],
-                'urlClose'=> $m[5],
+                'url' => $m[4],
+                'urlClose' => $m[5],
             ];
         }
+
         return null;
     }
 
@@ -463,12 +479,12 @@ class DiffRenderer
             if ($oldMid === $newMid) {
                 $out .= e($oldMid);
             } elseif ($oldMid !== '' && $newMid !== '') {
-                $out .= '<del style="background:#ffeef0;color:#cb2431;text-decoration:none">' . e($oldMid) . '</del>'
-                      . '<ins style="background:#e6ffed;color:#22863a;text-decoration:none">' . e($newMid) . '</ins>';
+                $out .= '<del style="background:#ffeef0;color:#cb2431;text-decoration:none">'.e($oldMid).'</del>'
+                      .'<ins style="background:#e6ffed;color:#22863a;text-decoration:none">'.e($newMid).'</ins>';
             } elseif ($oldMid !== '') {
-                $out .= '<del style="background:#ffeef0;color:#cb2431;text-decoration:none">' . e($oldMid) . '</del>';
+                $out .= '<del style="background:#ffeef0;color:#cb2431;text-decoration:none">'.e($oldMid).'</del>';
             } else {
-                $out .= '<ins style="background:#e6ffed;color:#22863a;text-decoration:none">' . e($newMid) . '</ins>';
+                $out .= '<ins style="background:#e6ffed;color:#22863a;text-decoration:none">'.e($newMid).'</ins>';
             }
         }
 
@@ -482,8 +498,8 @@ class DiffRenderer
         $old = mb_str_split($oldLine);
         $new = mb_str_split($newLine);
 
-        $differ = new \SebastianBergmann\Diff\Differ(
-            new \SebastianBergmann\Diff\Output\DiffOnlyOutputBuilder("")
+        $differ = new Differ(
+            new DiffOnlyOutputBuilder('')
         );
 
         $diffArray = $differ->diffToArray($old, $new);
@@ -493,10 +509,10 @@ class DiffRenderer
             $ch = $entry[0];
             $type = $entry[1];
 
-            if ($type === \SebastianBergmann\Diff\Differ::REMOVED) {
-                $out .= '<del style="background:#ffeef0;color:#cb2431;text-decoration:none">' . e(self::vis($ch)) . '</del>';
-            } elseif ($type === \SebastianBergmann\Diff\Differ::ADDED) {
-                $out .= '<ins style="background:#e6ffed;color:#22863a;text-decoration:none">' . e(self::vis($ch)) . '</ins>';
+            if ($type === Differ::REMOVED) {
+                $out .= '<del style="background:#ffeef0;color:#cb2431;text-decoration:none">'.e(self::vis($ch)).'</del>';
+            } elseif ($type === Differ::ADDED) {
+                $out .= '<ins style="background:#e6ffed;color:#22863a;text-decoration:none">'.e(self::vis($ch)).'</ins>';
             } else {
                 $out .= e($ch);
             }
@@ -517,8 +533,8 @@ class DiffRenderer
             if ($oc === $nc) {
                 $out .= e($oc);
             } elseif (($oc === '*' || $oc === '_') && ($nc === '*' || $nc === '_')) {
-                $out .= '<del style="background:#ffeef0;color:#cb2431;text-decoration:none">' . e($oc) . '</del>'
-                      . '<ins style="background:#e6ffed;color:#22863a;text-decoration:none">' . e($nc) . '</ins>';
+                $out .= '<del style="background:#ffeef0;color:#cb2431;text-decoration:none">'.e($oc).'</del>'
+                      .'<ins style="background:#e6ffed;color:#22863a;text-decoration:none">'.e($nc).'</ins>';
             } elseif ($oc === '*') {
                 $out .= '<del style="background:#ffeef0;color:#cb2431;text-decoration:none">*</del>';
             } elseif ($oc === '_') {

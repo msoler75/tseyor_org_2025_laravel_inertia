@@ -3,12 +3,15 @@
 namespace App\Services;
 
 // use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Log;
+use App\Models\User;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
-use App\Models\User;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Hash;
-
+use Illuminate\Support\Facades\Log;
 
 /**
  * Convierte el audio a un formato mp3 de menos peso
@@ -18,8 +21,9 @@ class MuularElectronico
     /**
      * Redirige al portal de Muular Electrónico pasándoles los datos del usuario actual
      *
+     * @return mixed|Factory|View|RedirectResponse
+     *
      * @throws \Error
-     * @return mixed|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View|\Illuminate\Http\RedirectResponse
      */
     public static function redirigir()
     {
@@ -27,36 +31,41 @@ class MuularElectronico
 
         $jwt = self::jwt();
         // si no ha iniciado sesión, debe redirigir a login
-        if (!$jwt)
-            return redirect()->route('login',  [
-                'to' => 'muular-electronico' . ($from ? '?from=' . $from : '')
+        if (! $jwt) {
+            return redirect()->route('login', [
+                'to' => 'muular-electronico'.($from ? '?from='.$from : ''),
             ]);
+        }
 
         $auth_url = config('app.muular_electronico.auth_url');
 
-        if (!$auth_url)
-            throw new \Error("Error de configuración");
+        if (! $auth_url) {
+            throw new \Error('Error de configuración');
+        }
 
-        return view('redirect-with-jwt', ['url' => $auth_url. ($from ? '?to=' . $from : ''), 'token' => $jwt]);
+        return view('redirect-with-jwt', ['url' => $auth_url.($from ? '?to='.$from : ''), 'token' => $jwt]);
     }
-
 
     /**
      * Obtiene el saldo del usuario actual
+     *
+     * @return mixed|JsonResponse
+     *
      * @throws \Error
-     * @return mixed|\Illuminate\Http\JsonResponse
      */
     public static function saldo()
     {
         $jwt = self::jwt();
 
-        if (!$jwt)
+        if (! $jwt) {
             return response()->json(['error' => 'No ha iniciado sesión']);
+        }
 
         $url = config('app.muular_electronico.saldo_url');
 
-        if (!$url)
-            throw new \Error("Error de configuración");
+        if (! $url) {
+            throw new \Error('Error de configuración');
+        }
 
         // llamamos a la URL con curl, pasándole mediante POST el parámetro 'token' que es el $jwt y recogemos el resultado en JSON
 
@@ -67,7 +76,7 @@ class MuularElectronico
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $result = curl_exec($ch);
 
-        Log::info("Llamada a MuularElectronico:saldo", ['url'=> $url, 'respuesta' => $result]);
+        Log::info('Llamada a MuularElectronico:saldo', ['url' => $url, 'respuesta' => $result]);
         // decodificamos la respuesta
 
         $json = json_decode($result, true);
@@ -75,66 +84,71 @@ class MuularElectronico
         return response()->json($json);
     }
 
-
     /**
      * Crea el token JWT con los valores del usuario actual
      *
-     * @param array $extra valores adicionales para el payload
-     * @throws \Error
+     * @param  array  $extra  valores adicionales para el payload
      * @return string|null
+     *
+     * @throws \Error
      */
-    private static function jwt(array $extra=null)
+    private static function jwt(?array $extra = null)
     {
         // obtiene el usuario actual
         $user = auth()->user();
-        if (!$user)
+        if (! $user) {
             return null;
+        }
 
         // Generar el token JWT
         $key = config('app.muular_electronico.jwt_secret');
 
-        if (!$key)
-            throw new \Error("Error de configuración. JWT key no definido");
+        if (! $key) {
+            throw new \Error('Error de configuración. JWT key no definido');
+        }
 
         $payload = [
             'id' => $user->id,
             'user' => $user->name,
             'email' => $user->email,
-            'expira' => time() + 60 * 10 // Expira en 10 minutos
+            'expira' => time() + 60 * 10, // Expira en 10 minutos
         ];
 
-        if ($extra)
+        if ($extra) {
             $payload = array_merge($payload, $extra);
+        }
 
         $jwt = JWT::encode($payload, $key, 'HS256');
 
         return $jwt;
     }
 
-
     /**
      * API para verificar la contraseña desde el muular electrónico
      *
-     * @param \App\Services\Request $request
+     * @param  Request  $request
      * @return void
      */
     public function check_password()
     {
-        $token = isset($_POST["token"]) ? $_POST["token"] : "";
-        if (!$token)
+        $token = isset($_POST['token']) ? $_POST['token'] : '';
+        if (! $token) {
             return response()->json(['error' => 'Token no especificado']);
+        }
 
         $key = config('app.muular_electronico.jwt_secret');
 
-        if (!$key)
-            throw new \Error("Error de configuración. JWT key no definido");
+        if (! $key) {
+            throw new \Error('Error de configuración. JWT key no definido');
+        }
 
         $payload = JWT::decode($token, new Key($key, 'HS256'));
 
-        if (!$payload)
+        if (! $payload) {
             return response()->json(['error' => 'Error en los datos']);
+        }
 
-        Log::info("Muular electrónico. Comprobación de contraseña", ['payload' => $payload]);
+        Log::info('Muular electrónico. Comprobación de contraseña', ['payload' => $payload]);
 
         $username = $payload->user;
         $email = $payload->email;
@@ -146,11 +160,12 @@ class MuularElectronico
 
         $password = $user->getAuthPassword();
 
-        Log::info("user data is", ['password' => $password, 'user' => $user->toArray()]);
+        Log::info('user data is', ['password' => $password, 'user' => $user->toArray()]);
         // comprobamos la contraseña para este usuario
-        if (Hash::check($passwordIntento, $password))
+        if (Hash::check($passwordIntento, $password)) {
             // if(password_verify($passwordIntento, $user->password))
             return response()->json(['ok' => 1, 'mensaje' => 'Contraseña válida']);
+        }
 
         return response()->json(['error' => 'Contraseña incorrecta']);
     }

@@ -1,11 +1,10 @@
 <?php
 
+use App\Http\Controllers\Api\ComentariosController;
+use App\Http\Controllers\EquiposController;
+use App\Http\Controllers\GaleriaController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ArchivosController;
-use App\Http\Controllers\EquiposController;
-use App\Http\Controllers\Api\ComentariosController;
-use App\Http\Controllers\GaleriaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -31,8 +30,6 @@ Route::middleware([
     // ni idea
 });
 
-
-
 Route::get('/comentarios', [ComentariosController::class, 'index'])->name('comentarios');
 
 // API para galerías
@@ -41,11 +38,8 @@ Route::get('/comentarios', [ComentariosController::class, 'index'])->name('comen
 Route::middleware(['web'])->group(function () {
     Route::post('/comentarios', [ComentariosController::class, 'create'])->name('comentario.nuevo');
 
-
 })
     ->middleware(['auth']);
-
-
 
 /*
 Route::middleware(['web'])->group(function () {

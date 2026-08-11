@@ -12,9 +12,13 @@ class FormularioContactoConfirmacionEmail extends Mailable implements ShouldQueu
     use Queueable, SerializesModels;
 
     public $nombre;
+
     public $pais;
+
     public $email;
+
     public $telefono;
+
     public $comentario;
 
     public function __construct(string $nombre, string $pais, string $email, string $telefono, string $comentario)
@@ -38,7 +42,6 @@ class FormularioContactoConfirmacionEmail extends Mailable implements ShouldQueu
                 'comentario' => $this->comentario,
             ]);
     }
-
 
     public function __toString(): string
     {

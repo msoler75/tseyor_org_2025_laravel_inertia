@@ -2,9 +2,9 @@
 
 namespace Tests\Unit;
 
+use App\Models\Grupo;
 use App\Models\Nodo;
 use App\Models\User;
-use App\Models\Grupo;
 use App\Policies\NodoPolicy;
 
 class NodoTest extends BaseTest
@@ -19,34 +19,34 @@ class NodoTest extends BaseTest
         $admin = User::find(1);
 
         $this->assertNotNull($admin);
-        $this->assertEquals("admin", $admin->name);
-
+        $this->assertEquals('admin', $admin->name);
 
         // comprobamos que existe el grupo 1 de administradores
-        $adminGroup =  \App\Models\Grupo::find(1);
-        if (!$adminGroup) {
-            $adminGroup = \App\Models\Grupo::create(['id' => 1, 'nombre' => 'administradores', 'slug' => 'administradores']);
+        $adminGroup = Grupo::find(1);
+        if (! $adminGroup) {
+            $adminGroup = Grupo::create(['id' => 1, 'nombre' => 'administradores', 'slug' => 'administradores']);
         } else {
             $adminGroup->update(['nombre' => 'administradores', 'slug' => 'administradores']);
         }
         $this->assertNotNull($adminGroup);
-        $this->assertEquals("administradores", $adminGroup->nombre);
+        $this->assertEquals('administradores', $adminGroup->nombre);
 
-        $this->nodoPolicy = new NodoPolicy();
+        $this->nodoPolicy = new NodoPolicy;
     }
 
     // Verifica que el propietario del nodo tiene todos los permisos (lectura, escritura y ejecución) cuando los permisos son 755.
     public function test_permisos_propietario()
     {
         // correct this code:
-        $propietario = $this->getUser("Propietario");
-        $this->assertEquals("Propietario", $propietario->name);
+        $propietario = $this->getUser('Propietario');
+        $this->assertEquals('Propietario', $propietario->name);
 
-        $grupo = $this->getGrupo("test1");
+        $grupo = $this->getGrupo('test1');
 
         // asociar el grupo al propietario
-        if(!$propietario->enGrupo($grupo->id))
+        if (! $propietario->enGrupo($grupo->id)) {
             $propietario->grupos()->attach($grupo->id);
+        }
 
         $this->assertNotNull($propietario->grupos()->where('grupos.id', $grupo->id)->first());
 
@@ -84,7 +84,6 @@ class NodoTest extends BaseTest
         $this->assertFalse($this->nodoPolicy->escribir($propietario, $nodo));
         $this->assertFalse($this->nodoPolicy->ejecutar($propietario, $nodo));
 
-
         // r-x------
         $nodo->update(['permisos' => '1500']);
         $this->assertTrue($this->nodoPolicy->leer($propietario, $nodo));
@@ -119,9 +118,9 @@ class NodoTest extends BaseTest
     // Comprueba que un miembro del grupo tiene los permisos correctos (lectura y ejecución, pero no escritura) cuando los permisos son 750.
     public function test_permisos_grupo()
     {
-        $propietario = $this->getUser("Propietario");
-        $miembroGrupo = $this->getUser("MiembroGrupo");
-        $grupo = $this->getGrupo("test2");
+        $propietario = $this->getUser('Propietario');
+        $miembroGrupo = $this->getUser('MiembroGrupo');
+        $grupo = $this->getGrupo('test2');
 
         $nodo = $this->getNodo('/archivos/test2', [
             'user_id' => $propietario->id,
@@ -129,8 +128,9 @@ class NodoTest extends BaseTest
         ]);
 
         // Asociamos el usuario al grupo
-        if(!$miembroGrupo->enGrupo($grupo->id))
+        if (! $miembroGrupo->enGrupo($grupo->id)) {
             $miembroGrupo->grupos()->attach($grupo->id);
+        }
 
         $nodo->update(['permisos' => '1070']);
         $this->assertTrue($this->nodoPolicy->leer($miembroGrupo, $nodo));
@@ -141,7 +141,6 @@ class NodoTest extends BaseTest
         $this->assertFalse($this->nodoPolicy->leer($miembroGrupo, $nodo));
         $this->assertFalse($this->nodoPolicy->escribir($miembroGrupo, $nodo));
         $this->assertFalse($this->nodoPolicy->ejecutar($miembroGrupo, $nodo));
-
 
         $nodo->update(['permisos' => '1010']);
         $this->assertFalse($this->nodoPolicy->leer($miembroGrupo, $nodo));
@@ -171,14 +170,13 @@ class NodoTest extends BaseTest
 
     }
 
-
     // Verifica que otros usuarios tienen solo permiso de lectura cuando los permisos son 754
     public function test_permisos_otros()
     {
-        $propietario = $this->getUser("Propietario");
-        $otroUsuario = $this->getUser("OtroUsuario");
+        $propietario = $this->getUser('Propietario');
+        $otroUsuario = $this->getUser('OtroUsuario');
 
-        $grupo = $this->getGrupo("test3");
+        $grupo = $this->getGrupo('test3');
 
         $nodo = $this->getNodo('/archivos/test3', [
             'user_id' => $propietario->id,
@@ -186,8 +184,9 @@ class NodoTest extends BaseTest
         ]);
 
         // Asociamos el usuario al grupo
-        if($otroUsuario->enGrupo($grupo->id))
+        if ($otroUsuario->enGrupo($grupo->id)) {
             $otroUsuario->grupos()->detach($grupo->id);
+        }
 
         $nodo->update(['permisos' => '000']);
         $this->assertFalse($this->nodoPolicy->leer($otroUsuario, $nodo));
@@ -226,11 +225,10 @@ class NodoTest extends BaseTest
 
     }
 
-
     //  Prueba el caso de acceso sin usuario autenticado (null), con permisos 704
     public function test_permisos_sin_usuario()
     {
-        $propietario = $this->getUser("Propietario");
+        $propietario = $this->getUser('Propietario');
 
         $nodo = $this->getNodo('/archivos/test4', [
             'user_id' => $propietario->id,
@@ -273,13 +271,12 @@ class NodoTest extends BaseTest
 
     }
 
-
     // test accesors
 
     public function test_nodo_accesors()
     {
-        $user = $this->getUser("Propietario");
-        $grupo = $this->getGrupo("access");
+        $user = $this->getUser('Propietario');
+        $grupo = $this->getGrupo('access');
         $nodo1 = $this->getNodo('/archivos/test_accesors1', [
             'user_id' => $user->id,
             'permisos' => '007',
@@ -294,5 +291,4 @@ class NodoTest extends BaseTest
         $this->assertEquals(0, $nodo1->sticky);
         $this->assertEquals(1, $nodo2->sticky);
     }
-
 }

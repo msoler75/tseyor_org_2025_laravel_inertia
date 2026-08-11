@@ -1,60 +1,71 @@
 <?php
 
+use App\Http\Controllers\Admin\AuthController;
+use App\Http\Controllers\Admin\JobsController;
+use App\Http\Controllers\AnalyticsController;
+use App\Http\Controllers\Api\ComentariosController;
+use App\Http\Controllers\ArchivosController;
+use App\Http\Controllers\AudiosController;
+use App\Http\Controllers\BoletinesController;
+use App\Http\Controllers\CentrosController;
+use App\Http\Controllers\ChatGPTController;
+use App\Http\Controllers\ComunicadosController;
+use App\Http\Controllers\ContactarController;
+use App\Http\Controllers\ContactosController;
+use App\Http\Controllers\ContenidosController;
+use App\Http\Controllers\CursosController;
+use App\Http\Controllers\EmailsController;
+use App\Http\Controllers\EnlaceCortoController;
+use App\Http\Controllers\EntradasController;
+use App\Http\Controllers\EquiposController;
+use App\Http\Controllers\EventosController;
+use App\Http\Controllers\ExperienciasController;
+use App\Http\Controllers\FavoritosController;
+use App\Http\Controllers\GaleriaController;
+use App\Http\Controllers\GuiasController;
+use App\Http\Controllers\ImagenesController;
+use App\Http\Controllers\InformesController;
+use App\Http\Controllers\InscripcionesController;
+use App\Http\Controllers\LibrosController;
+use App\Http\Controllers\LugaresController;
+use App\Http\Controllers\McpTokenController;
+use App\Http\Controllers\MeditacionesController;
+use App\Http\Controllers\NodosController;
+use App\Http\Controllers\NormativasController;
+use App\Http\Controllers\NoticiasController;
+use App\Http\Controllers\PaginasController;
+use App\Http\Controllers\PreguntasController;
+use App\Http\Controllers\PsicografiasController;
+use App\Http\Controllers\PublicacionesController;
+use App\Http\Controllers\PWALogController;
+use App\Http\Controllers\RadioController;
+use App\Http\Controllers\RadioManifestController;
+use App\Http\Controllers\SalasController;
+use App\Http\Controllers\SettingsController;
+use App\Http\Controllers\SuscriptorController;
+use App\Http\Controllers\TarjetaVisitaController;
+use App\Http\Controllers\TerminosController;
+use App\Http\Controllers\TutorialesController;
+use App\Http\Controllers\UsuariosController;
+use App\Http\Controllers\VideosController;
+use App\MCP\Tools\BuscarTool;
+use App\MCP\Tools\CrearTool;
+use App\MCP\Tools\EditarTool;
+use App\MCP\Tools\EliminarTool;
+use App\MCP\Tools\InfoTool;
+use App\MCP\Tools\ListarTool;
+use App\MCP\Tools\VerTool;
+use App\Models\Entrada;
+use App\Models\Inscripcion;
+use App\Models\Setting;
+use App\Pigmalion\SEO;
+use App\Services\MuularElectronico;
+use App\Services\TseyorCanva;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use App\Http\Controllers\SettingsController;
-use App\Http\Controllers\PaginasController;
-use App\Http\Controllers\ArchivosController;
-use App\Http\Controllers\NodosController;
-use App\Http\Controllers\NoticiasController;
-use App\Http\Controllers\ComunicadosController;
-use App\Http\Controllers\EntradasController;
-use App\Http\Controllers\PreguntasController;
-use App\Http\Controllers\GuiasController;
-use App\Http\Controllers\LugaresController;
-use App\Http\Controllers\TerminosController;
-use App\Http\Controllers\EventosController;
-use App\Http\Controllers\EquiposController;
-use App\Http\Controllers\LibrosController;
-use App\Http\Controllers\CentrosController;
-use App\Http\Controllers\ContactosController;
-use App\Http\Controllers\AudiosController;
-use App\Http\Controllers\VideosController;
-use App\Http\Controllers\ContenidosController;
-use App\Http\Controllers\CursosController;
-use App\Http\Controllers\SalasController;
-use App\Http\Controllers\RadioController;
-use App\Http\Controllers\RadioManifestController;
-use App\Http\Controllers\InscripcionesController;
-use App\Http\Controllers\ExperienciasController;
-use App\Http\Controllers\ContactarController;
-use App\Http\Controllers\UsuariosController;
-use App\Http\Controllers\PublicacionesController;
-use App\Http\Controllers\InformesController;
-use App\Http\Controllers\MeditacionesController;
-use App\Http\Controllers\PsicografiasController;
-use App\Http\Controllers\TutorialesController;
-use App\Http\Controllers\NormativasController;
-use App\Http\Controllers\ChatGPTController;
-use App\Http\Controllers\ImagenesController;
-use App\Http\Controllers\TarjetaVisitaController;
-use App\Http\Controllers\EmailsController;
-use App\Http\Controllers\GaleriaController;
-use App\Http\Controllers\Api\ComentariosController;
-use App\Http\Controllers\Admin\JobsController;
-use App\Http\Controllers\Admin\AuthController;
-use App\Http\Controllers\BoletinesController;
-use App\Http\Controllers\SuscriptorController;
-use App\Http\Controllers\McpTokenController;
-use App\Http\Controllers\AnalyticsController;
-use App\Http\Controllers\EnlaceCortoController;
-use App\Http\Controllers\PWALogController;
-use App\Pigmalion\SEO;
-use Illuminate\Support\Facades\Cookie;
-use App\Services\MuularElectronico;
-use App\Services\TseyorCanva;
 
 // Bloquear rutas sospechosas con patrones generales (cualquier ruta que empiece con wp, templates, o sea un archivo .php sospechoso)
 Route::any('{suspicious}', function () {
@@ -75,7 +86,6 @@ Route::get('glosario/parse', [TerminosController::class, 'parse'])->name('parse'
 | contains the "web" middleware group. Now create something great!
 |
 */
-
 
 Route::middleware(['auth', 'verified'])->group(function () {
     // ...otras rutas de perfil...
@@ -100,11 +110,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 });
 
-
-
-
-
-
 // switch theme dark/light
 Route::post('update-theme', function (Request $request) {
     $theme = $request->input('theme');
@@ -112,6 +117,7 @@ Route::post('update-theme', function (Request $request) {
     Cookie::queue(
         Cookie::make('theme', $theme, 60 * 24 * 30, '/', null, request()->isSecure(), false, false, 'lax')
     );
+
     return response()->json(['success' => true]);
 });
 
@@ -121,6 +127,7 @@ Route::post('update-font-size', function (Request $request) {
     Cookie::queue(
         Cookie::make('fontSize', $fontSize, 60 * 24 * 30, '/', null, request()->isSecure(), false, false, 'lax')
     );
+
     return response()->json(['success' => true]);
 });
 
@@ -140,9 +147,10 @@ Route::get('biblioteca', [PaginasController::class, 'biblioteca'])->name('biblio
 Route::get('', function (Request $request) {
     // Solo redirigir a /novedades en la carga inicial de la página
     // (peticiones Inertia desde el cliente envían el header `X-Inertia`)
-    if (auth()->check() && !$request->header('X-Inertia')) {
+    if (auth()->check() && ! $request->header('X-Inertia')) {
         return redirect()->route('miembros');
     }
+
     return app()->call([app(PaginasController::class), 'portada']);
 })->name('portada');
 
@@ -165,24 +173,21 @@ Route::get('archivos_raiz', [ArchivosController::class, 'archivos'])->name('arch
 
 Route::get('nodos/{id}', [NodosController::class, 'show'])->name('nodo');
 
- // manejo de archivos
- Route::post('files/upload/file', [ArchivosController::class, 'uploadFile'])->name('files.upload.file');
- Route::post('files/upload/image', [ArchivosController::class, 'uploadImage'])->name('files.upload.image');
- Route::post('files/rename', [ArchivosController::class, 'rename'])->name('files.rename');
- Route::post('files/update', [ArchivosController::class, 'update'])->name('files.update');
- Route::post('files/move', [ArchivosController::class, 'move'])->name('files.move');
- Route::post('files/copy', [ArchivosController::class, 'copy'])->name('files.copy');
- Route::put('files/mkdir', [ArchivosController::class, 'makeDir'])->name('files.mkdir');
- Route::delete('files{ruta}', [ArchivosController::class, 'delete'])->where(['ruta' => '(\/.+)?'])->name('files.delete');
-
-
+// manejo de archivos
+Route::post('files/upload/file', [ArchivosController::class, 'uploadFile'])->name('files.upload.file');
+Route::post('files/upload/image', [ArchivosController::class, 'uploadImage'])->name('files.upload.image');
+Route::post('files/rename', [ArchivosController::class, 'rename'])->name('files.rename');
+Route::post('files/update', [ArchivosController::class, 'update'])->name('files.update');
+Route::post('files/move', [ArchivosController::class, 'move'])->name('files.move');
+Route::post('files/copy', [ArchivosController::class, 'copy'])->name('files.copy');
+Route::put('files/mkdir', [ArchivosController::class, 'makeDir'])->name('files.mkdir');
+Route::delete('files{ruta}', [ArchivosController::class, 'delete'])->where(['ruta' => '(\/.+)?'])->name('files.delete');
 
 Route::get('audios', [AudiosController::class, 'index'])->name('audios');
 Route::get('audios/{slug}', [AudiosController::class, 'show'])->where('slug', '[a-z_0-9\-\s]+')->name('audio');
 
 Route::get('videos', [VideosController::class, 'index'])->name('videos');
 Route::get('videos/{slug}', [VideosController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('video');
-
 
 Route::get('noticias', [NoticiasController::class, 'index'])->name('noticias');
 Route::get('noticias/{slug}', [NoticiasController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('noticia');
@@ -229,14 +234,11 @@ Route::get('lugares/{slug}', [LugaresController::class, 'show'])->where('slug', 
 Route::get('eventos', [EventosController::class, 'index'])->name('eventos');
 Route::get('eventos/{slug}', [EventosController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('evento');
 
-
 Route::get('preguntas-frecuentes', [PreguntasController::class, 'index'])->name('preguntas');
 Route::get('preguntas-frecuentes/{slug}', [PreguntasController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('preguntas.seccion');
 
-
 Route::get('salas', [SalasController::class, 'index'])->name('salas');
 Route::get('salas/{slug}', [SalasController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('sala');
-
 
 Route::get('donde-estamos', [ContactosController::class, 'index'])->name('contactos');
 Route::get('contactos/{slug}', [ContactosController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('contacto');
@@ -246,11 +248,11 @@ Route::get('centros/{slug}', [CentrosController::class, 'show'])->where('slug', 
 
 Route::get('quienes-somos', function () {
     return Inertia::render('QuienesSomos/Index', [
-        'entradasRecientes' => \App\Models\Entrada::publicada()
+        'entradasRecientes' => Entrada::publicada()
             ->latest('published_at')
             ->limit(4)
             ->get(['slug', 'titulo', 'imagen', 'descripcion', 'published_at'])
-            ->map(fn($e) => [
+            ->map(fn ($e) => [
                 'slug' => $e->slug,
                 'titulo' => $e->titulo,
                 'imagen' => $e->imagen,
@@ -281,7 +283,6 @@ Route::get('inscripcion', function () {
 })->name('cursos.inscripcion.nueva');
 Route::post('inscripcion/store', [InscripcionesController::class, 'store'])->name('cursos.inscripcion.store');
 
-
 Route::post('experiencia/store', [ExperienciasController::class, 'store']);
 Route::get('experiencias', [ExperienciasController::class, 'index'])->name('experiencias');
 Route::get('experiencias/nueva', [ExperienciasController::class, 'nueva'])->name('experiencia.nueva');
@@ -295,7 +296,7 @@ Route::post('contactar/enviar', [ContactarController::class, 'send'])->name('con
 Route::get('contactar/test', [ContactarController::class, 'test'])->name('contactar.test');
 
 Route::get('ong', function () {
-    return Inertia::render('Ong/Index', ['estatutosUrl'=>'/normativas/estatutos-ong-mundo-armonico-tseyor'])
+    return Inertia::render('Ong/Index', ['estatutosUrl' => '/normativas/estatutos-ong-mundo-armonico-tseyor'])
         ->withViewData(SEO::get('ong'));
 })->name('ong');
 Route::get('ong/muular', function () {
@@ -326,7 +327,6 @@ Route::get('psicografias/{slug}', [PsicografiasController::class, 'show'])->wher
 Route::get('tutoriales', [TutorialesController::class, 'index'])->name('tutoriales');
 Route::get('tutoriales/{slug}', [TutorialesController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('tutorial');
 
-
 Route::get('normativas', [NormativasController::class, 'index'])->name('normativas');
 Route::get('normativas/{slug}', [NormativasController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('normativa');
 
@@ -343,14 +343,12 @@ Route::get('/sello', function () {
     return Inertia::render('Sello');
 })->name('sello');
 
-
 // Route::get('login/1', [DevController::class, 'loginUser1'])->name('login1');
 // Route::get('login/2', [DevController::class, 'loginUser2'])->name('login2');
 // Route::get('/_email', [DevController::class, 'testMail']);
 Route::get('/dev/test', function () {
     return Inertia::render('Test');
 });
-
 
 Route::middleware([
     'auth',
@@ -363,11 +361,12 @@ Route::middleware([
         $inscripcionesTotales = 0;
         if ($user) {
             $estadosFinalizados = ['finalizado', 'duplicada', 'nointeresado', 'abandonado', 'nocontesta', 'caducada'];
-            $inscripcionesPendientes = \App\Models\Inscripcion::where('user_id', $user->id)
+            $inscripcionesPendientes = Inscripcion::where('user_id', $user->id)
                 ->whereNotIn('estado', $estadosFinalizados)
                 ->count();
-            $inscripcionesTotales = \App\Models\Inscripcion::where('user_id', $user->id)->count();
+            $inscripcionesTotales = Inscripcion::where('user_id', $user->id)->count();
         }
+
         return Inertia::render('Miembros', [
             'misEquipos' => $user ? $user->equipos()->count() : 0,
             'esMuul' => $user && $user->grupos()->where('slug', 'muul')->exists(),
@@ -382,11 +381,8 @@ Route::middleware([
     })->name('trabajos.arte');
 });
 
-
 // queue  batch
 Route::get('__process_audios', [JobsController::class, 'processAudios'])->name('process.audios');
-
-
 
 // EQUIPOS
 
@@ -425,13 +421,11 @@ Route::put('equipos/{idEquipo}/rol/{idUsuario}/{rol}', [EquiposController::class
 Route::put('equipos/{idEquipo}/agregar/{idUsuario}', [EquiposController::class, 'addMember'])->name('equipo.agregar');
 Route::put('equipos/{idEquipo}/remover/{idUsuario}', [EquiposController::class, 'removeMember'])->name('equipo.remover');
 
-
 // chat gpt
 
 Route::get('/chatgpt', [ChatGPTController::class, 'chat'])->name('chatgpt');
 
 // comentarios
-
 
 Route::delete('/comentarios/{id}', [ComentariosController::class, 'unpublish'])->name('comentario.despublicar');
 Route::put('/comentarios/{id}', [ComentariosController::class, 'publish'])->name('comentario.publicar');
@@ -452,23 +446,20 @@ Route::get('mockup/libro{ruta}', [ImagenesController::class, 'mockupLibro'])->wh
 Route::get('muul/tarjeta.visita', [TarjetaVisitaController::class, 'index'])->name('tarjeta.visita');
 Route::post('muul/tarjeta.visita', [TarjetaVisitaController::class, 'send'])->name('tarjeta.visita.enviar');
 
-
 // administración
 Route::get('emails', [EmailsController::class, 'index'])->name('emails');
 
 // Favoritos: añadir o remover un contenido de favoritos (protegido por auth)
 Route::middleware(['auth'])->group(function () {
     // Añadir a favoritos: POST /favoritos/{coleccion}/{id_ref}
-    Route::post('favoritos/{coleccion}/{id_ref}', [App\Http\Controllers\FavoritosController::class, 'store'])->name('favoritos.store');
+    Route::post('favoritos/{coleccion}/{id_ref}', [FavoritosController::class, 'store'])->name('favoritos.store');
 
     // Eliminar favorito: DELETE /favoritos/{coleccion}/{id_ref}
-    Route::delete('favoritos/{coleccion}/{id_ref}', [App\Http\Controllers\FavoritosController::class, 'destroy'])->name('favoritos.destroy');
+    Route::delete('favoritos/{coleccion}/{id_ref}', [FavoritosController::class, 'destroy'])->name('favoritos.destroy');
 });
 Route::get('emails/{id}', [EmailsController::class, 'index'])->name('email');
 
-
 Route::get('asociacion', [PaginasController::class, 'show'])->name('asociacion');
-
 
 // BOLETINES ///////////////////////////////////////
 
@@ -478,7 +469,6 @@ Route::middleware('boletin.token')->group(function () {
     Route::post('boletines/preparar', [BoletinesController::class, 'prepararBoletin'])->name('boletin.preparar');
     Route::post('boletines/enviar-pendientes', [BoletinesController::class, 'enviarBoletinesPendientes'])->name('boletin.enviar.pendientes');
 });
-
 
 // Ruta para el índice de boletines
 Route::get('boletines', [BoletinesController::class, 'index'])->name('boletines');
@@ -504,8 +494,7 @@ Route::get('galerias', [GaleriaController::class, 'index'])->name('galerias');
 Route::get('galerias/{slug}', [GaleriaController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('galeria');
 Route::get('galerias/{slug}/json', [GaleriaController::class, 'apiShow'])->where('slug', '[a-z0-9\-]+')->name('galeria.json');
 
-
-////////////////////////////////////////////////////////////////////////////////////////////////
+// //////////////////////////////////////////////////////////////////////////////////////////////
 // DEV/DEPLOY: Agrupadas bajo middleware de seguridad
 Route::middleware(['deploy.token', 'allowed.ip'])->group(function () {
     Route::post('_sendbuild', 'App\\Http\\Controllers\\DeployController@handlePublicBuildUpload');
@@ -513,7 +502,6 @@ Route::middleware(['deploy.token', 'allowed.ip'])->group(function () {
     Route::post('_sendssr', 'App\\Http\\Controllers\\DeployController@handleSSRUpload');
     Route::post('_sendnodemodules', 'App\\Http\\Controllers\\DeployController@handleNodeModulesUpload');
 });
-
 
 Route::get('test/image', function () {
     return Inertia::render('test/ImageTest');
@@ -528,25 +516,25 @@ Route::get('test/time', function () {
 });
 
 // test para convertir archivos .docx a markdown
-Route::get('test/docx',  'App\Http\Controllers\TestController@docx');
-Route::get('test/docx/{num}',  'App\Http\Controllers\TestController@docxShow');
+Route::get('test/docx', 'App\Http\Controllers\TestController@docx');
+Route::get('test/docx/{num}', 'App\Http\Controllers\TestController@docxShow');
 
 // test para ver la conversión de archivos .docx a pdf
-Route::get('test/word2pdf',  'App\Http\Controllers\TestController@word2pdf');
-Route::get('test/word2md',  'App\Http\Controllers\TestController@word2md');
+Route::get('test/word2pdf', 'App\Http\Controllers\TestController@word2pdf');
+Route::get('test/word2md', 'App\Http\Controllers\TestController@word2md');
 
 // developing
-Route::get('dev/1',  'App\Http\Controllers\DevController@dev1');
-Route::get('dev/2',  'App\Http\Controllers\DevController@dev2');
+Route::get('dev/1', 'App\Http\Controllers\DevController@dev1');
+Route::get('dev/2', 'App\Http\Controllers\DevController@dev2');
 
-////////////////////////////////////////////////////////////////////////////////////////////////
-
+// //////////////////////////////////////////////////////////////////////////////////////////////
 
 // Endpoint MCP (opgginc/laravel-mcp-server v2 - route-driven)
 Route::get('/aviso-mantenimiento', function () {
-    $setting = \App\Models\Setting::where('name', 'aviso_mantenimiento')->first();
+    $setting = Setting::where('name', 'aviso_mantenimiento')->first();
     $data = $setting ? json_decode($setting->value, true) : null;
-    return \Inertia\Inertia::render('AvisoMantenimiento', [
+
+    return Inertia::render('AvisoMantenimiento', [
         'aviso' => $data,
     ]);
 })->name('aviso-mantenimiento');
@@ -559,27 +547,25 @@ Route::mcp('/mcp')
         description: 'Servidor MCP para interactuar con los contenidos de tseyor.org',
     )
     ->tools([
-        \App\MCP\Tools\VerTool::class,
-        \App\MCP\Tools\ListarTool::class,
-        \App\MCP\Tools\BuscarTool::class,
-        \App\MCP\Tools\CrearTool::class,
-        \App\MCP\Tools\EditarTool::class,
-        \App\MCP\Tools\EliminarTool::class,
-        \App\MCP\Tools\InfoTool::class,
+        VerTool::class,
+        ListarTool::class,
+        BuscarTool::class,
+        CrearTool::class,
+        EditarTool::class,
+        EliminarTool::class,
+        InfoTool::class,
     ]);
 
 // Analytics - sendBeacon para tracking al cerrar navegador
 Route::post('analytics/beacon', [AnalyticsController::class, 'beacon'])->name('analytics.beacon');
 
-
 // API para enlaces cortos públicos (sin auth para URLs del propio dominio)
 Route::post('obtener-enlace', [EnlaceCortoController::class, 'obtener'])->name('obtener.enlace.corto');
 
-
-//////////////////////////
+// ////////////////////////
 // PWA DEBUGGING Y LOGGING
 // Página de logs PWA para debugging
-if(config('app.env') === 'local' || config('app.debug') ) {
+if (config('app.env') === 'local' || config('app.debug')) {
     Route::get('pwa-debug', function () {
         return Inertia::render('PWALogs', []);
     })->name('pwa.debug');
@@ -589,16 +575,12 @@ if(config('app.env') === 'local' || config('app.debug') ) {
     Route::get('pwa-logs', [PWALogController::class, 'show']);
     Route::delete('pwa-logs', [PWALogController::class, 'clear']);
 }
-//////////////////////////
-
+// ////////////////////////
 
 // Redirección de enlaces cortos (debe ir antes del fallback)
 Route::get('{prefix}/{code}', [EnlaceCortoController::class, 'redirigir'])
     ->where('prefix', '^(e|d|a)$')
     ->where('code', '^[a-zA-Z0-9]+$');
 
-
-///// FINAL FALLBACK PAGE
+// /// FINAL FALLBACK PAGE
 Route::get('{ruta}', [PaginasController::class, 'show'])->where('ruta', '^(?!admin/).*')->name('pagina');
-
-

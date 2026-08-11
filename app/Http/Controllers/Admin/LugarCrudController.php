@@ -2,23 +2,32 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\Lugar;
+use App\Traits\CrudContenido;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
+use Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
+use Backpack\CRUD\app\Library\CrudPanel\CrudPanel;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
+use Backpack\ReviseOperation\ReviseOperation;
 
 /**
  * Class LugarCrudController
- * @package App\Http\Controllers\Admin
- * @property-read \Backpack\CRUD\app\Library\CrudPanel\CrudPanel $crud
+ *
+ * @property-read CrudPanel $crud
  */
 class LugarCrudController extends CrudController
 {
-    use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
-    use \Backpack\ReviseOperation\ReviseOperation;
-    use \App\Traits\CrudContenido;
+    use CreateOperation;
+    use CrudContenido;
+    use DeleteOperation;
+    use ListOperation;
+    use ReviseOperation;
+    use ShowOperation;
+    use UpdateOperation;
 
     /**
      * Configure the CrudPanel object. Apply settings to all operations.
@@ -27,8 +36,8 @@ class LugarCrudController extends CrudController
      */
     public function setup()
     {
-        CRUD::setModel(\App\Models\Lugar::class);
-        CRUD::setRoute(config('backpack.base.route_prefix') . '/lugar');
+        CRUD::setModel(Lugar::class);
+        CRUD::setRoute(config('backpack.base.route_prefix').'/lugar');
         CRUD::setEntityNameStrings('lugar', 'lugares de la galaxia');
     }
 
@@ -36,6 +45,7 @@ class LugarCrudController extends CrudController
      * Define what happens when the List operation is loaded.
      *
      * @see  https://backpackforlaravel.com/docs/crud-operation-list-entries
+     *
      * @return void
      */
     protected function setupListOperation()
@@ -46,19 +56,17 @@ class LugarCrudController extends CrudController
          * Columns can be defined using the fluent syntax:
          * - CRUD::column('price')->type('number');
          */
-
-         $this->crud->addColumn([
+        $this->crud->addColumn([
             'name' => 'id',
             'label' => 'id',
-            'type' => 'number'
+            'type' => 'number',
         ]);
 
         $this->crud->addColumn([
             'name' => 'nombre',
             'label' => 'Nombre',
-            'type' => 'text'
+            'type' => 'text',
         ]);
-
 
         $this->crud->addColumn([
             'name' => 'updated_at',
@@ -79,7 +87,7 @@ class LugarCrudController extends CrudController
             'type' => 'text',
             'value' => function ($entry) {
                 return $entry->visibilidad == 'P' ? '✔️ Publicado' : '⚠️ Borrador';
-            }
+            },
         ]);
     }
 
@@ -87,6 +95,7 @@ class LugarCrudController extends CrudController
      * Define what happens when the Create operation is loaded.
      *
      * @see https://backpackforlaravel.com/docs/crud-operation-create
+     *
      * @return void
      */
     protected function setupCreateOperation()
@@ -98,9 +107,7 @@ class LugarCrudController extends CrudController
          * Fields can be defined using the fluent syntax:
          * - CRUD::field('price')->type('number');
          */
-
-
-         $folder = $this->getMediaFolder();
+        $folder = $this->getMediaFolder();
 
         CRUD::field('descripcion')->type('textarea')->attributes(['maxlength' => 400])->hint('descripción corta');
 
@@ -114,13 +121,14 @@ class LugarCrudController extends CrudController
 
         CRUD::field('libros')->type('textarea')->hint('slug de libros, separados comas o saltos de linea. Ejemplo: los-guias-estelares, el-rayo-sincronizador, ...')->attributes(['rows' => 4]);
 
-         CRUD::field('visibilidad')->type('visibilidad');
+        CRUD::field('visibilidad')->type('visibilidad');
     }
 
     /**
      * Define what happens when the Update operation is loaded.
      *
      * @see https://backpackforlaravel.com/docs/crud-operation-update
+     *
      * @return void
      */
     protected function setupUpdateOperation()
@@ -128,10 +136,10 @@ class LugarCrudController extends CrudController
         $this->setupCreateOperation();
     }
 
-
     public function show($id)
     {
-        $lugar = \App\Models\Lugar::find($id);
+        $lugar = Lugar::find($id);
+
         return $lugar->visibilidad == 'P' ? redirect("/lugares/$id") : redirect("/lugares/$id?borrador");
     }
 }

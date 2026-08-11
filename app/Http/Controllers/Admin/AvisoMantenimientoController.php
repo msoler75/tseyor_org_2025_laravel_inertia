@@ -7,20 +7,19 @@ use App\Services\OpenRouterService;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class AvisoMantenimientoController extends CrudController
 {
     public function setup()
     {
         CRUD::setModel(Setting::class);
-        CRUD::setRoute(config('backpack.base.route_prefix') . '/aviso-mantenimiento');
+        CRUD::setRoute(config('backpack.base.route_prefix').'/aviso-mantenimiento');
         CRUD::setEntityNameStrings('aviso de mantenimiento', 'avisos de mantenimiento');
     }
 
     public function edit()
     {
-        if (!backpack_user()) {
+        if (! backpack_user()) {
             abort(403, 'Acceso denegado');
         }
 
@@ -49,7 +48,7 @@ class AvisoMantenimientoController extends CrudController
 
     public function update(Request $request)
     {
-        if (!backpack_user()) {
+        if (! backpack_user()) {
             abort(403, 'Acceso denegado');
         }
 
@@ -60,6 +59,7 @@ class AvisoMantenimientoController extends CrudController
             $setting->description = 'Aviso de mantenimiento programado';
             $setting->save();
             \Alert::success('Aviso de mantenimiento eliminado.')->flash();
+
             return redirect()->to(backpack_url('aviso-mantenimiento/edit'));
         }
 
@@ -74,7 +74,7 @@ class AvisoMantenimientoController extends CrudController
             'raw_email_text' => $request->input('raw_email_text', ''),
         ];
 
-        $data = array_filter($data, fn($v) => $v !== null && $v !== '');
+        $data = array_filter($data, fn ($v) => $v !== null && $v !== '');
 
         $setting->description = $data['titulo'] ?: 'Aviso de mantenimiento programado';
         $setting->value = json_encode($data, JSON_UNESCAPED_UNICODE);
@@ -87,7 +87,7 @@ class AvisoMantenimientoController extends CrudController
 
     public function analizarEmail(Request $request)
     {
-        if (!backpack_user()) {
+        if (! backpack_user()) {
             abort(403, 'Acceso denegado');
         }
 

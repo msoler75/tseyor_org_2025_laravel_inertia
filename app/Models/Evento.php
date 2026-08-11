@@ -2,13 +2,11 @@
 
 namespace App\Models;
 
-use Backpack\CRUD\app\Models\Traits\CrudTrait;
-use App\Models\ContenidoBaseModel;
-use Laravel\Scout\Searchable;
-use App\Pigmalion\Markdown;
 use App\Pigmalion\Countries;
+use App\Pigmalion\Markdown;
+use Backpack\CRUD\app\Models\Traits\CrudTrait;
 use Carbon\Carbon;
-
+use Laravel\Scout\Searchable;
 
 class Evento extends ContenidoBaseModel
 {
@@ -32,7 +30,7 @@ class Evento extends ContenidoBaseModel
         'visibilidad',
         'centro_id',
         'sala_id',
-        'equipo_id'
+        'equipo_id',
     ];
 
     /**
@@ -45,7 +43,6 @@ class Evento extends ContenidoBaseModel
         'fecha_fin' => 'datetime',
     ];
 
-
     // ACCESOR: CSV string → array
     public function getImagenesAttribute($value): array
     {
@@ -55,6 +52,7 @@ class Evento extends ContenidoBaseModel
         if (is_array($value)) {
             return $value;
         }
+
         return array_values(array_filter(array_map('trim', explode(',', $value))));
     }
 
@@ -68,10 +66,10 @@ class Evento extends ContenidoBaseModel
     }
 
     // ACCESOR
-     public function getNombrePaisAttribute()
-     {
-         return Countries::getCountry($this->pais);
-     }
+    public function getNombrePaisAttribute()
+    {
+        return Countries::getCountry($this->pais);
+    }
 
     /**
      * Accessors para formatear fechas como strings sin hora
@@ -79,19 +77,21 @@ class Evento extends ContenidoBaseModel
     public function getFechaInicioAttribute($value)
     {
         // Si hay valor directo en la BD, usarlo
-        if (!is_null($value)) {
+        if (! is_null($value)) {
             try {
                 return Carbon::parse($value)->format('Y-m-d');
-            } catch (\Throwable $e) {}
+            } catch (\Throwable $e) {
+            }
         }
 
         // Fallback: si no hay fecha_inicio pero hay fechas_evento, usar la primera
         try {
             $fechas = $this->getFechasEventoNormalized();
-            if (!empty($fechas)) {
+            if (! empty($fechas)) {
                 return Carbon::parse($fechas[0])->format('Y-m-d');
             }
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) {
+        }
 
         return null;
     }
@@ -99,23 +99,24 @@ class Evento extends ContenidoBaseModel
     public function getFechaFinAttribute($value)
     {
         // Si hay valor directo en la BD, usarlo
-        if (!is_null($value)) {
+        if (! is_null($value)) {
             try {
                 return Carbon::parse($value)->format('Y-m-d');
-            } catch (\Throwable $e) {}
+            } catch (\Throwable $e) {
+            }
         }
 
         // Fallback: si no hay fecha_fin pero hay fechas_evento, usar la última
         try {
             $fechas = $this->getFechasEventoNormalized();
-            if (!empty($fechas)) {
+            if (! empty($fechas)) {
                 return Carbon::parse($fechas[count($fechas) - 1])->format('Y-m-d');
             }
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) {
+        }
 
         return null;
     }
-
 
     /**
      * Devuelve todas las imágenes del evento: la portada (imagen) más las adicionales (imagenes).
@@ -134,6 +135,7 @@ class Evento extends ContenidoBaseModel
                 }
             }
         }
+
         return $images;
     }
 
@@ -159,7 +161,7 @@ class Evento extends ContenidoBaseModel
      */
     public function shouldBeSearchable(): bool
     {
-        return $this->visibilidad == 'P' && !$this->deleted_at;
+        return $this->visibilidad == 'P' && ! $this->deleted_at;
     }
 
     /**
@@ -207,8 +209,6 @@ class Evento extends ContenidoBaseModel
      * Normaliza y devuelve el array de fechas configuradas en `fechas_evento`.
      * Acepta JSON, array o string con separador por comas.
      * Devuelve array de strings en formato Y-m-d ordenadas asc.
-     *
-     * @return array
      */
     public function getFechasEventoNormalized(): array
     {
@@ -235,7 +235,9 @@ class Evento extends ContenidoBaseModel
 
         $normalized = [];
         foreach ($arr as $item) {
-            if (empty($item)) continue;
+            if (empty($item)) {
+                continue;
+            }
             try {
                 $c = Carbon::parse($item)->format('Y-m-d');
                 $normalized[] = $c;
@@ -264,6 +266,7 @@ class Evento extends ContenidoBaseModel
             } catch (\Throwable $e) {
             }
         }
+
         return $out;
     }
 
@@ -275,7 +278,10 @@ class Evento extends ContenidoBaseModel
     public function firstDate()
     {
         $list = $this->fechasEventoCarbon();
-        if (!empty($list)) return $list[0];
+        if (! empty($list)) {
+            return $list[0];
+        }
+
         return $this->attributes['fecha_inicio'] ?? null;
     }
 
@@ -287,7 +293,10 @@ class Evento extends ContenidoBaseModel
     public function lastDate()
     {
         $list = $this->fechasEventoCarbon();
-        if (!empty($list)) return $list[count($list) - 1];
+        if (! empty($list)) {
+            return $list[count($list) - 1];
+        }
+
         return $this->attributes['fecha_fin'] ?? null;
     }
 
@@ -300,14 +309,18 @@ class Evento extends ContenidoBaseModel
     {
         $today = Carbon::today();
         foreach ($this->fechasEventoCarbon() as $d) {
-            if ($d->greaterThanOrEqualTo($today)) return $d;
+            if ($d->greaterThanOrEqualTo($today)) {
+                return $d;
+            }
         }
 
         // si no hay fechas_evento, y existe fecha_inicio, comprobarla
         try {
             if ($this->attributes['fecha_inicio']) {
                 $f = Carbon::parse($this->attributes['fecha_inicio'])->startOfDay();
-                if ($f->greaterThanOrEqualTo($today)) return $f;
+                if ($f->greaterThanOrEqualTo($today)) {
+                    return $f;
+                }
             }
         } catch (\Throwable $e) {
         }
@@ -317,8 +330,6 @@ class Evento extends ContenidoBaseModel
 
     /**
      * Determina si el evento está en curso (hoy entre primera y última fecha inclusive).
-     *
-     * @return bool
      */
     public function isOngoing(): bool
     {
@@ -330,6 +341,7 @@ class Evento extends ContenidoBaseModel
             $end = $last instanceof \DateTimeInterface ? Carbon::parse($last)->endOfDay() : ($last ? Carbon::parse($last)->endOfDay() : null);
             if ($start && $end) {
                 $now = Carbon::now();
+
                 return $now->between($start, $end);
             }
         } catch (\Throwable $e) {
@@ -340,8 +352,6 @@ class Evento extends ContenidoBaseModel
 
     /**
      * Determina si el evento tiene una próxima fecha (hoy o futura).
-     *
-     * @return bool
      */
     public function isUpcoming(): bool
     {

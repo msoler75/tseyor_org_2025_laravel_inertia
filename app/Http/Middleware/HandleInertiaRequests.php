@@ -2,10 +2,10 @@
 
 namespace App\Http\Middleware;
 
-use Illuminate\Http\Request;
-use Inertia\Middleware;
 use App\Services\AnuncioService;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cookie;
+use Inertia\Middleware;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -19,7 +19,7 @@ class HandleInertiaRequests extends Middleware
     /**
      * Determine the current asset version.
      */
-    public function version(Request $request): string|null
+    public function version(Request $request): ?string
     {
         return parent::version($request);
     }
@@ -48,7 +48,7 @@ class HandleInertiaRequests extends Middleware
         // llamada normal
         $r = array_merge(parent::share($request), [
             'flash' => [
-                'message' => fn() => $request->session()->get('message')
+                'message' => fn () => $request->session()->get('message'),
             ],
             'anuncio' => $banner['anuncio'],
             'mantenimiento' => $banner['mantenimiento'],
@@ -59,18 +59,18 @@ class HandleInertiaRequests extends Middleware
             'api_url' => config('app.api_url'),
             'google_analytics' => [
                 'measurement_id' => config('services.google_analytics.measurement_id'),
-            ]
+            ],
         ]);
 
         // si no tiene el header X-INERTIA:
-        if(!$request->header('X-Inertia')) {
+        if (! $request->header('X-Inertia')) {
             $r['initialTheme'] = Cookie::get('theme', 'light');
             $r['initialFontSize'] = Cookie::get('fontSize', 16);
         }
 
         // Algunas páginas se van a cachear con page-cache, así que debe estar limpia de sesión
         // si es la url de portada y no existe cabecera http de X-INERTIA:
-        if ($request->route()->uri() === '/' && !$request->header('X-Inertia')) {
+        if ($request->route()->uri() === '/' && ! $request->header('X-Inertia')) {
             $r['auth']['user'] = null;
         }
 
