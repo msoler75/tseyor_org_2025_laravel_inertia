@@ -55,3 +55,4 @@ skill*
 # Local AI runtime state
 .atl/
 .codegraph/
+/storage/indexes_test
