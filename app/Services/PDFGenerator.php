@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Models\ContenidoBaseModel;
+use App\Contracts\PdfGenerable;
 use App\Pigmalion\Markdown;
 use App\Pigmalion\StorageItem;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -16,18 +16,18 @@ class PDFGenerator
      *
      * @return Response
      */
-    public static function generatePdf(ContenidoBaseModel $contenido, string $vista = 'contenido-pdf')
+    public static function generatePdf(PdfGenerable $contenido, string $vista = 'contenido-pdf')
     {
         // comprobaremos si existe ya el archivo pdf generado
 
-        $pdf_path = $contenido->pdfPath; // attribute with accesor
+        $pdf_path = $contenido->getPdfPath();
 
         $pdf_full_path = Storage::disk('public')->path($pdf_path);
 
         $headers = [
             'Content-Type' => 'application/pdf',
             'Cache-Control' => 'no-cache, no-store, must-revalidate',
-            'Content-Disposition' => 'inline; filename="'.$contenido->pdf_filename.'"',
+            'Content-Disposition' => 'inline; filename="'.$contenido->getPdfFilename().'"',
             'Pragma' => 'no-cache',
             'Expires' => '0',
         ];
@@ -35,11 +35,11 @@ class PDFGenerator
         // dd(dirname($pdf_full_path));
         StorageItem::ensureDirExists(dirname($pdf_full_path));
 
-        if (file_exists($pdf_full_path) && filemtime($pdf_full_path) > $contenido->updated_at->getTimestamp()) {
+        if (file_exists($pdf_full_path) && filemtime($pdf_full_path) > $contenido->getUpdatedAtTimestamp()) {
             return response()->file($pdf_full_path, $headers);
         }
 
-        $texto = $contenido->texto;
+        $texto = $contenido->getTextoPdf();
 
         // reducimos las imagenes de los guías para que no sean tan grandes
         $texto = preg_replace_callback("#\!\[\]\(\/almacen\/medios\/guias\/con_nombre\/.+?\.jpg\)\{width=(\d+),height=(\d+)\}#", function ($match) {
@@ -141,7 +141,7 @@ class PDFGenerator
 
         // Contenido HTML completo con etiquetas <html>, <head> y <body>
         $pdf = Pdf::loadView($vista, [
-            'titulo' => $contenido->titulo ?? $contenido->nombre,
+            'titulo' => $contenido->getTituloPdf(),
             'texto' => $html,
         ]);
 

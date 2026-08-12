@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Contracts\PdfGenerable;
 use App\Pigmalion\ContenidoHelper;
 use App\Pigmalion\Markdown;
 use App\Pigmalion\StorageItem;
@@ -22,7 +23,7 @@ use Venturecraft\Revisionable\RevisionableTrait;
  - SEO
  */
 
-class ContenidoBaseModel extends Model
+class ContenidoBaseModel extends Model implements PdfGenerable
 {
     use BuscableTrait;
     use HasSEO;
@@ -202,6 +203,38 @@ class ContenidoBaseModel extends Model
     public function generatePdf()
     {
         return PDFGenerator::generatePdf($this);
+    }
+
+    // --- PdfGenerable interface ---
+
+    public function getPdfPath(): string
+    {
+        return $this->pdfPath;
+    }
+
+    public function getPdfFilename(): string
+    {
+        return $this->pdf_filename;
+    }
+
+    public function getTituloPdf(): string
+    {
+        return $this->titulo ?? $this->nombre ?? '';
+    }
+
+    public function getTextoPdf(): string
+    {
+        return $this->texto ?? '';
+    }
+
+    public function getImagenPdf(): ?string
+    {
+        return $this->imagen;
+    }
+
+    public function getUpdatedAtTimestamp(): int
+    {
+        return $this->updated_at->getTimestamp();
     }
 
     /**
