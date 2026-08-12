@@ -130,7 +130,16 @@ class EquiposController extends Controller
             $equipo = $equipo->where('slug', $id)->firstOrFail();
         }
 
-        $carpetas = $equipo->carpetas()->get();
+        $carpetasTodas = $equipo->carpetas()->get();
+        $carpetas = $carpetasTodas;
+
+        // Filtrar y ordenar carpetas según carpetas_orden del equipo
+        if ($equipo->carpetas_orden) {
+            $ordenIds = $equipo->carpetas_orden;
+            $carpetas = $carpetas->filter(fn ($c) => in_array($c->id, $ordenIds));
+            $ordered = collect($ordenIds);
+            $carpetas = $carpetas->sortBy(fn ($c) => $ordered->search($c->id))->values();
+        }
 
         $user = auth()->user();
 
@@ -205,6 +214,7 @@ class EquiposController extends Controller
         return Inertia::render('Equipos/Equipo', [
             'equipo' => $equipo,
             'carpetas' => $carpetas,
+            'carpetasTodas' => $carpetasTodas,
             'ultimosArchivos' => // Inertia::lazy(function () use ($equipo) {
             // return
             $this->ultimosArchivos($equipo)
@@ -240,7 +250,16 @@ class EquiposController extends Controller
 
         $cacheKey = 'equipo_ultimos_archivos_'.$equipo->id;
         $archivos = Cache::remember($cacheKey, now()->addDays($DIAS_CACHE), function () use ($equipo) {
-            $carpetas = $equipo->carpetas()->get();
+        $carpetas = $equipo->carpetas()->get();
+
+        // Aplicar mismo filtrado de carpetas para últimos archivos
+        if ($equipo->carpetas_orden) {
+            $ordenIds = $equipo->carpetas_orden;
+            $carpetas = $carpetas->filter(fn ($c) => in_array($c->id, $ordenIds));
+            $ordered = collect($ordenIds);
+            $carpetas = $carpetas->sortBy(fn ($c) => $ordered->search($c->id))->values();
+        }
+
             $ultimosArchivosEquipo = [];
             $ubicacionesRecorridas = [];
 
@@ -309,7 +328,7 @@ class EquiposController extends Controller
     {
         // Validar los datos
         $validatedData = $request->validate([
-            'nombre' => 'required|max:64',
+            'nombre' => 'required|max:48',
             'descripcion' => 'max:400',
             'imagen' => 'max:255',
         ]);
@@ -349,14 +368,21 @@ class EquiposController extends Controller
             return response()->json(['error' => 'No autorizado'], 403);
         }
 
+        // Decodificar carpetas_orden si viene como string JSON (FormData)
+        if (is_string($request->input('carpetas_orden'))) {
+            $decoded = json_decode($request->input('carpetas_orden'), true);
+            $request->merge(['carpetas_orden' => $decoded]);
+        }
+
         // Validar los datos
         $validatedData = $request->validate([
-            'nombre' => 'required|max:32',
+            'nombre' => 'required|max:48',
             'descripcion' => 'required|max:400',
             'imagen' => 'image|mimes:jpeg,png,jpg,gif|max:64000', // Ajustar las reglas de validación según tus necesidades
             'anuncio' => 'max:400',
             'reuniones' => 'max:255',
             'informacion' => 'max:65000',
+            'carpetas_orden' => 'nullable|array',
         ]);
 
         Log::info(var_export($validatedData, true));
@@ -368,6 +394,12 @@ class EquiposController extends Controller
         $equipo->anuncio = $validatedData['anuncio'];
         $equipo->reuniones = $validatedData['reuniones'];
         $equipo->informacion = $validatedData['informacion'];
+
+        // Guardar orden de carpetas (null = mostrar todas en orden por defecto)
+        if (array_key_exists('carpetas_orden', $validatedData)) {
+            $equipo->carpetas_orden = $validatedData['carpetas_orden'];
+            Cache::forget('equipo_ultimos_archivos_'.$equipo->id);
+        }
 
         // Subir la nueva imagen (si se proporciona)
         $newImage = $request->file('imagen');
