@@ -12,11 +12,17 @@
                             :class="user.pivot.rol == 'coordinador' ? 'bg-blue-50 dark:bg-blue-800' : ''">
                             <td>{{ user.nombre }}</td>
                             <td>
-                                <select v-model="user.pivot.rol" class="select" @change="cambiarRol(user)">
-                                    <option value="coordinador">coordinador</option>
-                                    <option value="miembro">miembro</option>
-                                    <option v-if="user.pivot.rol != 'coordinador'" value="eliminar">eliminar</option>
-                                </select>
+                                <div class="dropdown dropdown-end">
+                                    <div tabindex="0" role="button" class="btn btn-sm btn-ghost gap-1 normal-case">
+                                        {{ user.pivot.rol == 'coordinador' ? 'coordinador' : 'miembro' }}
+                                        <Icon icon="ph:caret-down" class="text-sm" />
+                                    </div>
+                                    <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-1 w-40 p-2 shadow-lg">
+                                        <li><a @click="user.pivot.rol = 'coordinador'; cambiarRol(user)">coordinador</a></li>
+                                        <li><a @click="user.pivot.rol = 'miembro'; cambiarRol(user)">miembro</a></li>
+                                        <li v-if="user.pivot.rol != 'coordinador'"><a class="text-error" @click="user.pivot.rol = 'eliminar'; cambiarRol(user)">eliminar</a></li>
+                                    </ul>
+                                </div>
                             </td>
                         </tr>
                     </tbody>

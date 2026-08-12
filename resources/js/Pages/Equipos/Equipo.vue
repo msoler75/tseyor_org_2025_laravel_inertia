@@ -125,7 +125,7 @@
                 </Card>
 
                 <LazyHydrate>
-                    <EquipoAdmin v-if="soyCoordinador || puedoAdministrar" :equipo="equipo" @updated="reloadEquipo" />
+                    <EquipoAdmin v-if="soyCoordinador || puedoAdministrar" :equipo="equipo" :carpetas="carpetas" :carpetasTodas="carpetasTodas" @updated="reloadEquipo" />
                 </LazyHydrate>
 
             </GridAppear>
@@ -152,6 +152,7 @@ const props = defineProps({
     ultimosArchivos: {},
     ultimosInformes: {},
     carpetas: {},
+    carpetasTodas: { type: Array, default: () => [] },
     miSolicitud: {},
     soyMiembro: Boolean,
     soyCoordinador: Boolean,
@@ -181,14 +182,14 @@ function doReload() {
     if (visibleModalElements.length) return
 
     router.reload({
-        only: ['equipo', 'ultimosArchivos', 'ultimosInformes', 'carpetas', 'miSolicitud', 'soyMiembro', 'soyCoordinador']
+        only: ['equipo', 'ultimosArchivos', 'ultimosInformes', 'carpetas', 'carpetasTodas', 'miSolicitud', 'soyMiembro', 'soyCoordinador']
     })
 }
 
 function reloadEquipo() {
     console.log('Equipo.reloadEquipo')
     router.reload({
-        only: ['equipo', 'miSolicitud', 'soyMiembro', 'soyCoordinador']
+        only: ['equipo', 'carpetas', 'carpetasTodas', 'miSolicitud', 'soyMiembro', 'soyCoordinador']
     })
 }
 

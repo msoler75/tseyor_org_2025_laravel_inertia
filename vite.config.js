@@ -35,6 +35,9 @@ export default defineConfig({
     watch: {
       ignored: ['**/vendor/**', '**/storage/**', '**/tests/**', '**/.git/**'],
     },
+    cors: {
+      origin: '*',
+    },
   },
   build: {
     sourcemap: false,

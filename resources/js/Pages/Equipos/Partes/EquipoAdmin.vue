@@ -25,7 +25,7 @@
 
         <ModalMiembros :equipo="props.equipo" ref="miembros" @updated="actualizarEquipo" />
 
-        <ModalConfiguracion :equipo="props.equipo" ref="config" @updated="actualizarEquipo" />
+        <ModalConfiguracion :equipo="props.equipo" :carpetas="props.carpetasTodas" ref="config" @updated="actualizarEquipo" />
 
         <ModalInvitaciones :equipo="props.equipo" ref="invitaciones" />
 
@@ -61,7 +61,7 @@ import ModalInvitaciones from './ModalInvitaciones.vue'
 import ModalMiembros from './ModalMiembros.vue'
 import ModalSolicitudes from './ModalSolicitudes.vue'
 
-const props = defineProps({ equipo: { type: Object, required: true } })
+const props = defineProps({ equipo: { type: Object, required: true }, carpetas: { type: Array, default: () => [] }, carpetasTodas: { type: Array, default: () => [] } })
 
 const emit = defineEmits(['updated'])
 
