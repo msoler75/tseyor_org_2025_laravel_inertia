@@ -33,6 +33,7 @@ class Equipo extends ContenidoBaseModel
         'ocultarArchivos',
         'ocultarMiembros',
         'ocultarSolicitudes',
+        'carpetas_orden',
     ];
 
     public static function boot()
@@ -264,6 +265,10 @@ class Equipo extends ContenidoBaseModel
 
         return $usersWithoutPivot->toJson();
     }
+
+    protected $casts = [
+        'carpetas_orden' => 'array',
+    ];
 }
 
 class Membresia extends Pivot
