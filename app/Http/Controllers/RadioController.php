@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Audio;
+use App\Models\Comunicado;
 use App\Models\RadioItem;
 use App\Models\Setting;
 use App\Pigmalion\SEO;
@@ -28,39 +30,11 @@ class RadioController extends Controller
     }
 
     /**
-     * Renderizar vista de emisora
-     */
-    private function renderizarVistaEmisora(array $estado)
-    {
-        $categorias = $this->obtenerCategoriasEmisoras();
-
-        return Inertia::render('Radio/Emisora', [
-            'estado' => $estado,
-            'emisoras' => $categorias,
-        ])->withViewData(SEO::get('radio'));
-    }
-
-    /**
-     * Manejar la lógica de reproducción de una emisora
+     * Manejar la lógica de reproducción de una emisora (redirige a Index)
      */
     public function emisora(Request $request, string $emisora)
     {
-        try {
-            DB::beginTransaction();
-
-            $estado = $this->gestionarEstadoRadio($emisora);
-
-            DB::commit();
-
-            return $this->renderizarVistaEmisora($estado);
-        } catch (Exception $e) {
-            DB::rollBack();
-            Log::error('Error en reproducción de emisora', [
-                'emisora' => $emisora,
-                'error' => $e->getMessage(),
-            ]);
-            throw $e;
-        }
+        return redirect()->route('radio')->with('emisora', $emisora);
     }
 
     /**
@@ -377,12 +351,75 @@ class RadioController extends Controller
             'segundos_restantes' => $duracion_actual - $posicion_actual,
         ];
 
+        // Buscar enlace al contenido original
+        $audioActual = $radio['audio_actual'] ?? null;
+        if ($audioActual && ! empty($audioActual['titulo'])) {
+            $estado['contenido_url'] = $this->buscarContenidoOriginal($audioActual['titulo'], $emisora);
+        }
+
         // Añadir audio siguiente si es un jingle
         if ($radio['reproduciendo_jingle']) {
             $estado['audio_siguiente'] = $radio['audio_siguiente'] ?? null;
         }
 
         return $estado;
+    }
+
+    /**
+     * Buscar la URL del contenido original basándose en el título del audio de radio
+     */
+    private function buscarContenidoOriginal(string $titulo, string $emisora): ?string
+    {
+        $emisoraLower = strtolower($emisora);
+
+        // Si es una emisora de comunicados, buscar el comunicado por título
+        if (str_contains($emisoraLower, 'comunicado')) {
+            $comunicado = Comunicado::where('titulo', $titulo)->first();
+            if ($comunicado) {
+                return route('comunicado', $comunicado->slug);
+            }
+        }
+
+        // Para emisoras de audios (meditaciones, talleres, cuentos, etc.)
+        // Buscar por título exacto primero, luego por LIKE
+        $audio = Audio::where('titulo', $titulo)->first();
+        if (! $audio) {
+            $audio = Audio::where('titulo', 'LIKE', '%'.$titulo.'%')->first();
+        }
+        if (! $audio && strlen($titulo) > 20) {
+            // Intentar con los primeros 50 caracteres
+            $audio = Audio::where('titulo', 'LIKE', '%'.mb_substr($titulo, 0, 50).'%')->first();
+        }
+
+        if ($audio && isset($audio->slug)) {
+            return route('audio', $audio->slug);
+        }
+
+        return null;
+    }
+
+    /**
+     * API: devolver estado de emisora como JSON (sin recargar página)
+     */
+    public function apiEmisora(Request $request, string $emisora)
+    {
+        try {
+            DB::beginTransaction();
+
+            $estado = $this->gestionarEstadoRadio($emisora);
+
+            DB::commit();
+
+            return response()->json($estado);
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::error('Error en API de emisora', [
+                'emisora' => $emisora,
+                'error' => $e->getMessage(),
+            ]);
+
+            return response()->json(['error' => 'Error al obtener estado de la emisora'], 500);
+        }
     }
 
     /**

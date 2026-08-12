@@ -283,6 +283,7 @@ Route::get('cursos', [CursosController::class, 'index'])->name('cursos');
 
 Route::get('radio', [RadioController::class, 'index'])->name('radio');
 Route::get('radio/{emisora}', [RadioController::class, 'emisora'])->name('radio.emisora');
+Route::get('api/radio/{emisora}', [RadioController::class, 'apiEmisora'])->name('radio.api');
 Route::get('radio-manifest.json', [RadioManifestController::class, 'manifest'])->name('radio.manifest');
 
 Route::get('inscripcion', function () {
