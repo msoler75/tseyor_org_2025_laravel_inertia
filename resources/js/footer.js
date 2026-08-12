@@ -21,7 +21,6 @@ export const sections = [
             { label: "Audios", route: 'audios' },
             { label: "Meditaciones", route: 'meditaciones' },
             { label: "Archivos", url: '/archivos' },
-            { label: "Radio Tseyor", route: 'radio' },
         ],
     },
     {
@@ -30,7 +29,7 @@ export const sections = [
             { label: "Vídeos", route: 'videos' },
             { label: "Galerías", route: 'galerias' },
             { label: "Psicografías", route: 'psicografias' },
-            { label: "Guías Estelares", route: 'guias' },
+            { label: "Radio Tseyor", route: 'radio' },
         ],
     },
     {
@@ -40,6 +39,7 @@ export const sections = [
             { label: "Inscríbete gratis", route: 'cursos.inscripcion.nueva' },
             { label: "Nuestra filosofía", route: 'filosofia' },
             { label: "Orígenes de TSEYOR", route: 'origenes-de-tseyor' },
+            { label: "Guías Estelares", route: 'guias' },
             { label: "Preguntas frecuentes", route: 'preguntas' },
         ],
     },
