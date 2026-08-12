@@ -15,6 +15,7 @@ Tseyor.org es una plataforma web modular y escalable para la gestión de conteni
   - Equipos y miembros
   - Boletines y suscripciones
   - Comunicados y publicaciones
+  - Comunicados de Interiorización (contenido restringido)
   - Archivos y almacenamiento (local y S3)
   - Notificaciones y eventos
   - Buscador global (TNTSearch/Scout)
@@ -63,7 +64,36 @@ Tseyor.org es una plataforma web modular y escalable para la gestión de conteni
 
 ---
 
-## 6. Extensibilidad y futuro
+## 6. Arquitectura de contenidos
+
+El sistema maneja diferentes tipos de contenido con una jerarquía de modelos:
+
+### Modelo base: `ContenidoBaseModel`
+- Proporciona: SEO (HasSEO), revisiones (RevisionableTrait), SoftDeletes, favoritos, gestión de medios
+- **Todos los modelos que extienden este modelo se copian automáticamente a la tabla `contenidos`** (buscador global) via el hook `saved` de `ContenidoHelper::guardarContenido()`
+- Usa `BuscableTrait` para búsquedas TNTSearch locales
+
+### Contenido público (extiende `ContenidoBaseModel`)
+- **Comunicado** → `ContenidoConAudios` → `ContenidoBaseModel`
+  - Tabla: `comunicados`
+  - Indexado en buscador global (`contenidos`) y Scout propio
+  - Categorías: General, TAP, 12M, Muul
+
+### Contenido restringido (NO extiende `ContenidoBaseModel`)
+- **ComunicadoInteriorizacion** → `Model` directamente
+  - Tabla: `comunicados_interiorizacion`
+  - **NO se indexa en el buscador global** (no hay hook a `contenidos`)
+  - Tiene su propio índice Scout para búsqueda local
+  - Acceso: usuarios autenticados ven publicados; admins y miembros del equipo "iniciados-interiorizacion" ven todos
+  - Campos: nivel (1/2), ciclo, número arbitrario
+
+### Buscador global vs local
+- **Global**: Tabla `contenidos` → Scout → `buscarContenidos()` — busca en todos los tipos de contenido
+- **Local**: `BuscableTrait::scopeBuscar()` → TNTSearch — busca solo dentro de un modelo específico
+
+---
+
+## 7. Extensibilidad y futuro
 - Arquitectura preparada para nuevas integraciones (IA, multimedia, API externa, etc.)
 - Modularidad para añadir nuevas secciones o funcionalidades sin afectar el núcleo
 - Priorización de la accesibilidad y la experiencia de usuario
@@ -71,8 +101,6 @@ Tseyor.org es una plataforma web modular y escalable para la gestión de conteni
 ---
 
 > Para detalles sobre tareas, hitos y mejoras, consulta también `TODO.md` y `hoja_de_ruta.md`.
-
----
 
 ## Diagramas y representaciones visuales
 

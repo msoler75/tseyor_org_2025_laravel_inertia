@@ -30,6 +30,7 @@ Route::group([
     Route::post('user/new-password', [AdminController::class, 'newPassword']);
     Route::crud('user', 'UserCrudController');
     Route::crud('comunicado', 'ComunicadoCrudController');
+    Route::crud('comunicado-interiorizacion', 'ComunicadoInteriorizacionCrudController');
     Route::crud('contenido', 'ContenidoCrudController');
     Route::crud('guia', 'GuiaCrudController');
     Route::crud('nodo', 'NodoCrudController');
@@ -81,6 +82,9 @@ Route::group([
 
     Route::post('comunicado/importar/crear', 'ComunicadoCrudController@importCreate');
     Route::post('comunicado/importar/actualizar/{id}', 'ComunicadoCrudController@importUpdate');
+
+    Route::post('comunicado-interiorizacion/importar/crear', 'ComunicadoInteriorizacionCrudController@importCreate');
+    Route::post('comunicado-interiorizacion/importar/actualizar/{id}', 'ComunicadoInteriorizacionCrudController@importUpdate');
 
     Route::post('noticia/importar/crear', 'NoticiaCrudController@importCreate');
     Route::post('noticia/importar/actualizar/{id}', 'NoticiaCrudController@importUpdate');
