@@ -25,6 +25,12 @@
 @endcan
 
 @can('administrar contenidos')
+<x-backpack::menu-dropdown title="Iniciados" icon="la la-key">
+    <x-backpack::menu-dropdown-item title="Comunicados de Interiorización" icon="la la-file" :link="backpack_url('comunicado-interiorizacion')" />
+</x-backpack::menu-dropdown>
+@endcan
+
+@can('administrar contenidos')
 <x-backpack::menu-dropdown title="Consulta/Formación" icon="la la-list-ul">
     <x-backpack::menu-dropdown-item title="Glosario" icon="la la-edit" :link="backpack_url('termino')" />
     <x-backpack::menu-dropdown-item title="Guias Estelares" icon="la la-star" :link="backpack_url('guia')" />

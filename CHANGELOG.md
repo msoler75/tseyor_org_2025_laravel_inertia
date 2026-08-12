@@ -48,4 +48,14 @@
   - Notificación automática a tutores sobre nuevas asignaciones y consejos prácticos de uso.
   - Artículo informativo para tutores sobre el funcionamiento y mejores prácticas del sistema de inscripciones.
 
+- **12 de agosto de 2026**:
+  - Implementada la funcionalidad de **Comunicados de Interiorización** — contenido restringido para miembros del equipo "iniciados-interiorizacion".
+  - Modelo `ComunicadoInteriorizacion` separado (extiende `Model` directamente, NO `ContenidoBaseModel`) para evitar indexación en el buscador global (`contenidos`).
+  - Trait `ComunicadoMediaTrait` compartido para lógica de audios y medios.
+  - CRUD Backpack completo con campos: nivel (1/2), ciclo, número arbitrario, fecha, audios.
+  - Controller público con control de acceso: usuarios autenticados ven publicados, admins y miembros del equipo ven todos.
+  - Rutas públicas: `/comunicados-interiorizacion`, `/{slug}`, `/{slug}/pdf`.
+  - Vistas Vue: Index con filtros por nivel, ciclo y año; página de detalle con badges.
+  - Sección "Iniciados" añadida al sidebar de administración Backpack.
+
 

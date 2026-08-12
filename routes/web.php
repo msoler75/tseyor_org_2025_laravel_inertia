@@ -10,6 +10,7 @@ use App\Http\Controllers\BoletinesController;
 use App\Http\Controllers\CentrosController;
 use App\Http\Controllers\ChatGPTController;
 use App\Http\Controllers\ComunicadosController;
+use App\Http\Controllers\ComunicadosInteriorizacionController;
 use App\Http\Controllers\ContactarController;
 use App\Http\Controllers\ContactosController;
 use App\Http\Controllers\ContenidosController;
@@ -196,6 +197,13 @@ Route::get('comunicados', [ComunicadosController::class, 'index'])->name('comuni
 Route::get('comunicados/{slug}', [ComunicadosController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('comunicado');
 // Route::get('archivo/comunicados', [ComunicadosController::class, 'archive'])->name('archivo.comunicados');
 Route::get('comunicados/{slug}/pdf', [ComunicadosController::class, 'pdf'])->where('slug', '[a-z0-9\-]+')->name('comunicado.pdf');
+
+// Comunicados de Interiorización (restringido a iniciados)
+Route::middleware(['auth'])->group(function () {
+    Route::get('comunicados-interiorizacion', [ComunicadosInteriorizacionController::class, 'index'])->name('comunicados-interiorizacion');
+    Route::get('comunicados-interiorizacion/{slug}', [ComunicadosInteriorizacionController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('comunicado-interiorizacion');
+    Route::get('comunicados-interiorizacion/{slug}/pdf', [ComunicadosInteriorizacionController::class, 'pdf'])->where('slug', '[a-z0-9\-]+')->name('comunicado-interiorizacion.pdf');
+});
 
 Route::get('libros', [LibrosController::class, 'index'])->name('libros');
 Route::get('libros/{slug}', [LibrosController::class, 'show'])->where('slug', '[a-z0-9\-]+')->name('libro');
