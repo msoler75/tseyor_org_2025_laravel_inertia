@@ -129,5 +129,12 @@ const secciones = ref([
         count: computed(() => props.stats ? props.stats.entradas : 0),
         collection: 'artículos'
     },
+    {
+        title: 'Archivos',
+        url: '/archivos',
+        descripcion: 'Archivos de los distintos equipos y otros contenidos de la comunidad.',
+        icon: "ph:folder-duotone",
+        count: 0
+    },
 ])
 </script>
