@@ -26,7 +26,8 @@
             <p>{{ audio.descripcion }}</p>
 
             <div v-if="audio.audio" class="btn pl-2 pr-4 py-2 min-h-auto flex items-center gap-2 w-40"
-                :class="player.music?.src == audio.src ? 'btn-secondary' : 'btn-primary'" @click="clickPlayPause(audio)"
+                :class="player.music?.src == audio.src || (player.radioMode && player.state == 'playing') ? 'btn-secondary' : 'btn-primary'"
+                @click="clickPlayPause(audio)"
                 :title="audio.src">
                 <AudioStateIcon :src="audio.src" class="text-3xl flex-shrink-0"/>
                 <span class="flex-1 text-center">
@@ -37,7 +38,9 @@
                             : player.state == 'error'
                                 ? 'Error'
                                 : 'Reproducir'
-                        : 'Reproducir'
+                        : player.radioMode && player.state == 'playing'
+                            ? 'Pausar'
+                            : 'Reproducir'
                 }}
                 </span>
             </div>
@@ -76,11 +79,14 @@ const audio = computed(() => ({ ...audioData.value, src: srcAudio(audioData.valu
 function clickPlayPause(audio) {
     const titulo = audio.titulo
 
+    // Si el player está en modo radio reproduciendo, pausar/reanudar
+    if (player.radioMode && player.state == 'playing') {
+        player.playPause()
+        return
+    }
+
     if (player.music?.src == audio.src) {
         switch (player.state) {
-            /*case 'error':
-                player.play()
-                break*/
             case 'waiting':
             case 'playing':
             case 'paused':

@@ -2,12 +2,12 @@
     <div class="flex flex-wrap gap-3">
         <a v-for="audio of audios" :key="audio" class="btn btn-xs flex-nowrap text-xs"
         :href="audio.src"
-            :class="player.music?.src == audio.src ? 'btn-secondary' : 'btn-primary'" @click.prevent="clickPlayPause(audio)"
+            :class="player.music?.src == audio.src || (player.radioMode && player.state == 'playing') ? 'btn-secondary' : 'btn-primary'" @click.prevent="clickPlayPause(audio)"
             :title="player.music?.src == audio.src ? frase : 'Escuchar'">
 
             <AudioStateIcon :src="audio.src" />
 
-            <template v-if="player.music?.src == audio.src">
+            <template v-if="player.music?.src == audio.src || (player.radioMode && player.state == 'playing')">
                 <template v-if="numerados">{{ frase }}</template>
                 {{ numerados ? 'Audio ' + audio.index : audio.filename }}
             </template>
@@ -42,18 +42,19 @@ const player = usePlayer()
 
 function clickPlayPause(audio) {
 
-    //let titulo =  audio.title || audio.filename || audio.label
-    //if(!titulo)
     let titulo = !props.titulo ? audio.label : props.titulo + (props.numerados ? ` (${audio.index})` : '')
 
     if(!titulo )
     titulo = audio.filename
 
+    // Si el player está en modo radio reproduciendo, pausar/reanudar
+    if (player.radioMode && player.state == 'playing') {
+        player.playPause()
+        return
+    }
+
     if (player.music && player.music.src == audio.src) {
         switch (player.state) {
-            /*case 'error':
-                player.play()
-                break*/
             case 'playing':
             case 'paused':
                 player.playPause()

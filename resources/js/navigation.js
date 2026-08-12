@@ -78,6 +78,13 @@ export default [
               mobileShow: true,
             },
             {
+              title: "Radio Tseyor",
+              route: "radio",
+              description: "Escucha la radio online de TSEYOR.",
+              icon: "ph:radio-duotone",
+              mobileShow: true,
+            },
+            {
               title: "Audios",
               route: "audios",
               description: "Meditaciones, talleres, cuentos, canciones y materiales sonoros.",
@@ -108,12 +115,6 @@ export default [
               route: "biblioteca",
               description: "Libros, comunicados, audios y materiales de libre descarga.",
               icon: "ph:books-duotone",
-            },
-            {
-              title: "Radio Tseyor",
-              route: "radio",
-              description: "Escucha la radio online de TSEYOR.",
-              icon: "ph:radio-duotone",
             },
             {
               title: "Psicografías",
