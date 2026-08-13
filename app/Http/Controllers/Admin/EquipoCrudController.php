@@ -122,7 +122,15 @@ class EquipoCrudController extends CrudController
 
         CRUD::field('nombre')->type('text')->attributes(['maxlength' => 48]);
 
-        CRUD::field('slug')->type('text')->attributes(['maxlength' => 64])->hint('Puedes dejarlo en blanco');
+        $esProtegido = $this->crud->getCurrentEntryId() === config('equipos.interiorizacion.id');
+
+        CRUD::field('slug')->type('text')
+            ->attributes(array_filter([
+                'maxlength' => 64,
+                'readonly' => $esProtegido ? true : null,
+                'disabled' => $esProtegido ? true : null,
+            ]))
+            ->hint($esProtegido ? 'Slug protegido: no puede modificarse' : 'Puedes dejarlo en blanco');
 
         CRUD::field([   // select_from_array
             'name' => 'categoria',
@@ -221,9 +229,17 @@ class EquipoCrudController extends CrudController
         $this->crud->setRequest($this->crud->validateRequest());
         $this->crud->unsetValidation(); // validation has already been run
 
+        $equipoId = $this->crud->getCurrentEntryId();
+        $slugOriginal = Equipo::find($equipoId)?->slug;
+
         $r = $this->traitUpdate();
 
-        $this->actualizarMiembros($this->crud->entry->id, $this->crud->getRequest()->CoordinadoresJSON, $this->crud->getRequest()->MiembrosJSON);
+        // El slug de un equipo protegido no puede modificarse, ni siquiera manipulando el formulario
+        if ($equipoId === config('equipos.interiorizacion.id') && $slugOriginal) {
+            Equipo::where('id', $equipoId)->update(['slug' => $slugOriginal]);
+        }
+
+        $this->actualizarMiembros($equipoId, $this->crud->getRequest()->CoordinadoresJSON, $this->crud->getRequest()->MiembrosJSON);
 
         return $r;
     }

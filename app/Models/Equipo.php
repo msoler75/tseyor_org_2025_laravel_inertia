@@ -58,6 +58,14 @@ class Equipo extends ContenidoBaseModel
         });
     }
 
+    /**
+     * Indica si este equipo es un caso especial cuyo slug no debe modificarse.
+     */
+    public function esEquipoProtegido(): bool
+    {
+        return $this->id === config('equipos.interiorizacion.id');
+    }
+
     public function miembros()
     {
         return $this->belongsToMany(User::class, 'equipo_user')

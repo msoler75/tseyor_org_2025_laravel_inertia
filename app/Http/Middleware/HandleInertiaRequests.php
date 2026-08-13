@@ -60,6 +60,8 @@ class HandleInertiaRequests extends Middleware
             'google_analytics' => [
                 'measurement_id' => config('services.google_analytics.measurement_id'),
             ],
+            'equipo_interiorizacion_id' => config('equipos.interiorizacion.id'),
+            'equipo_interiorizacion_slug' => config('equipos.interiorizacion.slug'),
         ]);
 
         // si no tiene el header X-INERTIA:

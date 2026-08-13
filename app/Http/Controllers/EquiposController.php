@@ -389,7 +389,12 @@ class EquiposController extends Controller
 
         // Actualizar los datos del equipo
         $equipo->nombre = trim($validatedData['nombre']);
-        $equipo->slug = Str::slug($equipo->nombre);
+
+        // El slug solo se regenera si no es un equipo especial protegido
+        if (! $equipo->esEquipoProtegido()) {
+            $equipo->slug = Str::slug($equipo->nombre);
+        }
+
         $equipo->descripcion = $validatedData['descripcion'];
         $equipo->anuncio = $validatedData['anuncio'];
         $equipo->reuniones = $validatedData['reuniones'];

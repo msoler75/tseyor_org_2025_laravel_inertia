@@ -134,7 +134,7 @@ const sections = computed(() => {
             titleColor: 'text-accent',
             show: props.esIniciado,
             items: [
-                { label: 'Interiorización', icon: 'solar:meditation-round-bold-duotone', color: 'accent',  to: route('equipo', 'iniciados-interiorizacion'), tooltip: 'Acceder al equipo de interiorización' },
+                { label: 'Interiorización', icon: 'solar:meditation-round-bold-duotone', color: 'accent',  to: route('equipo', page.props.equipo_interiorizacion_id), tooltip: 'Acceder al equipo de interiorización' },
                 { label: 'Comunicados de Interiorización', icon: 'ph:file-text-duotone', color: 'primary', to: route('comunicados-interiorizacion'), tooltip: 'Comunicados restringidos del equipo de interiorización' },
                 { label: 'Carpeta de iniciados',        icon: 'ph:folder-duotone',  color: 'primary', to: '/archivos/equipos/interiorizacion', tooltip: 'Archivos del equipo de interiorización' },
             ]
