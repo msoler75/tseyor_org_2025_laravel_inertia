@@ -2,7 +2,7 @@
     <Page>
         <PageHeader>
             <div class="flex justify-between items-center mb-20">
-                <Back :href="route('equipo', $page.props.equipo_interiorizacion_id)">Interiorización</Back>
+                <Back :href="route('comunicados-interiorizacion')">Comunicados de Interiorización</Back>
                 <div class="flex gap-2">
                     <Share />
                     <a class="btn btn-xs btn-error text-white w-fit flex gap-3"
@@ -14,6 +14,13 @@
             </div>
         </PageHeader>
 
+        <div class="mb-6 flex justify-center">
+            <div class="w-fit rounded-md border border-warning/30 bg-warning/10 flex items-center gap-1.5 px-2 py-0.5">
+                <Icon icon="game-icons:holy-grail" class="text-[2.25rem] text-warning shrink-0 opacity-80" />
+                <p class="text-[0.7rem] font-semibold uppercase tracking-wider text-warning">Comunicado restringido · solo para iniciados</p>
+            </div>
+        </div>
+
         <PageContent class="sm:max-w-[80ch]">
             <div class="py-[10ch] mb-12 relative">
                 <FontSizeControls class="hidden lg:flex absolute right-4 top-4"/>
@@ -21,7 +28,7 @@
                 <div class="prose mx-auto">
                     <div class="flex items-center gap-3 mb-4">
                         <span class="badge badge-primary">{{ comunicado.nivel == 1 ? 'Nivel 1' : 'Nivel 2' }}</span>
-                        <span class="badge badge-ghost">{{ comunicado.ciclo }}</span>
+                        <span v-if="comunicado.ciclo" class="badge badge-ghost">{{ comunicado.ciclo }}</span>
                         <span v-if="comunicado.numero" class="badge badge-outline">#{{ comunicado.numero }}</span>
                     </div>
 
