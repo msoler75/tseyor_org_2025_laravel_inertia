@@ -2,7 +2,7 @@
     <Page>
         <PageHeader>
         <div class="flex justify-between mb-20">
-            <Back :href="route('equipo', 'iniciados-interiorizacion')">Interiorización</Back>
+            <Back :href="route('equipo', $page.props.equipo_interiorizacion_id)">Interiorización</Back>
             <div class="flex gap-2">
                 <Share />
                 <AdminLinks modelo="comunicado-interiorizacion" necesita="administrar contenidos" />
@@ -17,34 +17,63 @@
             </TitleInfo>
         </div>
 
-        <div class="flex flex-wrap justify-between items-center my-4 gap-x-9 gap-y-7">
-            <select v-model="busqueda.orden" class="sel-trans">
+        <div
+            class="w-fit rounded-lg border border-warning/30 bg-warning/10 flex items-center gap-3 px-4 py-2 mb-8">
+            <Icon icon="ph:lock-key-duotone" class="text-xl text-warning shrink-0 opacity-80" />
+            <p class="font-display text-sm font-bold uppercase tracking-wider text-warning">Zona solo para iniciados en los talleres de interiorización</p>
+        </div>
+
+        <div class="flex flex-wrap justify-between items-center my-4 gap-x-3 gap-y-3">
+            <div class="relative">
+            <select v-model="busqueda.orden" class="filtro-solid">
                 <option value="relevancia" v-if="query">Relevancia</option>
                 <option value="recientes">Recientes primero</option>
                 <option value="cronologico">Cronológico</option>
             </select>
+            <Icon icon="ph:caret-down-duotone" class="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-primary text-base" />
+            </div>
 
-            <select v-model="busqueda.nivel" class="sel-trans">
-                <option value="todos">Todos los niveles</option>
+            <div class="relative">
+            <select v-model="busqueda.nivel" class="filtro-solid">
+                <option value="todos">Nivel 1 y 2</option>
                 <option value="1">Nivel 1</option>
                 <option value="2">Nivel 2</option>
             </select>
+            <Icon icon="ph:caret-down-duotone" class="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-primary text-base" />
+            </div>
 
-            <select v-model="busqueda.ciclo" class="sel-trans">
+            <div class="relative">
+            <select v-model="busqueda.ciclo" class="filtro-solid">
                 <option value="todos">Todos los ciclos</option>
+                <option value="1">Ciclo 1</option>
+                <option value="2">Ciclo 2</option>
                 <option v-for="c of ciclos" :key="c" :value="c">{{ c }}</option>
             </select>
+            <Icon icon="ph:caret-down-duotone" class="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-primary text-base" />
+            </div>
 
-            <select v-model="busqueda.ano" class="sel-trans">
+            <div class="relative">
+            <select v-model="busqueda.ano" class="filtro-solid">
                 <option value="todos">Cualquier año</option>
                 <option v-for="año of añosBusqueda" :key="año" :value="año">{{ año }}</option>
             </select>
+            <Icon icon="ph:caret-down-duotone" class="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-primary text-base" />
+            </div>
 
-            <SearchInput :arguments="busqueda" class="ml-auto sel-trans"
-                auto-width
-                v-model="query" @focus="focusQuery"
-                placeholder="Buscar en comunicados de interiorización..."
-                @search="buscando = true" @blur="blurQuery" />
+            <button v-if="hayFiltrosActivos" type="button" @click="limpiarFiltros"
+                class="btn btn-sm rounded-md border border-base-content/25 bg-base-100 text-base-content/70 hover:border-error hover:text-error transition-colors cursor-pointer shrink-0"
+                title="Borrar filtros" aria-label="Borrar filtros">
+                <Icon icon="ph:x-circle-duotone" class="text-lg" />
+                <span class="text-[0.7rem]">Borrar filtros</span>
+            </button>
+
+            <div class="flex items-center gap-2 ml-auto">
+                <SearchInput class="sel-trans"
+                    auto-width
+                    v-model="query" @focus="focusQuery"
+                    placeholder="Buscar en comunicados..."
+                    @search="buscando = true" @blur="blurQuery" />
+            </div>
         </div>
 
         </PageHeader>
@@ -60,7 +89,7 @@
 
                 <GridAppear
                     v-if="listado.data && listado.data?.length > 0"
-                    class="gap-4" col-width="20rem">
+                    class="gap-4 min-h-[30vh]" col-width="20rem">
                     <CardContent v-for="contenido in listado.data" :key="contenido.id" :title="contenido.titulo"
                         :image="contenido.imagen" image-class="h-80"
                         :href="route('comunicado-interiorizacion', contenido.slug) + resultadoQueryBusqueda"
@@ -77,10 +106,15 @@
 
                 <div v-else>
                     <div v-if="buscando"
-                        class="mt-12 p-8 pb-64 flex gap-4 text-xl items-center">
+                        class="mt-12 p-8 pb-64 flex gap-4 text-xl items-center min-h-[30vh]">
                         <Spinner /> Buscando ...
                     </div>
-                    <div v-else class="flex flex-col gap-5">
+                    <div v-else-if="listado.data?.length === 0"
+                        class="mt-12 p-8 min-h-[30vh] flex flex-col items-center justify-center gap-3 text-center">
+                        <Icon icon="tabler:zoom-cancel" class="text-5xl opacity-30" />
+                        <p class="text-base-content/70">No se encontraron comunicados con los filtros seleccionados.</p>
+                    </div>
+                    <div v-else class="flex flex-col gap-5 min-h-[30vh]">
                         <div v-for="(comunicado, index) of listado.data" :key="comunicado.slug"
                             class="card overflow-hidden shadow-2xs border border-black border-opacity-[0.1] flex flex-col gap-1 bg-info dark:bg-black/10">
                             <div class="px-3 pt-1 text-lg font-bold flex items-center gap-5 justify-between">
@@ -157,35 +191,48 @@ function blurQuery() {}
 
 const buscando = ref(false)
 
-watch(busqueda, () => {
-    if(typeof window == 'undefined') return
+const hayFiltrosActivos = computed(() =>
+    busqueda.value.nivel !== 'todos' ||
+    busqueda.value.ciclo !== 'todos' ||
+    busqueda.value.ano !== 'todos' ||
+    busqueda.value.orden !== 'recientes'
+)
+
+function limpiarFiltros() {
+    busqueda.value.nivel = 'todos'
+    busqueda.value.ciclo = 'todos'
+    busqueda.value.ano = 'todos'
+    busqueda.value.orden = 'recientes'
+    aplicarBusqueda()
+}
+
+function aplicarBusqueda() {
+    if (typeof window == 'undefined') return
     const currentUrl = window.location.href.replace(/\?.*/, '')
 
     var args = {}
     if (query.value)
         args.buscar = query.value
 
-    if (busqueda.value.nivel != 'todos')
-        args.nivel = busqueda.value.nivel
-
-    if (busqueda.value.ciclo != 'todos')
-        args.ciclo = busqueda.value.ciclo
-
-    if (busqueda.value.ano != 'todos')
-        args.ano = busqueda.value.ano
-
-    if (busqueda.value.orden != 'recientes')
-        args.orden = busqueda.value.orden
+    // Enviar siempre los cuatro filtros para que el servidor guarde el estado
+    // completo (incluidos los "todos"/"recientes" cuando se resetean)
+    args.nivel = busqueda.value.nivel
+    args.ciclo = busqueda.value.ciclo
+    args.ano = busqueda.value.ano
+    args.orden = busqueda.value.orden
 
     buscando.value = true
     router.get(currentUrl, args)
-}, { deep: true })
+}
+
+watch(busqueda, aplicarBusqueda, { deep: true })
 </script>
 
 <style scoped>
 @reference "../../../css/app.css";
 
-.sel-trans {
-    @apply bg-base-200 border-transparent border-b-gray-500/50;
+/* Filtro sólido con color de acento primario */
+.filtro-solid {
+    @apply appearance-none bg-none rounded-md border-0 bg-primary/15 text-primary font-semibold pl-3 pr-7 py-1.5 text-sm cursor-pointer;
 }
 </style>
