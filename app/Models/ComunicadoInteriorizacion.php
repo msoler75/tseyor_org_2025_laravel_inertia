@@ -6,6 +6,7 @@ use App\Contracts\PdfGenerable;
 use App\Traits\BuscableTrait;
 use App\Traits\ComunicadoMediaTrait;
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Laravel\Scout\Searchable;
@@ -22,6 +23,7 @@ class ComunicadoInteriorizacion extends Model implements PdfGenerable
     use BuscableTrait;
     use ComunicadoMediaTrait;
     use CrudTrait;
+    use HasFactory;
     use RevisionableTrait;
     use Searchable;
     use SoftDeletes;
