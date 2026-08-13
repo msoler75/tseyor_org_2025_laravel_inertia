@@ -379,7 +379,7 @@ Route::middleware([
         return Inertia::render('Miembros', [
             'misEquipos' => $user ? $user->equipos()->count() : 0,
             'esMuul' => $user && $user->grupos()->where('slug', 'muul')->exists(),
-            'esIniciado' => $user && $user->equipos()->where('slug', 'iniciados-interiorizacion')->exists(),
+            'esIniciado' => $user && $user->esIniciado(),
             'inscripcionesPendientes' => $inscripcionesPendientes,
             'inscripcionesTotales' => $inscripcionesTotales,
         ]);

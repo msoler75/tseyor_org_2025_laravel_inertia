@@ -22,8 +22,6 @@ use Laravel\Scout\Searchable;
 use Spatie\Permission\Traits\HasRoles;
 use Venturecraft\Revisionable\RevisionableTrait;
 
-define('EQUIPO_ID_INTERIORIZACION', 2);
-
 class User extends Authenticatable implements MustVerifyEmail
 {
     use BuscableTrait;
@@ -217,7 +215,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function esIniciado()
     {
-        return $this->equipos()->pluck('equipos.id')->contains(EQUIPO_ID_INTERIORIZACION);
+        return $this->equipos()->pluck('equipos.id')->contains(config('equipos.interiorizacion.id'));
     }
 
     /**

@@ -2,7 +2,7 @@
     <Page>
         <PageHeader>
             <div class="flex justify-between items-center mb-20">
-                <Back :href="route('equipo', 'iniciados-interiorizacion')">Interiorización</Back>
+                <Back :href="route('equipo', $page.props.equipo_interiorizacion_id)">Interiorización</Back>
                 <div class="flex gap-2">
                     <Share />
                     <a class="btn btn-xs btn-error text-white w-fit flex gap-3"
