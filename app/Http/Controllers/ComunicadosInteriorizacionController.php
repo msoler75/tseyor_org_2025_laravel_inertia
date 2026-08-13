@@ -7,6 +7,7 @@ use App\Pigmalion\BusquedasHelper;
 use App\Pigmalion\Markdown;
 use App\Pigmalion\SEO;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Inertia\Inertia;
 
 class ComunicadosInteriorizacionController extends Controller
@@ -34,12 +35,37 @@ class ComunicadosInteriorizacionController extends Controller
 
         $page = $request->input('page', 1);
         $buscar = $request->input('buscar');
-        $nivel = $request->input('nivel');
-        $ciclo = $request->input('ciclo');
-        $ano = $request->input('ano');
-        $orden = $request->input('orden');
 
         $user = auth()->user();
+
+        // Filtros persistidos por usuario: si la petición trae filtros, se guardan;
+        // si no los trae (primera visita), se recuperan de la caché.
+        $filtrosPersistibles = ['nivel', 'ciclo', 'ano', 'orden'];
+        $cacheKey = 'comunicados-interiorizacion-filtros-'.$user->id;
+
+        if ($request->hasAny($filtrosPersistibles)) {
+            $filtrosGuardados = $request->only($filtrosPersistibles);
+            Cache::put($cacheKey, $filtrosGuardados, now()->addDays(30));
+        } else {
+            $filtrosGuardados = Cache::get($cacheKey, []);
+
+            // Si se cargó la URL sin filtros pero el usuario tiene filtros guardados,
+            // redirige a la URL con esos filtros para que la URL original no muestre
+            // una versión filtrada distinta de la canónica.
+            if ($filtrosGuardados && ! $buscar && (int) $request->input('page', 1) === 1) {
+                $query = collect($filtrosGuardados)->filter(fn ($v) => $v && $v !== 'todos' && $v !== 'recientes')->all();
+
+                if ($query) {
+                    return redirect($request->url().'?'.http_build_query($query));
+                }
+            }
+        }
+
+        $nivel = $request->input('nivel', $filtrosGuardados['nivel'] ?? null);
+        $ciclo = $request->input('ciclo', $filtrosGuardados['ciclo'] ?? null);
+        $ano = $request->input('ano', $filtrosGuardados['ano'] ?? null);
+        $orden = $request->input('orden', $filtrosGuardados['orden'] ?? null);
+
         $esAdmin = $user && $user->can('administrar contenidos');
         $esIniciado = $user && $user->esIniciado();
         $accesoCompleto = $esAdmin || $esIniciado;
