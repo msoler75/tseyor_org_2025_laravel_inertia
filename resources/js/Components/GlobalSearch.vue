@@ -3,7 +3,7 @@
         class="w-fit flex items-center text-sm leading-6 text-slate-400 rounded-md ring-1 ring-slate-900/10 shadow-2xs py-1.5 pl-2 pr-3 hover:ring-slate-300 dark:bg-slate-800 dark:highlight-white/5 dark:hover:bg-slate-700 select-none flex-nowrap shrink-0"
         @click="search.opened = true">
         <Icon icon="ph:magnifying-glass-bold" class="mr-2" />
-        <span class="hidden xs:inline">Buscar en el sitio...</span>
+        <span class="hidden xs:inline">Buscar contenidos...</span>
         <span class="xs:hidden">Buscar...</span>
             <span class="hidden ml-auto pl-3 flex-none text-xs font-semibold">Ctrl K</span>
 
@@ -18,7 +18,7 @@
                             :value="search.query"
                             @input="handleQueryInput"
                             aria-autocomplete="both" autocomplete="off" autocorrect="off" autocapitalize="off"
-                            enterkeyhint="go" spellcheck="false" placeholder="Buscar en el sitio web..." :maxlength="INPUT_MAX_LENGTH"
+                            enterkeyhint="go" spellcheck="false" placeholder="Buscar contenidos..." :maxlength="INPUT_MAX_LENGTH"
                             type="search" aria-owns="search-input-list"
                             :aria-activedescendant="itemSeleccionado ? itemSeleccionado.idDom : ''"
                             aria-controls="search-input-list" aria-haspopup="true">
