@@ -71,6 +71,19 @@
     }
 }
 
+.filtro-solid {
+    color-scheme: light;
+}
+
+.dark .filtro-solid {
+    color-scheme: dark;
+}
+
+.filtro-solid option {
+    background-color: var(--color-base-100);
+    color: var(--color-base-content);
+}
+
 
 @utility container {
     padding-inline: 1rem;

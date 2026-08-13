@@ -21,7 +21,8 @@
             </TitleInfo>
 
             <div class="flex-grow flex justify-start md:justify-end">
-            <Dropdown width="60">
+            <Dropdown width="60"
+                :content-classes="['py-1', 'bg-base-100']">
 
                 <template #trigger="data">
                     <div class="btn btn-primary btn-sm cursor-pointer gap-3" :class="data.open ? 'opacity-50' : ''">
@@ -51,27 +52,37 @@
 
         <div class="flex flex-wrap justify-between items-center my-4 gap-x-9 gap-y-7">
 
-            <select v-model="busqueda.orden" class="sel-trans" v-show="verFiltros">
-                <option value="relevancia" v-if="vistaBusquedaCompleta || query">Relevancia</option>
-                <option value="recientes">Recientes primero</option>
-                <option value="cronologico">Cronológico</option>
-            </select>
+            <div class="relative" v-show="verFiltros">
+                <select v-model="busqueda.orden" class="filtro-solid">
+                    <option value="relevancia" v-if="vistaBusquedaCompleta || query">Relevancia</option>
+                    <option value="recientes">Recientes primero</option>
+                    <option value="cronologico">Cronológico</option>
+                </select>
+                <Icon icon="ph:caret-down-duotone" class="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-primary text-base" />
+            </div>
 
-            <select v-model="busqueda.categoria" class="sel-trans" v-show="verFiltros">
-                <option value="todos">Todos los comunicados</option>
-                <option v-for="etiqueta, categoria of categoriasBusqueda" :key="categoria" :value="categoria">{{
-                    etiqueta
-                }}</option>
-            </select>
+            <div class="relative" v-show="verFiltros">
+                <select v-model="busqueda.categoria" class="filtro-solid">
+                    <option value="todos">Todos los comunicados</option>
+                    <option v-for="etiqueta, categoria of categoriasBusqueda" :key="categoria" :value="categoria">{{
+                        etiqueta
+                    }}</option>
+                </select>
+                <Icon icon="ph:caret-down-duotone" class="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-primary text-base" />
+            </div>
 
-            <select v-model="busqueda.ano" class="sel-trans" v-show="verFiltros">
-                <option value="todos">Cualquier año</option>
-                <option v-for="año of añosBusqueda" :key="año" :value="año">{{ año }}</option>
-            </select>
+            <div class="relative" v-show="verFiltros">
+                <select v-model="busqueda.ano" class="filtro-solid">
+                    <option value="todos">Cualquier año</option>
+                    <option v-for="año of añosBusqueda" :key="año" :value="año">{{ año }}</option>
+                </select>
+                <Icon icon="ph:caret-down-duotone" class="absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-primary text-base" />
+            </div>
 
-            <span v-show="!verFiltros" @click="verFiltros = true" class="flex items-center gap-2 cursor-pointer">
+            <button v-show="!verFiltros" @click="verFiltros = true" type="button"
+                class="filtro-solid flex items-center gap-2 cursor-pointer">
                 <Icon icon="material-symbols:filter-list-rounded"></Icon> Filtros
-            </span>
+            </button>
 
             <SearchInput :arguments="busqueda" class="ml-auto sel-trans"
                 auto-width
@@ -390,7 +401,9 @@ const cambiarVistaComunicados = (nuevaVista) => {
     @apply px-6 py-4 whitespace-nowrap text-sm font-medium;
 }
 
-.sel-trans {
-    @apply bg-base-200 border-transparent border-b-gray-500/50;
+.filtro-solid {
+    @apply appearance-none bg-none rounded-md border-0 bg-primary/15 text-primary font-semibold pl-3 pr-7 py-1.5 text-sm cursor-pointer;
+    min-width: max-content;
+    max-width: 100%;
 }
 </style>
