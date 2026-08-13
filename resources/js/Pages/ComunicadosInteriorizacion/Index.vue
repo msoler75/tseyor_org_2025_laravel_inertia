@@ -19,7 +19,7 @@
 
         <div
             class="w-fit rounded-lg border border-warning/30 bg-warning/10 flex items-center gap-3 px-4 py-2 mb-8">
-            <Icon icon="ph:lock-key-duotone" class="text-xl text-warning shrink-0 opacity-80" />
+            <Icon icon="game-icons:holy-grail" class="text-[3.5rem] text-warning shrink-0 opacity-80" />
             <p class="font-display text-sm font-bold uppercase tracking-wider text-warning">Zona solo para iniciados en los talleres de interiorización</p>
         </div>
 
