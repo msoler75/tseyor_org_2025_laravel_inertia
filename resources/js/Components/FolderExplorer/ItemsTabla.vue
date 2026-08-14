@@ -1,5 +1,5 @@
 <template>
-    <table class="w-full lg:w-auto max-w-full mx-auto" :class="transitionActive ? 'animating' : ''">
+    <table class="w-full max-w-full mx-auto overflow-hidden" :class="transitionActive ? 'animating' : ''">
         <thead class="hidden sm:table-header-group" :class="items.length ? '' : 'opacity-0'">
             <tr>
                 <th v-if="store.seleccionando" class="hidden md:table-cell"></th>
@@ -76,17 +76,18 @@
                         :is-link="!store.seleccionando && !store.embed && item.puedeLeer" />
                 </td>
                 <td class="sm:hidden py-3">
-                    <div class="flex flex-col">
+                    <div class="flex flex-col min-w-0">
                         <ConditionalLink v-if="item.tipo === 'disco'" :href="item.url" v-html="store.nombreItem(item)"
-                            class="cursor-pointer" @click="store.clickDisk(item, $event)"
+                            class="cursor-pointer break-all" @click="store.clickDisk(item, $event)"
                             :is-link="!store.seleccionando && !store.embed" />
                         <ConditionalLink v-else-if="item.tipo === 'carpeta'" :href="item.url"
-                            v-html="store.nombreItem(item)" class="cursor-pointer"
+                            v-html="store.nombreItem(item)" class="cursor-pointer break-all"
                             :class="store.seleccionando ? 'pointer-events-none' : ''"
                             @click="store.clickFolder(item, $event)" :is-link="!store.seleccionando && !store.embed" />
-                        <div v-else-if="store.seleccionando" :title="item.nombre" v-html="store.nombreItem(item)" />
+                        <div v-else-if="store.seleccionando" :title="item.nombre" v-html="store.nombreItem(item)" class="break-all" />
                         <a v-else :href="item.url" download v-html="store.nombreItem(item)"
                             :class="store.seleccionando ? 'pointer-events-none' : ''"
+                            class="break-all"
                             @click="store.clickFile(item, $event)" :is-link="!store.seleccionando && !store.embed" />
 
                         <small class="w-full flex justify-between gap-2 items-center opacity-50">
@@ -102,14 +103,14 @@
                 </td>
                 <td class="hidden sm:table-cell py-3 max-w-[24rem]">
                     <ConditionalLink v-if="item.tipo === 'disco'" :href="item.url" v-html="store.nombreItem(item)"
-                        class="cursor-pointer py-3 hover:underline" @click="store.clickDisk(item, $event)"
+                        class="cursor-pointer py-3 hover:underline break-all" @click="store.clickDisk(item, $event)"
                         :is-link="!store.seleccionando && !store.embed" />
                     <ConditionalLink v-else-if="item.tipo === 'carpeta'" :href="item.url"
-                        v-html="store.nombreItem(item)" class="cursor-pointer py-3 hover:underline"
+                        v-html="store.nombreItem(item)" class="cursor-pointer py-3 hover:underline break-all"
                         :class="store.seleccionando ? 'pointer-events-none' : ''"
                         @click="store.clickFolder(item, $event)" :is-link="!store.seleccionando && !store.embed" />
-                    <span v-else-if="store.seleccionando" v-html="store.nombreItem(item)" />
-                    <a v-else :href="item.url" download v-html="store.nombreItem(item)" class="py-3 hover:underline"
+                    <span v-else-if="store.seleccionando" v-html="store.nombreItem(item)" class="break-all" />
+                    <a v-else :href="item.url" download v-html="store.nombreItem(item)" class="py-3 hover:underline break-all"
                         :class="store.seleccionando ? 'pointer-events-none' : ''"
                         @click="store.clickFile(item, $event)" />
                 </td>
