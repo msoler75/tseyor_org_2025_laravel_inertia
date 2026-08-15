@@ -2,10 +2,10 @@
 
 namespace App\Services;
 
-use App\Models\Comunicado;
 use App\Pigmalion\ImageHasher;
 use App\Pigmalion\Markdown;
 use App\Pigmalion\StorageItem;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
 
 /**
@@ -36,7 +36,7 @@ class ImageDeduplicationService
      *
      * @return array{texto: string, imagen: string, changes: int}
      */
-    public static function deduplicate(Comunicado $comunicado): array
+    public static function deduplicate(Model $comunicado): array
     {
         self::loadCanonicals();
 
