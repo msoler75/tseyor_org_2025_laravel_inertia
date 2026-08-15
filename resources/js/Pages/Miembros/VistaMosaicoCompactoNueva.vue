@@ -7,21 +7,24 @@
             leave-active-class="transition-all duration-150 ease-in"
             leave-from-class="opacity-100 translate-y-0"
             leave-to-class="opacity-0 -translate-y-2">
-            <div v-if="editing" class="sticky top-0 z-10 flex items-center justify-end gap-2 px-3 py-2 mb-2 rounded-xl border border-base-300 bg-base-100 shadow-sm">
-                <button @click="cancelEdit"
-                    class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border border-base-300 bg-base-100 text-base-content/60 hover:bg-base-200/60 transition-colors cursor-pointer">
-                    <Icon icon="ph:x-duotone" class="text-sm" />
-                    Descartar
-                </button>
-                <button @click="saveEdit"
-                    class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border border-success/40 bg-success/10 text-success hover:bg-success/20 transition-colors cursor-pointer">
-                    <Icon icon="ph:check-circle-duotone" class="text-sm" />
-                    Guardar
-                </button>
+            <div v-if="editing" class="sticky top-0 z-10 flex items-center justify-between gap-2 px-3 py-2 my-6 rounded-xl border border-base-300 bg-base-100 shadow-sm">
+                <span class="text-sm font-semibold text-base-content/60 leading-tight">Ordenar los paneles</span>
+                <div class="flex items-center gap-2 shrink-0">
+                    <button @click="cancelEdit"
+                        class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border border-base-300 bg-base-100 text-base-content/60 hover:bg-base-200/60 transition-colors cursor-pointer">
+                        <Icon icon="ph:x-duotone" class="text-sm" />
+                        Descartar
+                    </button>
+                    <button @click="saveEdit"
+                        class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border border-success/40 bg-success/10 text-success hover:bg-success/20 transition-colors cursor-pointer">
+                        <Icon icon="ph:check-circle-duotone" class="text-sm" />
+                        Guardar
+                    </button>
+                </div>
             </div>
         </transition>
 
-        <!-- Desktop: sidebar menu (md+) -->
+        <!-- Desktop: sidebar menu (md+) — drag and drop -->
         <div class="hidden md:flex gap-4">
             <aside ref="sidebarRef" class="shrink-0 w-52 sm:w-62 space-y-1">
                 <div v-for="id in activeOrder" :key="id" :data-id="id">
@@ -34,7 +37,7 @@
                             editing ? 'cursor-grab active:cursor-grabbing' : 'cursor-pointer'
                         ]">
                         <Icon v-if="editing" icon="ph:dots-six-vertical-duotone" class="text-base-content/30 shrink-0 text-base" />
-                        <Icon :icon="getSection(id)?.titleIcon" class="text-lg shrink-0"                         :class="activa === id ? getSection(id)?.titleColor : ''" />
+                        <Icon :icon="getSection(id)?.titleIcon" class="text-lg shrink-0" :class="activa === id ? getSection(id)?.titleColor : ''" />
                         <span class="truncate capitalize">{{ getSection(id)?.title }}</span>
                         <span v-if="getSection(id)?.badges?.length" class="flex gap-0.5 ml-auto shrink-0">
                             <span v-for="b in getSection(id).badges" :key="b.label" class="text-xs font-bold px-1.5 py-0.5 rounded"
@@ -74,12 +77,22 @@
             </div>
         </div>
 
-        <!-- Mobile: mosaico compacto original (<md) -->
-        <div ref="mosaicRef" class="md:hidden">
-            <div v-for="s in mobileSections" :key="s.id" class="mb-4" :data-id="s.id">
-                <div class="section-header flex items-center gap-2 mb-2"
-                    :class="editing ? 'cursor-grab active:cursor-grabbing' : ''">
-                    <Icon v-if="editing" icon="ph:dots-six-vertical-duotone" class="text-base-content/30 shrink-0 text-base" />
+        <!-- Mobile: mosaico compacto (<md) — arrow buttons -->
+        <TransitionGroup name="panel-move" tag="div" class="md:hidden">
+            <div v-for="(s, idx) in mobileSections" :key="s.id" class="mb-4">
+                <div class="section-header flex items-center gap-2 mb-2">
+                    <template v-if="editing">
+                        <button @click="moveUp(s.id)" :disabled="idx === 0"
+                            class="shrink-0 w-7 h-7 flex items-center justify-center rounded-lg border border-base-300 bg-base-100 transition-colors cursor-pointer"
+                            :class="idx === 0 ? 'opacity-30 pointer-events-none' : 'hover:bg-base-200/60'">
+                            <Icon icon="ph:caret-up-duotone" class="text-sm" />
+                        </button>
+                        <button @click="moveDown(s.id)" :disabled="idx === mobileSections.length - 1"
+                            class="shrink-0 w-7 h-7 flex items-center justify-center rounded-lg border border-base-300 bg-base-100 transition-colors cursor-pointer"
+                            :class="idx === mobileSections.length - 1 ? 'opacity-30 pointer-events-none' : 'hover:bg-base-200/60'">
+                            <Icon icon="ph:caret-down-duotone" class="text-sm" />
+                        </button>
+                    </template>
                     <Icon :icon="s.titleIcon" class="text-sm shrink-0" :class="s.titleColor" />
                     <h2 class="text-xs font-semibold text-base-content/50 uppercase tracking-wider my-0">{{ s.title }}</h2>
                     <div class="flex-1 h-px bg-base-300/70 mx-1"></div>
@@ -110,7 +123,7 @@
                     </component>
                 </div>
             </div>
-        </div>
+        </TransitionGroup>
 
         <!-- Edit mode toggle button -->
         <div class="flex justify-center mt-4">
@@ -167,8 +180,27 @@ const mobileSections = computed(() =>
 )
 
 // --- Desktop sidebar active section ---
-const activa = ref(props.sections[0]?.id)
+const activa = ref(activeOrder.value[0])
 const activeSection = computed(() => enrichedSections.value.find(s => s.id === activa.value))
+
+// --- Arrow move (mobile) ---
+function moveUp(id) {
+    const arr = [...draftOrder.value]
+    const idx = arr.indexOf(id)
+    if (idx > 0) {
+        [arr[idx - 1], arr[idx]] = [arr[idx], arr[idx - 1]]
+        draftOrder.value = arr
+    }
+}
+
+function moveDown(id) {
+    const arr = [...draftOrder.value]
+    const idx = arr.indexOf(id)
+    if (idx < arr.length - 1) {
+        [arr[idx], arr[idx + 1]] = [arr[idx + 1], arr[idx]]
+        draftOrder.value = arr
+    }
+}
 
 // --- Edit mode ---
 function enterEdit() {
@@ -187,17 +219,13 @@ function cancelEdit() {
     editing.value = false
 }
 
-// --- Drag and drop (both desktop sidebar and mobile mosaic) ---
+// --- Drag and drop (desktop sidebar only) ---
 const sidebarRef = ref(null)
-const mosaicRef = ref(null)
 let sidebarInstance = null
-let mosaicInstance = null
 
 function destroySortables() {
     sidebarInstance?.destroy()
-    mosaicInstance?.destroy()
     sidebarInstance = null
-    mosaicInstance = null
 }
 
 function setupSortables() {
@@ -207,19 +235,6 @@ function setupSortables() {
     if (sidebarRef.value) {
         sidebarInstance = useSortable(sidebarRef, draftOrder, {
             handle: '.sidebar-item',
-            animation: 150,
-            ghostClass: 'sortable-ghost',
-            dragClass: 'sortable-drag',
-            group: 'sections',
-            delay: 100,
-            delayOnTouchOnly: true,
-            touchStartThreshold: 5,
-            onEnd: () => { draftOrder.value = [...draftOrder.value] },
-        })
-    }
-    if (mosaicRef.value) {
-        mosaicInstance = useSortable(mosaicRef, draftOrder, {
-            handle: '.section-header',
             animation: 150,
             ghostClass: 'sortable-ghost',
             dragClass: 'sortable-drag',
@@ -246,5 +261,22 @@ watch(editing, (val) => {
 }
 .sortable-drag {
     @apply opacity-90 shadow-2xl scale-[1.02];
+}
+
+/* Panel reorder animation */
+.panel-move-enter-active,
+.panel-move-leave-active {
+    transition: all 0.3s ease;
+}
+.panel-move-enter-from {
+    opacity: 0;
+    transform: translateY(-10px);
+}
+.panel-move-leave-to {
+    opacity: 0;
+    transform: translateY(10px);
+}
+.panel-move-move {
+    transition: transform 0.3s ease;
 }
 </style>
