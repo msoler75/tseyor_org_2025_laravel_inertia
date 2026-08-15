@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Contracts\PdfGenerable;
+use App\Services\ImageDeduplicationService;
 use App\Traits\BuscableTrait;
 use App\Traits\ComunicadoMediaTrait;
 use Backpack\CRUD\app\Models\Traits\CrudTrait;
@@ -69,6 +70,9 @@ class ComunicadoInteriorizacion extends Model implements PdfGenerable
             if (isset($model->fecha_comunicado)) {
                 $model->ano = date('Y', strtotime($model->fecha_comunicado));
             }
+
+            // Deduplicar imágenes: reemplazar copias locales del sello y guías
+            ImageDeduplicationService::deduplicate($model);
         });
 
         static::updated(function ($model) {
