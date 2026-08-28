@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "50b9d45f407a9382754bf7ff97f64d51",
+    "content-hash": "9a47eef9d68ff3753ce96d4fa3820fad",
     "packages": [
         {
             "name": "backpack/basset",
@@ -6282,6 +6282,85 @@
                 "source": "https://github.com/ramsey/uuid/tree/4.9.3"
             },
             "time": "2026-06-18T03:57:49+00:00"
+        },
+        {
+            "name": "redberry/mailbox-for-laravel",
+            "version": "v2.3.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/RedberryProducts/mailbox-for-laravel.git",
+                "reference": "2256cd50f1cadb35cce871640cf8dbda020f0a02"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/RedberryProducts/mailbox-for-laravel/zipball/2256cd50f1cadb35cce871640cf8dbda020f0a02",
+                "reference": "2256cd50f1cadb35cce871640cf8dbda020f0a02",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/contracts": "^10.0||^11.0||^12.0||^13.0",
+                "php": "^8.3",
+                "spatie/laravel-package-tools": "^1.16"
+            },
+            "require-dev": {
+                "larastan/larastan": "^2.9||^3.0||^4.0",
+                "laravel/pint": "^1.29",
+                "nunomaduro/collision": "^7.10.0||^8.1.1||^9.0",
+                "orchestra/testbench": "^11.0.0||^10.0.0||^9.0.0||^8.22.0",
+                "pestphp/pest": "^2.0||^3.0||^4.0",
+                "pestphp/pest-plugin-arch": "^2.5||^3.0||^4.0",
+                "pestphp/pest-plugin-laravel": "^2.0||^3.0||^4.0",
+                "phpstan/extension-installer": "^1.3",
+                "phpstan/phpstan-deprecation-rules": "^1.1||^2.0",
+                "phpstan/phpstan-phpunit": "^1.3||^2.0",
+                "spatie/laravel-ray": "^1.35"
+            },
+            "bin": [
+                "bin/check"
+            ],
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Redberry\\MailboxForLaravel\\MailboxServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Redberry\\MailboxForLaravel\\": "src/",
+                    "Redberry\\MailboxForLaravel\\Database\\Factories\\": "database/factories/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nika Jorjoliani",
+                    "email": "nika@redberry.ge",
+                    "role": "Developer"
+                }
+            ],
+            "description": "This is my package mailbox-for-laravel",
+            "homepage": "https://github.com/redberryproducts/mailbox-for-laravel",
+            "keywords": [
+                "laravel",
+                "mailbox-for-laravel",
+                "redberry"
+            ],
+            "support": {
+                "issues": "https://github.com/RedberryProducts/mailbox-for-laravel/issues",
+                "source": "https://github.com/RedberryProducts/mailbox-for-laravel/tree/v2.3.2"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/Redberry",
+                    "type": "github"
+                }
+            ],
+            "time": "2026-08-24T10:10:40+00:00"
         },
         {
             "name": "sabberworm/php-css-parser",

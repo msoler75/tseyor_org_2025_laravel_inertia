@@ -27,6 +27,7 @@
         "opgginc/laravel-mcp-server": "^2.0",
         "phpoffice/phpword": "^1.4",
         "ralphjsmit/laravel-seo": "^1.4",
+        "redberry/mailbox-for-laravel": "^2.3",
         "sebastian/diff": "^6.0",
         "setasign/fpdf": "^1.8",
         "setasign/fpdi": "^2.6",

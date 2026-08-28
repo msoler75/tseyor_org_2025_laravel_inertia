@@ -139,6 +139,9 @@ Route::group([
     Route::get('logs', function () {
         return view('admin.logs');
     });
+    Route::get('correos-enviados', function () {
+        return view('admin.mailbox');
+    })->name('admin.correos-enviados');
 
     // Radio
     Route::post('radio-item/{id}/toggle', 'RadioItemCrudController@toggle');
