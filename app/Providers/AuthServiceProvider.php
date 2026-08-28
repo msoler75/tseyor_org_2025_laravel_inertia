@@ -24,8 +24,8 @@ class AuthServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        /* Gate::guessPolicyNamesUsing(function ($modelClass) {
-            return 'App\\Policies\\' . class_basename($modelClass) . 'Policy';
-        }); */
+        Gate::define('viewMailbox', function ($user) {
+            return $user->hasPermissionTo('administrar social');
+        });
     }
 }

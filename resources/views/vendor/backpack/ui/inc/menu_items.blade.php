@@ -44,7 +44,7 @@
     <x-backpack::menu-dropdown-item title="Eventos" icon="la la-calendar-check" :link="backpack_url('evento')" />
     <x-backpack::menu-dropdown-item title="Inscripciones" icon="la la-edit" :link="backpack_url('inscripcion')" />
     <x-backpack::menu-dropdown-item title="Comentarios" icon="la la-comments" :link="backpack_url('comentario')" />
-    <x-backpack::menu-dropdown-item title="Correos" icon="la la-envelope" :link="backpack_url('email')" />
+    <x-backpack::menu-dropdown-item title="Correos" icon="la la-envelope" :link="backpack_url('correos-enviados')" />
     <x-backpack::menu-dropdown-item title="Boletines" icon="la la-newspaper" :link="backpack_url('boletin')" />
     <x-backpack::menu-dropdown-item title="Suscriptores" icon="la la-user" :link="backpack_url('suscriptor')" />
 </x-backpack::menu-dropdown>
