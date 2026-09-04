@@ -224,7 +224,7 @@ const sidebarRef = ref(null)
 let sidebarInstance = null
 
 function destroySortables() {
-    sidebarInstance?.destroy()
+    sidebarInstance?.stop()
     sidebarInstance = null
 }
 
