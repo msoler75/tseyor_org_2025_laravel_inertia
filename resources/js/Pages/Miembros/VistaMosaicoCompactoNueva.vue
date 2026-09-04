@@ -140,12 +140,12 @@
 <script setup>
 import { ref, computed, watch, nextTick } from 'vue'
 import { Link } from '@inertiajs/vue3'
-import { useStorage } from '@vueuse/core'
 import { useSortable } from '@vueuse/integrations/useSortable'
 
 const props = defineProps({
     sections: { type: Array, required: true },
-    iconClasses: { type: Function, required: true }
+    iconClasses: { type: Function, required: true },
+    userSettings: { type: Object, default: () => ({}) }
 })
 
 // --- Enriched sections with badges ---
@@ -161,7 +161,7 @@ const sectionMap = computed(() => new Map(enrichedSections.value.map(s => [s.id,
 function getSection(id) { return sectionMap.value.get(id) }
 
 // --- Persisted order (committed) ---
-const committedOrder = useStorage('miembros-mosaico-nueva-order', props.sections.map(s => s.id))
+const committedOrder = ref(props.userSettings.miembros_order || props.sections.map(s => s.id))
 watch(() => props.sections, (sections) => {
     const ids = sections.map(s => s.id)
     committedOrder.value = [...committedOrder.value.filter(id => ids.includes(id)), ...ids.filter(id => !committedOrder.value.includes(id))]
@@ -212,6 +212,19 @@ function enterEdit() {
 function saveEdit() {
     committedOrder.value = [...draftOrder.value]
     editing.value = false
+    const cookies = document.cookie.split(';')
+    const xsrfCookie = cookies.find(c => c.trim().startsWith('XSRF-TOKEN='))
+    const xsrf = xsrfCookie ? decodeURIComponent(xsrfCookie.split('=')[1]) : ''
+    fetch('/user/settings', {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-XSRF-TOKEN': xsrf,
+            'X-Requested-With': 'XMLHttpRequest',
+            'Accept': 'application/json',
+        },
+        body: JSON.stringify({ settings: { miembros_order: committedOrder.value } }),
+    })
 }
 
 function cancelEdit() {

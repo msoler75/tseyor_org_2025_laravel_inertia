@@ -12,6 +12,7 @@ use App\Http\Controllers\ChatGPTController;
 use App\Http\Controllers\ComunicadosController;
 use App\Http\Controllers\ComunicadosInteriorizacionController;
 use App\Http\Controllers\ContactarController;
+use App\Http\Controllers\UserSettingsController;
 use App\Http\Controllers\ContactosController;
 use App\Http\Controllers\ContenidosController;
 use App\Http\Controllers\CursosController;
@@ -92,6 +93,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // ...otras rutas de perfil...
     Route::get('/user/mcp-token', [McpTokenController::class, 'show'])->name('profile.mcp-token');
     Route::post('/user/mcp-token', [McpTokenController::class, 'generate'])->name('profile.mcp-token.generate');
+
+    Route::get('/user/settings', [UserSettingsController::class, 'index'])->name('user.settings');
+    Route::put('/user/settings', [UserSettingsController::class, 'update'])->name('user.settings.update');
 
     // Rutas de gestión de inscripciones
     Route::prefix('inscripciones')->group(function () {
@@ -382,6 +386,7 @@ Route::middleware([
             'esIniciado' => $user && $user->esIniciado(),
             'inscripcionesPendientes' => $inscripcionesPendientes,
             'inscripcionesTotales' => $inscripcionesTotales,
+            'userSettings' => $user->settings ?? [],
         ]);
     })->name('miembros');
 

@@ -9,7 +9,7 @@
             <FontSizeControls />
         </div>
 
-        <VistaMosaicoCompactoNueva :sections="sections" :icon-classes="iconClasses" />
+        <VistaMosaicoCompactoNueva :sections="sections" :icon-classes="iconClasses" :user-settings="userSettings" />
     </div>
 </template>
 
@@ -28,7 +28,8 @@ const props = defineProps({
     esMuul: { type: Boolean, default: false },
     esIniciado: { type: Boolean, default: false },
     inscripcionesPendientes: { type: Number, default: 0 },
-    inscripcionesTotales: { type: Number, default: 0 }
+    inscripcionesTotales: { type: Number, default: 0 },
+    userSettings: { type: Object, default: () => ({}) }
 })
 
 const iconClasses = (color) => {

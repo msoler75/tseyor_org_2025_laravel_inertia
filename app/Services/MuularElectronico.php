@@ -40,7 +40,8 @@ class MuularElectronico
         $auth_url = config('app.muular_electronico.auth_url');
 
         if (! $auth_url) {
-            throw new \Error('Error de configuración');
+            Log::warning('MuularElectronico: auth_url no configurada');
+            return redirect()->route('login');
         }
 
         return view('redirect-with-jwt', ['url' => $auth_url.($from ? '?to='.$from : ''), 'token' => $jwt]);
@@ -58,13 +59,14 @@ class MuularElectronico
         $jwt = self::jwt();
 
         if (! $jwt) {
-            return response()->json(['error' => 'No ha iniciado sesión']);
+            return response()->json(['error' => 'Servicio de muular no configurado']);
         }
 
         $url = config('app.muular_electronico.saldo_url');
 
         if (! $url) {
-            throw new \Error('Error de configuración');
+            Log::warning('MuularElectronico: saldo_url no configurada');
+            return response()->json(['error' => 'Servicio de muular no configurado']);
         }
 
         // llamamos a la URL con curl, pasándole mediante POST el parámetro 'token' que es el $jwt y recogemos el resultado en JSON
@@ -104,7 +106,8 @@ class MuularElectronico
         $key = config('app.muular_electronico.jwt_secret');
 
         if (! $key) {
-            throw new \Error('Error de configuración. JWT key no definido');
+            Log::warning('MuularElectronico: JWT key no definida en config');
+            return null;
         }
 
         $payload = [
@@ -139,7 +142,7 @@ class MuularElectronico
         $key = config('app.muular_electronico.jwt_secret');
 
         if (! $key) {
-            throw new \Error('Error de configuración. JWT key no definido');
+            return response()->json(['error' => 'Servicio de muular no configurado']);
         }
 
         $payload = JWT::decode($token, new Key($key, 'HS256'));
