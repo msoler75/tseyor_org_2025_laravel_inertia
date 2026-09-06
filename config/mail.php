@@ -124,11 +124,12 @@ return [
 
     'rate_limit' => [
         'max' => [
-            'overall' => env('MAIL_RATE_LIMIT_MAX', 80), // Default max limit
-            // 'boletin' => env('MAIL_RATE_LIMIT_MAX_BOLETIN', 50), // Max limit for boletin
+            'overall' => env('MAIL_RATE_LIMIT_MAX', 80), // Total combined limit (server accepts ~100/hr)
+            'boletin' => env('MAIL_RATE_LIMIT_MAX_BOLETIN', 70), // Boletin-specific limit
+            'invitacion' => env('MAIL_RATE_LIMIT_MAX_INVITACION', 50), // Invitation-specific limit
         ],
         'minutes_waiting' => env('MAIL_RATE_LIMIT_MINUTES_WAITING', 30), // in minutes
-        'window' => env('MAIL_RATE_LIMIT_WINDOW', 3600), // 20 segundos
+        'window' => env('MAIL_RATE_LIMIT_WINDOW', 3600), // 1 hour
     ],
 
     'webmaster_email' => env('EMAIL_WEBMASTER'),
