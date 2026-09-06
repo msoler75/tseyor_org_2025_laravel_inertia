@@ -17,11 +17,11 @@ class EmailRateLimited
      */
     public function getMaxSendLimit($type = 'overall'): int
     {
-        // Límites específicos por tipo de trabajo
+        // Límites específicos por tipo de trabajo (desde config)
         $limits = [
-            'App\Mail\InvitacionEquipoEmail' => 100, // Más permisivo para invitaciones
-            'App\Mail\BoletinEmail' => 15, // Más restrictivo para boletines
-            'overall' => config('mail.rate_limit.max.overall', 50),
+            'overall' => config('mail.rate_limit.max.overall', 80),
+            'App\Mail\BoletinEmail' => config('mail.rate_limit.max.boletin', 70),
+            'App\Mail\InvitacionEquipoEmail' => config('mail.rate_limit.max.invitacion', 50),
         ];
 
         $max = $limits[$type] ?? config('mail.rate_limit.max.'.$type, 50);
@@ -69,6 +69,15 @@ class EmailRateLimited
 
             // IMPORTANTE: Actualizar la caché con los timestamps válidos ANTES de contar
             Cache::put($key, $validTimestamps, $timeWindow);
+
+            // Verificar límite GENERAL (todos los tipos combinados)
+            $overallCount = count($validTimestamps);
+            $overallLimit = $this->getMaxSendLimit('overall');
+            if ($overallCount >= $overallLimit) {
+                Log::channel('smtp')->debug("Rate limit check overall: {$overallCount}/{$overallLimit} (blocked)");
+
+                return false;
+            }
 
             // Filtrar los timestamps específicos del jobType
             $jobTimestamps = array_filter($validTimestamps, function ($timestamp) use ($jobType) {
@@ -163,8 +172,8 @@ class EmailRateLimited
         // Base/default wait for this job type
         $baseWait = $waitTimes[$jobType] ?? (config('mail.rate_limit.minutes_waiting', 5) * 60);
 
-        // Si no podemos calcular la cola (no hay información de backlog), devolvemos el baseWait
-        $maxLimit = $this->getMaxSendLimit();
+        // Usar el límite ESPECÍFICO del job type para calcular slots correctamente
+        $maxLimit = $this->getMaxSendLimit($jobType);
         $timeWindow = $this->getTimeWindowSeconds();
 
         // Intentar calcular cuántos jobs del mismo tipo están pendientes en las colas

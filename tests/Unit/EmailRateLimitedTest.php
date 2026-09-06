@@ -45,6 +45,7 @@ class EmailRateLimitedTest extends TestCase
 
         // configure known values
         config(['mail.rate_limit.max.overall' => 50]);
+        config(['mail.rate_limit.max.boletin' => 50]);
         config(['mail.rate_limit.window' => 3600]);
 
         // Ensure pending bucket is clean and simulate 50 pending boletin jobs
@@ -55,10 +56,10 @@ class EmailRateLimitedTest extends TestCase
 
         // Calculate expected deterministic wait without jitter
         $expectedWindow = config('mail.rate_limit.window');
-        $maxOverall = config('mail.rate_limit.max.overall');
+        $maxBoletin = config('mail.rate_limit.max.boletin');
         $queued = $mw->getQueuedJobsCount('App\\Mail\\BoletinEmail');
         $index = $queued + 1; // next job index
-        $slot = (int) ceil($index / $maxOverall);
+        $slot = (int) ceil($index / $maxBoletin);
         $calculated = ($slot - 1) * $expectedWindow;
         $baseWait = 600; // BoletinEmail base wait defined in middleware
         $expected = max($baseWait, $calculated);
@@ -103,6 +104,7 @@ class EmailRateLimitedTest extends TestCase
 
         // configure known values
         config(['mail.rate_limit.max.overall' => 50]);
+        config(['mail.rate_limit.max.boletin' => 50]);
         config(['mail.rate_limit.window' => 3600]);
 
         // Vamos a simular el encolado de 1000 tareas usando únicamente la API
@@ -110,7 +112,7 @@ class EmailRateLimitedTest extends TestCase
         // `wait` que devolvería la middleware antes de añadir la tarea, y
         // luego añadimos la tarea con `addPending()` para avanzar la cola.
         $expectedWindow = config('mail.rate_limit.window');
-        $maxOverall = config('mail.rate_limit.max.overall');
+        $maxBoletin = config('mail.rate_limit.max.boletin');
         $baseWait = 600; // BoletinEmail base wait
 
         // Aseguramos estado limpio
@@ -120,7 +122,7 @@ class EmailRateLimitedTest extends TestCase
             // queued es el número actual de pendientes antes de encolar la nueva
             $queued = $mw->getQueuedJobsCount('App\\Mail\\BoletinEmail');
             $index = $queued + 1; // índice (1-based) de la tarea que probaríamos a encolar
-            $slot = (int) ceil($index / $maxOverall);
+            $slot = (int) ceil($index / $maxBoletin);
             $calculated = ($slot - 1) * $expectedWindow;
             $expected = max($baseWait, $calculated);
 
@@ -216,6 +218,7 @@ class EmailRateLimitedTest extends TestCase
 
         // Configurar valores conocidos
         config(['mail.rate_limit.max.overall' => 50]);
+        config(['mail.rate_limit.max.boletin' => 50]);
         config(['mail.rate_limit.window' => 3600]);
 
         $jobType = 'App\\Mail\\BoletinEmail';
@@ -257,13 +260,135 @@ class EmailRateLimitedTest extends TestCase
         $this->assertEquals(0, $delay, 'With 10 pending, job at index 0 (real position 10) should be in slot 0');
 
         // El job en índice 5 está en posición real 15 (10 pendientes + índice 5)
-        // Por lo tanto debe estar en slot 1 (posición 15 / maxPerWindow = 1)
+        // Con maxPerWindow=50, floor(15/50) = 0 → slot 0 → delay 0
         $delay = $mw->calculateDelayForIndex($jobType, 5);
-        $this->assertEquals($window, $delay, 'With 10 pending, job at index 5 (real position 15) should be in slot 1');
+        $this->assertEquals(0, $delay, 'With 10 pending, job at index 5 (real position 15) should be in slot 0 (15 < 50)');
+
+        // El job en índice 45 está en posición real 55 (10 pendientes + índice 45)
+        // Con maxPerWindow=50, floor(55/50) = 1 → slot 1 → delay = 1 * window
+        $delay = $mw->calculateDelayForIndex($jobType, 45);
+        $this->assertEquals($window, $delay, 'With 10 pending, job at index 45 (real position 55) should be in slot 1');
 
         // El job en índice 20 está en posición real 30 (10 pendientes + índice 20)
-        // Por lo tanto debe estar en slot 2 (posición 30 / maxPerWindow = 2)
+        // Con maxPerWindow=50, floor(30/50) = 0 → slot 0 → delay 0
         $delay = $mw->calculateDelayForIndex($jobType, 20);
-        $this->assertEquals(2 * $window, $delay, 'With 10 pending, job at index 20 (real position 30) should be in slot 2');
+        $this->assertEquals(0, $delay, 'With 10 pending, job at index 20 (real position 30) should be in slot 0 (30 < 50)');
+    }
+
+    public function test_mixed_boletin_and_invitation_never_exceed_overall_limit()
+    {
+        /**
+         * ESCENARIO CRÍTICO: 1100 boletines + 500 invitaciones simultáneas.
+         * El servidor acepta ~100 emails/hora. El límite overall es 80/hora.
+         * Verifica que:
+         * 1. Cada tipo respeta su límite individual
+         * 2. LA SUMA de ambos tipos NUNCA supera el límite overall
+         * 3. Cuando overall está lleno, ambos tipos se bloquean
+         */
+        $mw = new EmailRateLimited;
+
+        // Configurar límites reales (production-like)
+        config(['mail.rate_limit.max.overall' => 80]);
+        config(['mail.rate_limit.max.boletin' => 70]);
+        config(['mail.rate_limit.max.invitacion' => 50]);
+        config(['mail.rate_limit.window' => 3600]);
+
+        $boletinType = 'App\\Mail\\BoletinEmail';
+        $invitacionType = 'App\\Mail\\InvitacionEquipoEmail';
+
+        Cache::forget('email_rate_limit_pending');
+
+        // FASE 1: Simular envío mixto — enviar boletines e invitaciones interleaved
+        // El worker procesa la cola en orden: primero default (invitaciones), luego low_priority (boletines)
+        // Simulamos un escenario donde se procesan 40 boletines + 40 invitaciones = 80 total (límite overall)
+        $sentBoletines = 0;
+        $sentInvitaciones = 0;
+
+        for ($i = 0; $i < 80; $i++) {
+            if ($i % 2 === 0 && $sentBoletines < 70) {
+                // Intentar enviar boletín
+                if ($mw->isAllowedToSend($boletinType)) {
+                    $mw->recordSuccessfulSend($boletinType);
+                    $sentBoletines++;
+                }
+            } else {
+                // Intentar enviar invitación
+                if ($mw->isAllowedToSend($invitacionType)) {
+                    $mw->recordSuccessfulSend($invitacionType);
+                    $sentInvitaciones++;
+                }
+            }
+        }
+
+        // Deben haberse enviado exactamente 80 en total (límite overall)
+        $totalSent = $sentBoletines + $sentInvitaciones;
+        $this->assertEquals(80, $totalSent, 'Total sends should be exactly 80 (overall limit)');
+
+        // FASE 2: Verificar que el siguiente envío de CUALQUIER tipo está bloqueado
+        $this->assertFalse(
+            $mw->isAllowedToSend($boletinType),
+            'BoletinEmail should be blocked when overall limit is reached'
+        );
+        $this->assertFalse(
+            $mw->isAllowedToSend($invitacionType),
+            'InvitacionEquipoEmail should be blocked when overall limit is reached'
+        );
+
+        // FASE 3: Verificar que el tipo individual también tiene su propio límite
+        // Resetear cache y llenar solo con boletines hasta su límite individual (70)
+        Cache::flush();
+        Cache::forget('email_rate_limit');
+        Cache::forget('email_rate_limit_pending');
+
+        for ($i = 0; $i < 70; $i++) {
+            $mw->recordSuccessfulSend($boletinType);
+        }
+
+        // Boletín debe estar bloqueado (70/70), pero invitación aún puede enviar
+        // (porque overall tiene slots: 80 - 70 = 10 disponibles, y invitación tiene 0 enviados)
+        $this->assertFalse(
+            $mw->isAllowedToSend($boletinType),
+            'BoletinEmail should be blocked at its per-type limit (70)'
+        );
+        $this->assertTrue(
+            $mw->isAllowedToSend($invitacionType),
+            'InvitacionEquipoEmail should still be allowed (overall has room: 70/80)'
+        );
+    }
+
+    public function test_overall_limit_blocks_even_when_per_type_limits_not_reached()
+    {
+        /**
+         * Verifica que el límite overall actúa como techo duro:
+         * si se alcanza el overall, TODOS los tipos se bloquean
+         * incluso si individualmente no han llegado a su límite.
+         */
+        $mw = new EmailRateLimited;
+
+        config(['mail.rate_limit.max.overall' => 30]);
+        config(['mail.rate_limit.max.boletin' => 70]);
+        config(['mail.rate_limit.max.invitacion' => 50]);
+        config(['mail.rate_limit.window' => 3600]);
+
+        $boletinType = 'App\\Mail\\BoletinEmail';
+        $invitacionType = 'App\\Mail\\InvitacionEquipoEmail';
+
+        Cache::forget('email_rate_limit');
+
+        // Enviar 30 boletines (overall lleno, pero boletín individualmente en 30/70)
+        for ($i = 0; $i < 30; $i++) {
+            $mw->recordSuccessfulSend($boletinType);
+        }
+
+        // Overall está lleno (30/30), ambos tipos deben estar bloqueados
+        $this->assertFalse($mw->isAllowedToSend($boletinType), 'Boletin blocked by overall');
+        $this->assertFalse($mw->isAllowedToSend($invitacionType), 'Invitacion blocked by overall');
+
+        // Verificar que el wait time calculado es razonable para ambos tipos
+        $waitBoletin = $mw->getWaitTime($boletinType);
+        $waitInvitacion = $mw->getWaitTime($invitacionType);
+
+        $this->assertGreaterThan(0, $waitBoletin, 'Boletin wait time should be > 0 when blocked');
+        $this->assertGreaterThan(0, $waitInvitacion, 'Invitacion wait time should be > 0 when blocked');
     }
 }
