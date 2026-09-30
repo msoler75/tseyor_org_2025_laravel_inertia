@@ -24,7 +24,7 @@ class PsicografiasController extends Controller
         $buscar = $request->input('buscar');
         $categoria = $request->input('categoria');
 
-        $query = Psicografia::select('*');
+        $query = Psicografia::select('*')->publicada();
 
         if ($buscar) {
             $query->buscar($buscar);
@@ -56,8 +56,10 @@ class PsicografiasController extends Controller
 
     public function json()
     {
-        // obtiene los items sin busqueda
-        $resultados = Psicografia::select('*')->get()
+        // Feed del puzzle (puzle.tseyor.org). Solo van las psicografías
+        // marcadas como para_puzle: es el filtro que el puzle hereda sin
+        // necesidad de tocar su código.
+        $resultados = Psicografia::paraPuzle()->publicada()->select('*')->get()
             ->transform(function ($item) {
                 $item->imagen = $item->imagen ? (new StorageItem($item->imagen))->urlPath : null;
 
@@ -79,7 +81,7 @@ class PsicografiasController extends Controller
         }
 
         $borrador = request()->has('borrador');
-        $publicado = true; //
+        $publicado = $psicografia->visibilidad == 'P';
         $editor = optional(auth()->user())->can('administrar contenidos');
         if (! $psicografia || (! $publicado && ! $borrador && ! $editor)) {
             abort(404); // Item no encontrado o no autorizado

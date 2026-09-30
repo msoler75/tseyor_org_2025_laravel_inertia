@@ -21,7 +21,27 @@ class Psicografia extends ContenidoBaseModel
         'categoria',
         'descripcion',
         'imagen',
+        // Al estar 'visibilidad' en fillable, ContenidoBaseModel activa los
+        // scopes publicado()/publicada()/borrador() automáticamente.
+        'visibilidad',
+        'para_puzle',
     ];
+
+    protected $casts = [
+        'para_puzle' => 'boolean',
+    ];
+
+    /**
+     * Scope para las psicografías que pueden lanzarse en el puzzle.
+     * Es el filtro que consume el endpoint JSON que lee puzle.tseyor.org.
+     *
+     * @param  Builder  $query
+     * @return Builder
+     */
+    public function scopeParaPuzle($query)
+    {
+        return $query->where('para_puzle', true);
+    }
 
     public function getCarpetaMedios(bool $formatoRutaRelativa = false): string
     {
@@ -29,6 +49,15 @@ class Psicografia extends ContenidoBaseModel
     }
 
     // SCOUT
+
+    /**
+     * Searchable: solo se indexan las psicografías publicadas, igual que
+     * hace Libro con su campo 'visibilidad'.
+     */
+    public function shouldBeSearchable(): bool
+    {
+        return $this->visibilidad == 'P';
+    }
 
     /**
      * Get the indexable data array for the model.

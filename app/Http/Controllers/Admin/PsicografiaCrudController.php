@@ -75,15 +75,36 @@ class PsicografiaCrudController extends CrudController
                 if (! $src) {
                     return '<span class="text-muted">-</span>';
                 }
-                $src = (new StorageItem($src))->urlPath;
-                $miniatura = $src.'?mh=50&mw=50'; // miniatura de la imagen
-                $enlace = $src;
+                $ruta = (new StorageItem($src))->urlPath;
+                // Los query params ?mh/?mw solo los procesa ImagenesController
+                // (ruta /imagen{...}). Apuntar a /almacen/... sirve el archivo
+                // estático original completo, ignorando los parámetros.
+                if (! str_starts_with($ruta, '/imagen')) {
+                    $ruta = '/imagen'.$ruta;
+                }
+                $miniatura = $ruta.'?mh=50&mw=50';
 
-                return '<a href="'.$enlace.'" target="_blank">
-                            <img src="'.$miniatura.'" style="object-fit: cover;" alt="Miniatura">
+                return '<a href="'.$ruta.'" target="_blank">
+                            <img src="'.$miniatura.'" alt="Miniatura">
                         </a>';
             },
             'escaped' => false,
+        ]);
+
+        $this->crud->addColumn([
+            'name' => 'visibilidad',
+            'label' => 'Estado',
+            'type' => 'text',
+            'value' => function ($entry) {
+                return $entry->visibilidad == 'P' ? '✔️ Publicado' : '⚠️ Borrador';
+            },
+        ]);
+
+        $this->crud->addColumn([
+            'name' => 'para_puzle',
+            'label' => 'Puzle',
+            'type' => 'boolean',
+            'orderable' => true,
         ]);
 
         CRUD::setOperationSetting('lineButtonsAsDropdown', true);
@@ -140,6 +161,18 @@ class PsicografiaCrudController extends CrudController
                 'class' => 'form-group col-md-6',
             ]);
 
+        // Los campos nuevos los sobreescribimos después de setFromDb(), que
+        // los habría generado como 'text'. Default false: las psicografías
+        // nuevas no son lanzables en el puzle salvo que se marque.
+        CRUD::field('visibilidad')->type('visibilidad');
+
+        CRUD::field('para_puzle')->type('checkbox')
+            ->label('¿Puede lanzarse en el puzle?')
+            ->hint('Marca esta psicografía como disponible para el puzzle (puzle.tseyor.org). Por defecto las psicografías nuevas NO se lanzan.')
+            ->wrapper([
+                'class' => 'form-group col-md-6',
+            ]);
+
     }
 
     /**
@@ -158,6 +191,8 @@ class PsicografiaCrudController extends CrudController
     {
         $psicografia = Psicografia::findOrFail($id);
 
-        return redirect("/psicografias/$id");
+        return $psicografia->visibilidad == 'P'
+            ? redirect("/psicografias/$id")
+            : redirect("/psicografias/$id?borrador");
     }
 }

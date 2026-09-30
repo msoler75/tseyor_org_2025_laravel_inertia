@@ -26,7 +26,7 @@
 
                     <Content :content="`<img src='${getSrcUrl(psicografia.imagen)}' alt='${psicografia.titulo}' src-width='${ancho}' src-height='${alto}' class='mx-auto max-h-[70vh]'/>`"/>
 
-                    <div class="mt-7 flex justify-end">
+                    <div v-if="puedeLanzarseEnPuzle" class="mt-7 flex justify-end">
                         <button class="btn btn-primary" @click="abrirEnPuzle(psicografia.slug)">Abrir en puzle <Icon icon="ph:arrow-up-right-duotone" /></button>
                     </div>
                 </div>
@@ -81,6 +81,10 @@ const props = defineProps({
         required: true,
     },
 });
+
+// Solo las psicografías marcadas como para_puzle pueden lanzarse en el puzzle.
+// El cast del modelo lo expone como booleano real (true/false).
+const puedeLanzarseEnPuzle = computed(() => props.psicografia.para_puzle === true)
 
 function abrirEnPuzle(slug) {
     // Tracking del evento antes de abrir

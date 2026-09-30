@@ -35,6 +35,9 @@ class StorePsicografiaRequest extends FormRequest
             'slug' => ['nullable', 'regex:/^[a-z0-9\-]+$/', Rule::unique('psicografias', 'slug')->ignore($psicografiaId)],
             'descripcion' => 'required|max:65000',
             'imagen' => 'file|mimes:jpeg,jpg,webp,png|max:4096',
+            'visibilidad' => ['required', Rule::in(['B', 'P'])],
+            // Backpack envía "1"/"0" (o la ausencia) en los checkboxes.
+            'para_puzle' => ['nullable', 'boolean'],
         ];
 
         return $rules;
