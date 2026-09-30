@@ -129,4 +129,3 @@ exit;
 
 @endcanany
 
-<x-backpack::menu-item title="Galerias" icon="la la-question" :link="backpack_url('galeria')" />
