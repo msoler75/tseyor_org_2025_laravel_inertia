@@ -18,7 +18,15 @@ Lista de tareas pendientes. Revisada contra el código el 07/10/2026: se elimina
 - [ ] Codificar la query antes de enviarla (`resources/js/GlobalSearch.vue` → `globalSearch.js:116`) y pasar la frase exacta al buscar cuando viene entre comillas
 
 ### Dependencias (GitHub Dependabot)
-- [ ] **27 vulnerabilidades en la rama principal: 10 altas, 15 medias, 2 bajas** — revisar y actualizar dependencias (`composer audit` / `npm audit`): https://github.com/msoler75/tseyor_org_2025_laravel_inertia/security/dependabot
+- [x] PHP: `composer audit` limpio (0 vulnerabilidades) tras actualizar `league/commonmark`, `league/flysystem` y `laravel/framework`
+- [x] JS: `npm audit fix` sin `--force` — de 63 → 47 vulnerabilidades (quitó el critical de `proxy-addr` y 8 high)
+- [x] JS producción: `vue` y `@vue/server-renderer` a 3.5.43 — **producción sin high** (quedan 37 moderate)
+- [ ] **Riesgo conocido aceptado (no migrar ahora):**
+  - `@tiptap/*` v2.27.3 → v3.31.4 (moderate, `mergeAttributes`) — migración **major** que afecta al editor de `texto` de comunicados/noticias
+  - `showdown` 2.1.0 (moderate) — ya es la última versión, sin fix publicado
+  - `md-editor-v3` v4 → v7 (moderate) — migración major
+  - 6 high **solo de build/dev** (`braces`, `chokidar`, `fast-glob`, `micromatch`, `unplugin-auto-import`, `unplugin-vue-components`) — solo se arreglan con `npm audit fix --force` (breaking changes en plugins de Vite)
+- [ ] Dependabot: https://github.com/msoler75/tseyor_org_2025_laravel_inertia/security/dependabot
 
 ---
 
