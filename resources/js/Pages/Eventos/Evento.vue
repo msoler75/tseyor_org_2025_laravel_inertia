@@ -35,12 +35,6 @@
                             class="w-full cursor-pointer"
                             @click="openViewer(i)"
                         />
-                        <Image v-if="!displayImages.length && evento.imagen"
-                            :src="evento.imagen"
-                            alt="Imagen del evento"
-                            class="w-full mb-4 cursor-pointer"
-                            @click="openViewer(0)"
-                        />
                     </div>
                 </div>
                 <div class="w-full order-first md:order-last">
@@ -250,6 +244,7 @@ import {
 } from "@/composables/fechas.js";
 import {removeAccents} from "@/composables/textutils.js";
 import { useGoogleAnalytics } from "@/composables/useGoogleAnalytics.js";
+import { buildDisplayImages, buildAllImages } from "@/utils/eventoImagenes.js";
 
 const tutorialImage = 'data:image/jpeg;base64,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'
 
@@ -264,30 +259,9 @@ const props = defineProps({
 
 const fechasEvento = computed(() => parsearFechasEvento(props.evento.fechas_evento));
 
-const displayImages = computed(() => {
-    if (props.evento.imagenes && props.evento.imagenes.length > 0) {
-        return props.evento.imagenes
-    }
-    if (props.evento.imagen) {
-        return [props.evento.imagen]
-    }
-    return []
-})
+const displayImages = computed(() => buildDisplayImages(props.evento))
 
-const allImages = computed(() => {
-    const images = []
-    if (props.evento.imagen) {
-        images.push(props.evento.imagen)
-    }
-    if (props.evento.imagenes && props.evento.imagenes.length > 0) {
-        props.evento.imagenes.forEach(img => {
-            if (img && !images.includes(img)) {
-                images.push(img)
-            }
-        })
-    }
-    return images
-})
+const allImages = computed(() => buildAllImages(props.evento))
 
 const showViewer = ref(false)
 const viewerStartIndex = ref(0)

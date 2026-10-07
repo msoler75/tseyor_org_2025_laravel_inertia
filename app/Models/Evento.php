@@ -21,6 +21,7 @@ class Evento extends ContenidoBaseModel
         'texto',
         'imagen',
         'imagenes',
+        'mostrar_miniatura',
         'published_at',
         'fecha_inicio',
         'fecha_fin',
@@ -41,6 +42,7 @@ class Evento extends ContenidoBaseModel
         'published_at' => 'datetime',
         'fecha_inicio' => 'datetime',
         'fecha_fin' => 'datetime',
+        'mostrar_miniatura' => 'boolean',
     ];
 
     // ACCESOR: CSV string → array
