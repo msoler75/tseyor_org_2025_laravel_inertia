@@ -146,7 +146,8 @@ class EventoCrudController extends CrudController
         CRUD::field('mostrar_miniatura')
             ->type('checkbox')
             ->label('Mostrar también la miniatura en la página del evento')
-            ->hint('Si se activa, la imagen de portada aparecerá como primera imagen en la página pública del evento.');
+            ->hint('Si se activa, la imagen de portada aparecerá como primera imagen en la página pública del evento.')
+            ->after('imagenes');
 
         CRUD::field('fecha_inicio')->type('date')->wrapper(['style' => 'width: 200px']);
         CRUD::field('fecha_fin')->type('date')->wrapper(['style' => 'width: 200px']);
