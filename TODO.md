@@ -17,6 +17,9 @@ Lista de tareas pendientes. Revisada contra el código el 07/10/2026: se elimina
 - [ ] **El índice de Scout no existe** (`storage/indexes/` ausente): la búsqueda global devuelve 0 resultados, por eso "com 1281" / "comunicado 1281" / "1281" no aparecen — crear/importar el índice
 - [ ] Codificar la query antes de enviarla (`resources/js/GlobalSearch.vue` → `globalSearch.js:116`) y pasar la frase exacta al buscar cuando viene entre comillas
 
+### Dependencias (GitHub Dependabot)
+- [ ] **27 vulnerabilidades en la rama principal: 10 altas, 15 medias, 2 bajas** — revisar y actualizar dependencias (`composer audit` / `npm audit`): https://github.com/msoler75/tseyor_org_2025_laravel_inertia/security/dependabot
+
 ---
 
 ## 🟠 P2 — Deuda técnica
