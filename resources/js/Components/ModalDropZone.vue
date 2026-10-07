@@ -143,8 +143,19 @@ function sendingEvent(file, xhr, formData) {
 }
 
 function successEvent(file, response) {
-    if (response.data.filePath) {
-        emit('uploaded', response.data.filePath)
+    // dropzone.js emite el texto crudo de la respuesta (responseText), no el JSON parseado
+    let data = response
+    if (typeof response === 'string') {
+        try {
+            data = JSON.parse(response)
+        } catch (e) {
+            console.error('Error parsing upload response', e)
+            return
+        }
+    }
+    const filePath = data?.data?.filePath ?? data?.filePath
+    if (filePath) {
+        emit('uploaded', filePath)
     }
 }
 
