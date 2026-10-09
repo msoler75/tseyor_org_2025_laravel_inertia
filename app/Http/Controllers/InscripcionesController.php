@@ -64,29 +64,33 @@ class InscripcionesController extends Controller
         Log::channel('inscripciones')->info("Nueva inscripción creada: {$inscripcion->id} - {$data['nombre']} ({$data['email']})");
 
         // mensaje de confirmación al autor
-        Mail::to($data['email'])
-            ->bcc('removed@example.com')
-            ->queue(
-                new InscripcionConfirmacionEmail(
-                    $data['nombre'],
-                    $dataValidated['dia'],
-                    $dataValidated['mes'],
-                    $dataValidated['anyo'],
-                    $data['ciudad'],
-                    $data['region'],
-                    $data['pais'],
-                    $data['email'],
-                    $data['telefono'],
-                    $data['comentario'],
-                )
-            );
+        $mail = Mail::to($data['email']);
+        if ($bcc = config('mail.bcc.auditoria')) {
+            $mail->bcc($bcc);
+        }
+        $mail->queue(
+            new InscripcionConfirmacionEmail(
+                $data['nombre'],
+                $dataValidated['dia'],
+                $dataValidated['mes'],
+                $dataValidated['anyo'],
+                $data['ciudad'],
+                $data['region'],
+                $data['pais'],
+                $data['email'],
+                $data['telefono'],
+                $data['comentario'],
+            )
+        );
 
         // mensaje al destinatario
-        Mail::to($destinatario)
-            ->bcc('removed@example.com')
-            ->queue(
-                new InscripcionEmail($inscripcion)
-            );
+        $mail = Mail::to($destinatario);
+        if ($bcc = config('mail.bcc.auditoria')) {
+            $mail->bcc($bcc);
+        }
+        $mail->queue(
+            new InscripcionEmail($inscripcion)
+        );
 
         if ($inscripcion) {
             // Redirigir al usuario a la página anterior con un mensaje de éxito

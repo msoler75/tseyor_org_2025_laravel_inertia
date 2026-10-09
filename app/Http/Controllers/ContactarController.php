@@ -28,30 +28,34 @@ class ContactarController extends Controller
         $destinatario = $data['destinatario'] ?? 'secretaria@tseyor.org';
 
         // mensaje de confirmación al autor
-        Mail::to($data['email'])
-            ->bcc('removed@example.com')
-            ->queue(
-                new FormularioContactoConfirmacionEmail(
-                    $data['nombre'],
-                    $data['pais'],
-                    $data['email'],
-                    $data['telefono'] ?? '',
-                    $data['comentario'],
-                )
-            );
+        $mail = Mail::to($data['email']);
+        if ($bcc = config('mail.bcc.auditoria')) {
+            $mail->bcc($bcc);
+        }
+        $mail->queue(
+            new FormularioContactoConfirmacionEmail(
+                $data['nombre'],
+                $data['pais'],
+                $data['email'],
+                $data['telefono'] ?? '',
+                $data['comentario'],
+            )
+        );
 
         // mensaje al destinatario
-        Mail::to($destinatario)
-            ->bcc('removed@example.com')
-            ->queue(
-                new FormularioContactoEmail(
-                    $data['nombre'],
-                    $data['pais'],
-                    $data['email'],
-                    $data['telefono'] ?? '',
-                    $data['comentario'],
-                )
-            );
+        $mail = Mail::to($destinatario);
+        if ($bcc = config('mail.bcc.auditoria')) {
+            $mail->bcc($bcc);
+        }
+        $mail->queue(
+            new FormularioContactoEmail(
+                $data['nombre'],
+                $data['pais'],
+                $data['email'],
+                $data['telefono'] ?? '',
+                $data['comentario'],
+            )
+        );
 
         Artisan::call('schedule:run');
 

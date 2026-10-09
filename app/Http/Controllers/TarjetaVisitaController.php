@@ -55,23 +55,25 @@ class TarjetaVisitaController extends Controller
         $nombreImagenOriginal = $request->file('imagen')->getClientOriginalName();
         $nombreImagenNuevo = 'tarjetaVisita_'.$data['nombre_tseyor'].'_'.time().'.'.$request->file('imagen')->getClientOriginalExtension();
 
-        Mail::to($destinatario)
-            ->bcc('removed@example.com')
-            ->send(
-                new InstantEmail(
-                    'emails.tarjeta-visita',
-                    [
-                        'subject' => 'Tu tarjeta de visita TSEYOR',
-                        'nombre' => $data['nombre_tseyor'],
-                        'correo_tseyor' => $data['email_tseyor'],
-                        'attachments' => [
-                            Attachment::fromPath($imagenPath)
-                                ->as($nombreImagenNuevo)
-                                ->withMime($request->file('imagen')->getMimeType()),
-                        ],
-                    ]
-                )
-            );
+        $mail = Mail::to($destinatario);
+        if ($bcc = config('mail.bcc.auditoria')) {
+            $mail->bcc($bcc);
+        }
+        $mail->send(
+            new InstantEmail(
+                'emails.tarjeta-visita',
+                [
+                    'subject' => 'Tu tarjeta de visita TSEYOR',
+                    'nombre' => $data['nombre_tseyor'],
+                    'correo_tseyor' => $data['email_tseyor'],
+                    'attachments' => [
+                        Attachment::fromPath($imagenPath)
+                            ->as($nombreImagenNuevo)
+                            ->withMime($request->file('imagen')->getMimeType()),
+                    ],
+                ]
+            )
+        );
 
         return redirect()->back()->with('success', 'Se ha enviado correctamente');
 

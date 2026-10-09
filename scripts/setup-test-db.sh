@@ -71,9 +71,11 @@ echo "    -> mysqldump --no-data $DB_NAME | mysql $DB_TEST"
 
 echo "==> [3/5] Sembrando datos base (users admin, grupo, equipo, permisos)"
 echo "    -> INSERT user id=1 (admin)"
-"${MYSQL_APP[@]}" "$DB_TEST" -e "INSERT IGNORE INTO users (id, name, email, password, email_verified_at, created_at, updated_at) VALUES (1, 'admin', 'admin@tseyor.org', '\$2y\$10\$QZokGCM0YhfRYdlkhpgdn.5h1Yop6XgRwQuia1KjBwXRMFf8pPXdG', NOW(), NOW(), NOW());" || { echo "    ✗ FALLO insertando user id=1" >&2; exit 1; }
+TEST_HASH=$(php -r "echo password_hash('password', PASSWORD_BCRYPT);") || { echo "    ✗ FALLO generando hash de test" >&2; exit 1; }
+echo "    -> Hash de test generado en runtime"
+"${MYSQL_APP[@]}" "$DB_TEST" -e "INSERT IGNORE INTO users (id, name, email, password, email_verified_at, created_at, updated_at) VALUES (1, 'admin', 'admin@tseyor.org', '$TEST_HASH', NOW(), NOW(), NOW());" || { echo "    ✗ FALLO insertando user id=1" >&2; exit 1; }
 echo "    -> INSERT user id=2"
-"${MYSQL_APP[@]}" "$DB_TEST" -e "INSERT IGNORE INTO users (id, name, email, password, email_verified_at, created_at, updated_at) VALUES (2, 'usuario', 'usuario2@tseyor.org', '\$2y\$10\$QZokGCM0YhfRYdlkhpgdn.5h1Yop6XgRwQuia1KjBwXRMFf8pPXdG', NOW(), NOW(), NOW());" || { echo "    ✗ FALLO insertando user id=2" >&2; exit 1; }
+"${MYSQL_APP[@]}" "$DB_TEST" -e "INSERT IGNORE INTO users (id, name, email, password, email_verified_at, created_at, updated_at) VALUES (2, 'usuario', 'usuario2@tseyor.org', '$TEST_HASH', NOW(), NOW(), NOW());" || { echo "    ✗ FALLO insertando user id=2" >&2; exit 1; }
 echo "    -> INSERT grupo id=1"
 "${MYSQL_APP[@]}" "$DB_TEST" -e "INSERT IGNORE INTO grupos (id, nombre, slug, created_at, updated_at) VALUES (1, 'Grupo Base', 'grupo-base', NOW(), NOW());" || { echo "    ✗ FALLO insertando grupo id=1" >&2; exit 1; }
 echo "    -> INSERT equipo id=1 (con group_id=1)"

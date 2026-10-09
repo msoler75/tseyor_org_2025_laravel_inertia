@@ -103,6 +103,10 @@ return [
         'name' => env('MAIL_FROM_NAME', 'Notificaciones Tseyor'),
     ],
 
+    'bcc' => [
+        'auditoria' => env('MAIL_BCC_ARCHIVO'),
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | Markdown Mail Settings
