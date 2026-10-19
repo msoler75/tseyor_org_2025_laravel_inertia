@@ -117,6 +117,16 @@ class EventoCrudController extends CrudController
         // $this->crud->setValidation(EntradaRequest::class);
         CRUD::setFromDb(); // set fields from db columns.
 
+        // MariaDB devuelve 'NULL' (texto) en COLUMN_DEFAULT de las columnas nullable y Backpack
+        // lo copia al atributo `default` del campo (AutoSet); al editar, si el valor real es NULL,
+        // la plantilla del input cae en ese default y se pintaba el literal "NULL" en el formulario.
+        // Se anula el default engañoso para que los campos sin valor se rendericen vacíos.
+        foreach ($this->crud->fields() as $campo) {
+            if (($campo['default'] ?? null) === 'NULL') {
+                $this->crud->modifyField($campo['name'], ['default' => null]);
+            }
+        }
+
         /**
          * Fields can be defined using the fluent syntax:
          * - CRUD::field('price')->type('number');
@@ -151,8 +161,9 @@ class EventoCrudController extends CrudController
 
         CRUD::field('fecha_inicio')->type('date')->wrapper(['style' => 'width: 200px']);
         CRUD::field('fecha_fin')->type('date')->wrapper(['style' => 'width: 200px']);
-        CRUD::field('hora_inicio')->type('time')->wrapper(['style' => 'width: 200px']);
-        CRUD::field('hora_fin')->type('time')->wrapper(['style' => 'width: 200px']);
+        // Las horas van justo tras las fechas y antes del widget de fechas repetidas
+        CRUD::field('hora_inicio')->type('time')->wrapper(['style' => 'width: 200px'])->after('fecha_fin');
+        CRUD::field('hora_fin')->type('time')->wrapper(['style' => 'width: 200px'])->after('hora_inicio');
 
         // Campo para fechas repetidas: se renderiza con un campo personalizado (blade + JS)
         CRUD::addField([
@@ -178,10 +189,6 @@ class EventoCrudController extends CrudController
         CRUD::field('lugar')->type('text')->label('Lugar')->hint('Dirección o local concreto donde se celebra el evento.')->validationRules('nullable|max:255')->wrapper(['class' => 'form-group col-md-4']);
         CRUD::field('contacto')->type('text')->label('Contacto')->hint('Teléfono y/o correo de contacto del evento.')->validationRules('nullable|max:255')->wrapper(['class' => 'form-group col-md-4']);
 
-        CRUD::field('published_at')->type('datetime')->wrapper(['style' => 'width: 260px']);
-
-        CRUD::field('visibilidad')->type('visibilidad');
-
         CRUD::field([   // select_from_array
             'name' => 'categoria',
             'label' => 'Categoría',
@@ -206,7 +213,7 @@ class EventoCrudController extends CrudController
             'wrapper' => [
                 'class' => 'form-group col-md-4',
             ],
-        ])->after('visibilidad');
+        ])->after('categoria');
 
         CRUD::field([
             'name' => 'sala_id',
@@ -232,10 +239,11 @@ class EventoCrudController extends CrudController
             ],
         ])->after('sala_id');
 
-        CRUD::field('visibilidad')->type('visibilidad');
-
         // se tiene que poner el atributo step para que no dé error el input al definir los segundos
-        CRUD::field('published_at')->label('Fecha publicación')->type('datetime')->attributes(['step' => 1]);
+        CRUD::field('published_at')->label('Fecha publicación')->type('datetime')->attributes(['step' => 1])->wrapper(['style' => 'width: 260px']);
+
+        // visibilidad es el último campo del formulario; se re-ancla tras el último campo definido
+        CRUD::field('visibilidad')->type('visibilidad')->after(array_key_last($this->crud->fields()));
     }
 
     /**
