@@ -29,6 +29,9 @@ Añadir a los eventos cuatro campos opcionales —`ciudad`, `hora_fin`, `lugar` 
 - [x] T4 — `EventosController.php:37`: `ciudad` y `hora_fin` en el select de `index`. `Index.vue`: helper local `ubicacion()` → "Ciudad, País" en los 3 bloques.
 - [x] T5 — `Evento.vue`: ciudad en la fila del país (`v-if="evento.pais || evento.ciudad"`), fila `contacto` nueva tras `lugar` (`lugar` y `hora_fin` ya codificados).
 - [x] T6 — BDs migradas (dev + testing vía `--path`), tests en verde, commit `32f0b611`.
+- [x] T7 — Bug admin "NULL" en inputs: causa raíz empírica — MariaDB devuelve el string `'NULL'` en `COLUMN_DEFAULT` de las columnas nullable; Backpack (`Table.php:31-39`) solo lo normaliza a `null` si la conexión es `MariaDbConnection`, y el proyecto usa driver `mysql` → `AutoSet.php:63` creaba `'default' => 'NULL'` y las plantillas `text`/`time.blade.php:12` lo pintaban como `value="NULL"`. Corregido en `EventoCrudController` con `modifyField(..., ['default' => null])` solo cuando el default es exactamente `'NULL'` (defaults reales intactos: `categoria`, `pais`, `mostrar_miniatura`). Commit `af9a987f`.
+- [x] T8 — Orden: `hora_inicio`/`hora_fin` anclados con `->after('fecha_fin')`/`->after('hora_inicio')`; orden renderizado verificado parseando el HTML del formulario (RED previa mostraba `fechas_evento, pais...` antes de las horas).
+- [x] T9 — `visibilidad` consolidada a una única definición y anclada al último campo; `published_at` consolidado (label+step+wrapper); cadena `centro→sala→equipo` reanclada a `categoria`. Test verifica visibilidad al final (Backpack añade un hidden `id` tras el último campo, es comportamiento del framework).
 
 ## Superficie de edición autorizada
 - `database/migrations/2026_10_19_*_add_ciudad_hora_fin_lugar_contacto_to_eventos_table.php` (nuevo)
@@ -62,6 +65,7 @@ Añadir a los eventos cuatro campos opcionales —`ciudad`, `hora_fin`, `lugar` 
 - Commit de trabajo: **`32f0b611`** `feat(eventos): ciudad, hora_fin, lugar y contacto opcionales` (7 archivos, 223 insertiones).
 - Evaluación RDD (`review assess --base-ref main --committed-only`, untracked preexistente excluido con inventario canónico): riesgo **medium** (`executable_change` en `EventoCrudController`), 8 rutas / 303 líneas → `review_due: false`, motivo **`under_budget`**: la revisión nativa queda **pendiente en el slice** hasta que un commit posterior alcance ~400 líneas; el límite revisado NO avanza.
 - Atribución de fallos verificada por el orquestador en la BD de test: 42 filas huérfanas `evento-portada%` (más antigua 2026-10-07, anterior a la sesión; la más reciente la añadió la corrida de Unit del writer) y **0** restos `ubicacion` (los tests nuevos revierten limpio).
+- T7–T9 (`af9a987f`): RED previa `-'' +'NULL'` + orden real discordante; GREEN 3 passed/22 aserciones; regresión `--filter Eventos` 6 passed y `EventoMiniaturaTest` 4 passed. Spot-check del orquestador: 3 passed.
 
 ## Fallos ambientales conocidos (preexistentes, no causados por este cambio)
 - `tests/Unit/NodoTest.php:292` (sticky) falla en la base antes de estos cambios.
@@ -70,7 +74,7 @@ Añadir a los eventos cuatro campos opcionales —`ciudad`, `hora_fin`, `lugar` 
 - La BD de test tiene el registro `migrations` desincronizado → `migrate --force` completo falla en `personal_access_tokens`; patrón correcto: migración por `--path`.
 
 ## Progreso
-- [x] T1 · [x] T2 · [x] T3 · [x] T4 · [x] T5 · [x] T6
+- [x] T1 · [x] T2 · [x] T3 · [x] T4 · [x] T5 · [x] T6 · [x] T7 · [x] T8 · [x] T9
 
 ## Predicción / estrategia de entrega
 - ~250 líneas autorizadas previstas (< 400) → una sola unidad de trabajo, sin encadenamiento de PRs.
