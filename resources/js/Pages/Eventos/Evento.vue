@@ -98,7 +98,7 @@
                                 />
                                 Hora de fin:
                             </span>
-                            <span>{{ evento.hora_fin }}</span>
+                            <span>{{ evento.hora_fin.substr(0, 5) }}</span>
                         </template>
                         <template v-if="evento.lugar" class="mb-2 flex gap-3">
                             <span class="mb-2 flex gap-3">
@@ -159,7 +159,17 @@
                                 >{{ evento.equipo.nombre }}</Link
                             >
                         </template>
-                        <template v-if="evento.pais || evento.ciudad" class="mb-2 flex gap-3">
+                        <template v-if="evento.ciudad" class="mb-2 flex gap-3">
+                            <span class="mb-2 flex gap-3">
+                                <Icon
+                                    icon="ph:map-pin-duotone"
+                                    class="text-xl"
+                                />
+                                Ciudad:
+                            </span>
+                            <span>{{ evento.ciudad }}</span>
+                        </template>
+                        <template v-if="evento.pais" class="mb-2 flex gap-3">
                             <span class="mb-2 flex gap-3">
                                 <Icon
                                     icon="ph:globe"
@@ -167,9 +177,7 @@
                                 />
                                 País:
                             </span>
-                            <div
-                                >{{ evento.ciudad ? `${evento.ciudad}, ${evento.pais}` : evento.pais }}</div
-                            >
+                            <span>{{ evento.pais }}</span>
                         </template>
 
                         <div class="mt-6 col-span-2 flex justify-center">

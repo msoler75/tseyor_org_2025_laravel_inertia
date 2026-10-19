@@ -32,6 +32,7 @@ Añadir a los eventos cuatro campos opcionales —`ciudad`, `hora_fin`, `lugar` 
 - [x] T7 — Bug admin "NULL" en inputs: causa raíz empírica — MariaDB devuelve el string `'NULL'` en `COLUMN_DEFAULT` de las columnas nullable; Backpack (`Table.php:31-39`) solo lo normaliza a `null` si la conexión es `MariaDbConnection`, y el proyecto usa driver `mysql` → `AutoSet.php:63` creaba `'default' => 'NULL'` y las plantillas `text`/`time.blade.php:12` lo pintaban como `value="NULL"`. Corregido en `EventoCrudController` con `modifyField(..., ['default' => null])` solo cuando el default es exactamente `'NULL'` (defaults reales intactos: `categoria`, `pais`, `mostrar_miniatura`). Commit `af9a987f`.
 - [x] T8 — Orden: `hora_inicio`/`hora_fin` anclados con `->after('fecha_fin')`/`->after('hora_inicio')`; orden renderizado verificado parseando el HTML del formulario (RED previa mostraba `fechas_evento, pais...` antes de las horas).
 - [x] T9 — `visibilidad` consolidada a una única definición y anclada al último campo; `published_at` consolidado (label+step+wrapper); cadena `centro→sala→equipo` reanclada a `categoria`. Test verifica visibilidad al final (Backpack añade un hidden `id` tras el último campo, es comportamiento del framework).
+- [x] T10 — Revisión nativa RDD del slice aprobada (linaje `review-a4183f53a468bb25`, lente `review-reliability`, 5 hallazgos solo informativos, sin corrección abierta; recibo quemado 2026-10-19). Post-receipt, fix UX pedido por el usuario: `hora_fin` truncado a HH:MM en la ficha (`.substr(0,5)`, como `hora_inicio`) y filas separadas `Ciudad:` / `País:` (opción A) en lugar de `País: Madrid, España`. El badge "Ciudad, País" de Index queda intacto.
 
 ## Superficie de edición autorizada
 - `database/migrations/2026_10_19_*_add_ciudad_hora_fin_lugar_contacto_to_eventos_table.php` (nuevo)
@@ -74,7 +75,7 @@ Añadir a los eventos cuatro campos opcionales —`ciudad`, `hora_fin`, `lugar` 
 - La BD de test tiene el registro `migrations` desincronizado → `migrate --force` completo falla en `personal_access_tokens`; patrón correcto: migración por `--path`.
 
 ## Progreso
-- [x] T1 · [x] T2 · [x] T3 · [x] T4 · [x] T5 · [x] T6 · [x] T7 · [x] T8 · [x] T9
+- [x] T1 · [x] T2 · [x] T3 · [x] T4 · [x] T5 · [x] T6 · [x] T7 · [x] T8 · [x] T9 · [x] T10
 
 ## Predicción / estrategia de entrega
 - ~250 líneas autorizadas previstas (< 400) → una sola unidad de trabajo, sin encadenamiento de PRs.
