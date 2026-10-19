@@ -100,16 +100,6 @@
                             </span>
                             <span>{{ evento.hora_fin.substr(0, 5) }}</span>
                         </template>
-                        <template v-if="evento.lugar" class="mb-2 flex gap-3">
-                            <span class="mb-2 flex gap-3">
-                                <Icon
-                                    icon="ph:map-pin-duotone"
-                                    class="text-xl"
-                                />
-                                Lugar:
-                            </span>
-                            <span>{{ evento.lugar }}</span>
-                        </template>
                         <template v-if="evento.contacto" class="mb-2 flex gap-3">
                             <span class="mb-2 flex gap-3">
                                 <Icon
@@ -178,6 +168,16 @@
                                 País:
                             </span>
                             <span>{{ evento.pais }}</span>
+                        </template>
+                        <template v-if="evento.lugar" class="mb-2 flex gap-3">
+                            <span class="mb-2 flex gap-3">
+                                <Icon
+                                    icon="ph:map-pin-duotone"
+                                    class="text-xl"
+                                />
+                                Lugar:
+                            </span>
+                            <span>{{ evento.lugar }}</span>
                         </template>
 
                         <div class="mt-6 col-span-2 flex justify-center">
