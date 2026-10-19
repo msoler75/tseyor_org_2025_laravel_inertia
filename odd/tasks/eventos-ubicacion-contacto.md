@@ -60,6 +60,8 @@ Añadir a los eventos cuatro campos opcionales —`ciudad`, `hora_fin`, `lugar` 
 - `npm run build` → exit 0 (13.12s).
 - Spot-check del orquestador: `php artisan test --filter EventosUbicacionContactoTest` → **5 passed**.
 - Commit de trabajo: **`32f0b611`** `feat(eventos): ciudad, hora_fin, lugar y contacto opcionales` (7 archivos, 223 insertiones).
+- Evaluación RDD (`review assess --base-ref main --committed-only`, untracked preexistente excluido con inventario canónico): riesgo **medium** (`executable_change` en `EventoCrudController`), 8 rutas / 303 líneas → `review_due: false`, motivo **`under_budget`**: la revisión nativa queda **pendiente en el slice** hasta que un commit posterior alcance ~400 líneas; el límite revisado NO avanza.
+- Atribución de fallos verificada por el orquestador en la BD de test: 42 filas huérfanas `evento-portada%` (más antigua 2026-10-07, anterior a la sesión; la más reciente la añadió la corrida de Unit del writer) y **0** restos `ubicacion` (los tests nuevos revierten limpio).
 
 ## Fallos ambientales conocidos (preexistentes, no causados por este cambio)
 - `tests/Unit/NodoTest.php:292` (sticky) falla en la base antes de estos cambios.
