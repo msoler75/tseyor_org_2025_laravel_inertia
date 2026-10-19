@@ -110,6 +110,16 @@
                             </span>
                             <span>{{ evento.lugar }}</span>
                         </template>
+                        <template v-if="evento.contacto" class="mb-2 flex gap-3">
+                            <span class="mb-2 flex gap-3">
+                                <Icon
+                                    icon="ph:phone-duotone"
+                                    class="text-xl"
+                                />
+                                Contacto:
+                            </span>
+                            <span>{{ evento.contacto }}</span>
+                        </template>
                         <template v-if="evento.centro" class="mb-2 flex gap-3">
                             <span class="mb-2 flex gap-3">
                                 <Icon
@@ -149,7 +159,7 @@
                                 >{{ evento.equipo.nombre }}</Link
                             >
                         </template>
-                        <template v-if="evento.pais" class="mb-2 flex gap-3">
+                        <template v-if="evento.pais || evento.ciudad" class="mb-2 flex gap-3">
                             <span class="mb-2 flex gap-3">
                                 <Icon
                                     icon="ph:globe"
@@ -158,7 +168,7 @@
                                 País:
                             </span>
                             <div
-                                >{{ evento.pais }}</div
+                                >{{ evento.ciudad ? `${evento.ciudad}, ${evento.pais}` : evento.pais }}</div
                             >
                         </template>
 

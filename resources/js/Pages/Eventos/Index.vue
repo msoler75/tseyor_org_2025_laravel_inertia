@@ -42,7 +42,7 @@
                             :description="contenido.descripcion" :date-start="contenido.fecha_inicio"
                             :date-end="contenido.fecha_fin" :time-start="contenido.hora_inicio" :hora-fin="contenido.hora_fin"
                             :draft="contenido.visibilidad!='P'"
-                            :location="contenido.pais"
+                            :location="ubicacion(contenido)"
                             :imageWidth="800"
                             />
                     </div>
@@ -57,7 +57,7 @@
                             :description="contenido.descripcion" :date-start="contenido.fecha_inicio"
                             :date-end="contenido.fecha_fin" :time-start="contenido.hora_inicio" :hora-fin="contenido.hora_fin"
                             :draft="contenido.visibilidad!='P'"
-                            :location="contenido.pais"
+                            :location="ubicacion(contenido)"
                             :imageWidth="800"
                             />
                     </div>
@@ -73,7 +73,7 @@
                             :description="contenido.descripcion" :date-start="contenido.fecha_inicio"
                             :date-end="contenido.fecha_fin" :time-start="contenido.hora_inicio" :hora-fin="contenido.hora_fin"
                             :draft="contenido.visibilidad!='P'"
-                            :location="contenido.pais"
+                            :location="ubicacion(contenido)"
                             :imageWidth="800"
                             />
                     </div>
@@ -107,6 +107,10 @@ const props = defineProps({
 
 // Separar eventos en curso, próximos y pasados
 import { esFechaFutura, aFecha, esEventoEnCurso } from '@/composables/fechas.js'
+
+// "Ciudad, País" si hay ciudad; solo el país en caso contrario
+const ubicacion = (contenido) =>
+    contenido.ciudad ? `${contenido.ciudad}, ${contenido.pais}` : contenido.pais
 
 const eventsArray = computed(() => Array.isArray(props.listado.data) ? props.listado.data : []);
 

@@ -152,6 +152,7 @@ class EventoCrudController extends CrudController
         CRUD::field('fecha_inicio')->type('date')->wrapper(['style' => 'width: 200px']);
         CRUD::field('fecha_fin')->type('date')->wrapper(['style' => 'width: 200px']);
         CRUD::field('hora_inicio')->type('time')->wrapper(['style' => 'width: 200px']);
+        CRUD::field('hora_fin')->type('time')->wrapper(['style' => 'width: 200px']);
 
         // Campo para fechas repetidas: se renderiza con un campo personalizado (blade + JS)
         CRUD::addField([
@@ -172,6 +173,10 @@ class EventoCrudController extends CrudController
                 'class' => 'form-group col-md-3',
             ],
         ]);
+
+        CRUD::field('ciudad')->type('text')->label('Ciudad')->hint('Ciudad donde se celebra el evento. Se muestra junto al país.')->validationRules('nullable|max:255')->wrapper(['class' => 'form-group col-md-4']);
+        CRUD::field('lugar')->type('text')->label('Lugar')->hint('Dirección o local concreto donde se celebra el evento.')->validationRules('nullable|max:255')->wrapper(['class' => 'form-group col-md-4']);
+        CRUD::field('contacto')->type('text')->label('Contacto')->hint('Teléfono y/o correo de contacto del evento.')->validationRules('nullable|max:255')->wrapper(['class' => 'form-group col-md-4']);
 
         CRUD::field('published_at')->type('datetime')->wrapper(['style' => 'width: 260px']);
 
