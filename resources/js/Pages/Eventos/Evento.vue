@@ -113,13 +113,13 @@
                         <template v-if="evento.centro" class="mb-2 flex gap-3">
                             <span class="mb-2 flex gap-3">
                                 <Icon
-                                    icon="ph:map-pin-duotone"
-                                    class="text-xl"
-                                />
-                                Lugar:
-                            </span>
-                            <Link
-                                :href="route('centro', evento.centro.slug)"
+                                icon="ph:map-pin-duotone"
+                                class="text-xl"
+                            />
+                            Centro:
+                        </span>
+                        <Link
+                            :href="route('centro', evento.centro.slug)"
                                 class="text-primary"
                                 >{{ evento.centro.nombre }}</Link
                             >
