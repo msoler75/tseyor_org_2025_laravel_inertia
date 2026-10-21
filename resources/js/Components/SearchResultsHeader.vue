@@ -1,7 +1,7 @@
 <template>
     <div class="text-xl font-bold">
         <div v-if="loading" class="mb-5">Cargando...</div>
-        <div v-else-if="results.total > 0" :class="classes">
+        <div v-else-if="queryString && results.total > 0" :class="classes">
             {{ results.total }} {{ results.total == 1 ? 'resultado' : 'resultados' }}<span v-html="stringArguments"/> <template v-if="queryString">:</template>
         </div>
         <div v-else-if="queryString && !validSearch">Demasiados resultados<span v-html="stringArguments"/></div>
