@@ -28,3 +28,7 @@ Arreglo de código + datos pedido explícitamente por el usuario ("vamos a arreg
 
 ## Registro de rutas
 - Ruta elegida: delegated direct (writer trigger: 2+ ficheros no triviales: migración + controlador + test).
+
+## Registro RDD
+- 2026-10-21 — commit `bbd2e957`; assess (base c2516834, committed-only, untracked excluido): risk **medium** (`executable_change` en PaginasController), `review_due=false` (**under_budget**, 236 líneas en el rango, 4 commits). Frontera revisada no avanza; queda pendiente en el slice hasta llegar a ~400 líneas.
+- Verificación: RED→GREEN observado (`FilosofiaTemas`: 2 failed → 3 passed, 51 aserciones); migrate idempotente; spot-check del padre: `php artisan test --filter FilosofiaTemas` 3 passed; verificación en vivo sslip.io: `/filosofia/temas` → grupo «El cambio de era» con 2 páginas; portada → 2 tarjetas.
