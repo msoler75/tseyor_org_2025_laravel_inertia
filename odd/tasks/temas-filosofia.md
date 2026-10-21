@@ -24,7 +24,8 @@ Arreglo de código + datos pedido explícitamente por el usuario ("vamos a arreg
 - Tests verdes; `php artisan migrate` idempotente.
 
 ## Pendiente de decisión del usuario
-- Contenido faltante: importar/crear `la-autoobservacion` y `las-sociedades-armonicas` (existen en tseyor.org) y decidir sobre `salto-cuantico`, `especializacion`, `retroalimentacion`, `espejos` (no existen en ningún lado).
+- ~~Contenido faltante: importar `la-autoobservacion` y `las-sociedades-armonicas`~~ → **IMPORTADAS 2026-10-21** (desde tseyor.org vía data-page JSON, con imagen a storage/app/public/medios/paginas/, scout:import ejecutado; orden 40 y 20; atras = filosofia/temas). Verificado en vivo: 3 grupos / 4 páginas, portada con las 4 tarjetas.
+- Sigue pendiente: `salto-cuantico`, `especializacion`, `retroalimentacion`, `espejos` — no existen en ningún lado (404 en tseyor.org); crear contenido desde cero o descartarlos del mapa hardcodeado.
 
 ## Registro de rutas
 - Ruta elegida: delegated direct (writer trigger: 2+ ficheros no triviales: migración + controlador + test).
