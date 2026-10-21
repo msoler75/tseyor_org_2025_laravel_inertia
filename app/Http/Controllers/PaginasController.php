@@ -152,6 +152,15 @@ class PaginasController extends Controller
             }
         }
 
+        // las páginas marcadas cuyo slug no está en el mapa van a «Otros temas»
+        if (isset($groups['Otras'])) {
+            $paginasPorCategoria[] = [
+                'categoria' => 'Otros temas',
+                'icono' => 'ph:compass-duotone',
+                'paginas' => $groups['Otras'],
+            ];
+        }
+
         return Inertia::render('Filosofia/Temas', [
             'paginasPorCategoria' => $paginasPorCategoria,
         ])
@@ -194,12 +203,6 @@ class PaginasController extends Controller
                 'paginasFilosofia' => Pagina::select(['ruta', 'titulo', 'imagen', 'descripcion'])
                     ->publicada()
                     ->where('filosofia', true)
-                    ->where(function ($q) {
-                        $q->where('ruta', 'like', '%rayo%')
-                            ->orWhere('ruta', 'like', '%sociedades%')
-                            ->orWhere('ruta', 'like', '%confederacion%')
-                            ->orWhere('ruta', 'like', '%observacion%');
-                    })
                     ->orderBy('orden')
                     ->limit(4)
                     ->get(),
