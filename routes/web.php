@@ -446,9 +446,12 @@ Route::put('/comentarios/{id}', [ComentariosController::class, 'publish'])->name
 Route::get('/comentarios', [ComentariosController::class, 'index'])->name('comentarios');
 Route::post('/comentarios', [ComentariosController::class, 'create'])->name('comentario.nuevo');
 
+// phpinfo: solo el superadministrador del sitio (User::esSuperAdmin, name === 'admin').
+// No confundir: CheckIfAdmin (Backpack) abre el panel /admin a cualquier rol editorial;
+// can:admin es una ability inexistente que bloquea a todos. Ver User::esSuperAdmin().
 Route::get('phpinfo', function () {
     return phpinfo();
-});
+})->middleware('super.admin')->name('phpinfo');
 
 // imagenes
 Route::get('imagen{ruta}', [ImagenesController::class, 'descargar'])->where(['ruta' => '(\/.+)?'])->name('imagen');

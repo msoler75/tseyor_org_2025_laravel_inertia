@@ -22,7 +22,7 @@ class TarjetaVisitaController extends Controller
         // abort(401, 'Acceso no autorizado');
 
         // mirar si pertenece al grupo "muul"
-        $is_admin = $user->name == 'admin';
+        $is_admin = $user->esSuperAdmin();
         if (! $is_admin && ! $user->grupos()->where('slug', 'muul')->exists()) {
             abort(403, 'Debes ser Muul para ver esta página');
         }

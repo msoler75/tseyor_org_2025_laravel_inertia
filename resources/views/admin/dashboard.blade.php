@@ -415,7 +415,7 @@
 
     </div>
 
-    @if(Auth::user()?->name === 'admin')
+    @if(Auth::user()?->esSuperAdmin())
         <div class="mt-12 max-w-sm">
             <div class="rounded-xs overflow-y-auto border border-gray-500 bg-base-100 p-3">
                 <div class="font-bold text-lg mb-3">Deploy Token</div>
