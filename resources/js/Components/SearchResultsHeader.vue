@@ -4,7 +4,10 @@
         <div v-else-if="queryString && results.total > 0" :class="classes">
             {{ results.total }} {{ results.total == 1 ? 'resultado' : 'resultados' }}<span v-html="stringArguments"/> <template v-if="queryString">:</template>
         </div>
-        <div v-else-if="queryString && !validSearch">Demasiados resultados<span v-html="stringArguments"/></div>
+        <!-- "Demasiados" solo cuando hay una PALABRA BUSCADA demasiado genérica (validSearch=false).
+             Con solo filtros (categoria/ano) sin palabra, validSearch es false por diseño del helper:
+             en ese caso decir "Demasiados" seria mentira. -->
+        <div v-else-if="queryString && !validSearch && query">Demasiados resultados<span v-html="stringArguments"/></div>
         <div v-else-if="queryString && results.total == 0"  class="mb-24">No hay resultados<span v-html="stringArguments"/></div>
     </div>
 </template>
