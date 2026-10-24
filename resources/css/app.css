@@ -4,7 +4,7 @@
 @plugin "@tailwindcss/forms";
 
 @plugin "daisyui" {
-    themes: light --default, night --prefersdark;
+    themes: night --prefersdark;
 }
 
 @plugin "daisyui/theme" {
