@@ -56,3 +56,5 @@ skill*
 .atl/
 .codegraph/
 /storage/indexes_test
+# Local server scripts (not part of the project)
+/actualizar-php-cve.sh
