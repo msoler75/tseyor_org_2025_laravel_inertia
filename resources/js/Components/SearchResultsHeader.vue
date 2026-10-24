@@ -8,11 +8,13 @@
              Con solo filtros (categoria/ano) sin palabra, validSearch es false por diseño del helper:
              en ese caso decir "Demasiados" seria mentira. -->
         <div v-else-if="queryString && !validSearch && query">Demasiados resultados<span v-html="stringArguments"/></div>
-        <div v-else-if="queryString && results.total == 0"  class="mb-24">No hay resultados<span v-html="stringArguments"/></div>
+        <div v-else-if="queryString && results.total == 0"  class="mb-24">{{ noResultsText }}</div>
     </div>
 </template>
 
 <script setup>
+import { buildNoResultsMessage } from '@/utils/mensajesBusqueda.js';
+
 const query = ref('');
 
 const props = defineProps({
@@ -50,4 +52,6 @@ const stringArguments = computed(() => {
 
   return phrase;
 });
+
+const noResultsText = computed(() => buildNoResultsMessage(queryString.value, props.keyword));
 </script>
