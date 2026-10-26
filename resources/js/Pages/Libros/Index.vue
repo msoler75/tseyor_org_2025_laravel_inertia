@@ -43,7 +43,7 @@
 
                 <div class="w-full grow">
 
-                    <SearchResultsHeader :results="listado" :loading="cargando" :category="categoriaActiva" />
+                    <SearchResultsHeader :results="listado" :loading="cargando" :category="categoriaActiva" resource="libro" />
 
                     <FadeOnNavigate>
 

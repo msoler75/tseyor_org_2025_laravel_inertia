@@ -2,18 +2,19 @@
     <div class="text-xl font-bold">
         <div v-if="loading" class="mb-5">Cargando...</div>
         <div v-else-if="queryString && results.total > 0" :class="classes">
-            {{ results.total }} {{ results.total == 1 ? 'resultado' : 'resultados' }}<span v-html="stringArguments"/> <template v-if="queryString">:</template>
+            {{ summary }}<template v-if="queryString">:</template>
         </div>
         <!-- "Demasiados" solo cuando hay una PALABRA BUSCADA demasiado genérica (validSearch=false).
              Con solo filtros (categoria/ano) sin palabra, validSearch es false por diseño del helper:
              en ese caso decir "Demasiados" seria mentira. -->
-        <div v-else-if="queryString && !validSearch && query">Demasiados resultados<span v-html="stringArguments"/></div>
+        <div v-else-if="queryString && !validSearch && query">Demasiados resultados{{ resultsSuffix }}</div>
         <div v-else-if="queryString && results.total == 0"  class="mb-24">{{ noResultsText }}</div>
     </div>
 </template>
 
 <script setup>
 import { buildNoResultsMessage } from '@/utils/mensajesBusqueda.js';
+import { buildResultsSummary, buildResultsSuffix } from '@/utils/resultadosHeader.js';
 
 const query = ref('');
 
@@ -26,6 +27,7 @@ const props = defineProps({
     },
     classes: {default: 'mb-5'},
     category: {},
+    resource: { type: String, required: false, default: '' },
     arguments: {},
     validSearch: {type: Boolean, default: true},
     loading: {type: Boolean, default: false},
@@ -39,19 +41,18 @@ onMounted(() => {
     query.value = urlParams.get(props.keyword);
 });
 
-const stringArguments = computed(() => {
-  let phrase = '';
+const summary = computed(() =>
+    buildResultsSummary({
+        total: props.results.total,
+        resource: props.resource,
+        category: props.category,
+        query: query.value,
+    })
+);
 
-  if (props.category && query.value) {
-    phrase = ` para '${query.value}' en <em>${props.category}</em>`;
-  } else if (props.category) {
-    phrase = ` en <em>${props.category}</em>`;
-  } else if (query.value) {
-    phrase = ` para '${query.value}'`;
-  }
-
-  return phrase;
-});
+const resultsSuffix = computed(() =>
+    buildResultsSuffix({ category: props.category, query: query.value })
+);
 
 const noResultsText = computed(() => buildNoResultsMessage(queryString.value, props.keyword));
 </script>
