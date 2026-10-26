@@ -4,7 +4,7 @@
 @plugin "@tailwindcss/forms";
 
 @plugin "daisyui" {
-    themes: night --prefersdark;
+    themes: none;
 }
 
 @plugin "daisyui/theme" {
@@ -28,8 +28,9 @@
 @plugin "daisyui/theme" {
     name: "night";
     default: true;
+    prefersdark: true;
     --color-primary: oklch(0.72 0.1 250);
-    --color-secondary: oklch(0.76 0.12 75);
+    --color-secondary: oklch(0.66 0.13 50);
     --color-accent: oklch(0.68 0.08 290);
     --color-info: oklch(0.68 0.08 240);
     --color-success: oklch(0.65 0.14 160);
