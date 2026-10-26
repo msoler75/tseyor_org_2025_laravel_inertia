@@ -36,7 +36,9 @@ const props = defineProps({
 const queryString = ref()
 
 onMounted(() => {
-    queryString.value = window.location.search.replace(/[\?&]page=\d+/, '').replace('?categoria=_', '')
+    // '?categoria=_' ("todos") SÍ se cuenta como querystring para mostrar el total,
+    // pero el helper ignora el marcador '_' en el sufijo de categoría.
+    queryString.value = window.location.search.replace(/[\?&]page=\d+/, '');
     const urlParams = new URLSearchParams(queryString.value);
     query.value = urlParams.get(props.keyword);
 });

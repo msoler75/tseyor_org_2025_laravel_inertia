@@ -1,6 +1,9 @@
 export function buildResultsSuffix({ category, query } = {}) {
-  if (category && query) return ` para '${query}' en categoría '${category}'`;
-  if (category) return ` en categoría '${category}'`;
+  // '_' es el marcador de "todos" que envían los controllers; no es una categoría real.
+  const activeCategory = category && category !== "_" ? category : "";
+
+  if (activeCategory && query) return ` para '${query}' en categoría '${activeCategory}'`;
+  if (activeCategory) return ` en categoría '${activeCategory}'`;
   if (query) return ` para '${query}'`;
   return '';
 }

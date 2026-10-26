@@ -22,6 +22,16 @@ describe("buildResultsSuffix", () => {
     expect(buildResultsSuffix({})).toBe("");
     expect(buildResultsSuffix()).toBe("");
   });
+
+  it("marker '_' (all items) is not a category", () => {
+    expect(buildResultsSuffix({ category: "_" })).toBe("");
+    expect(
+      buildResultsSummary({ total: 435, resource: "libro", category: "_" })
+    ).toBe("435 libros");
+    expect(
+      buildResultsSummary({ total: 4, resource: "audio", category: "_", query: "calma" })
+    ).toBe("4 audios para 'calma'");
+  });
 });
 
 describe("buildResultsSummary", () => {
