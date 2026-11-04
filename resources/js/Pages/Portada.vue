@@ -115,6 +115,14 @@
                 <p class="text-base-content/60 mt-3 text-sm leading-relaxed">
                     Las referencias de los Guías Estelares nos invitan a una transformación profunda: del individuo a la comunidad, del miedo al amor, de la separación a la unidad.
                 </p>
+                <figure class="mt-8 rounded-3xl bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/15 p-7 sm:p-9 max-w-3xl">
+                    <blockquote class="text-2xl sm:text-3xl font-display font-black text-base-content tracking-tight leading-tight">
+                        «No nos creáis, comprobadlo.»
+                    </blockquote>
+                    <figcaption class="mt-4 text-sm text-base-content/60 leading-relaxed">
+                        Así nos lo dicen los Guías Estelares. La creencia no sirve de nada, ni a favor ni en contra: lo que conduce es la experimentación y la comprobación propia.
+                    </figcaption>
+                </figure>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -220,7 +228,7 @@
                             Conoce quiénes somos
                             <ArrowRight class="w-4 h-4" />
                         </Link>
-                        <Link href="/ong" class="btn rounded-xl bg-base-100 border border-base-300 hover:border-primary/40 text-base-content/80 text-xs font-bold uppercase tracking-wider px-6">
+                        <Link href="/ong" class="hidden btn rounded-xl bg-base-100 border border-base-300 hover:border-primary/40 text-base-content/80 text-xs font-bold uppercase tracking-wider px-6">
                             Proyectos de la ONG
                         </Link>
                     </div>
@@ -411,11 +419,11 @@
                 </details>
                 <details class="group rounded-xl bg-base-100 border border-base-200 p-5 cursor-pointer [&_summary::-webkit-details-marker]:hidden hover:border-primary/20 transition-colors">
                     <summary class="flex items-center justify-between gap-4 font-display font-bold text-base-content text-sm">
-                        ¿Hay que tener alguna creencia para participar?
+                        ¿Es Tseyor una religión?
                         <ChevronDown class="w-4 h-4 text-base-content/30 shrink-0 transition-transform group-open:rotate-180" />
                     </summary>
                     <p class="mt-4 text-sm text-base-content/60 leading-relaxed border-t border-base-100 pt-4">
-                        Ninguna. No hay dogmas, no hay credo que suscribir. Puedes ser ateo, agnóstico, espiritual o religioso. Lo único que se pide es apertura para explorar y disposición para compartir desde el respeto.
+                        No. No hay dogmas, ni credo que suscribir, ni líder al que obedecer: puedes ser ateo, agnóstico, espiritual o religioso. Respetamos todas las religiones porque la verdad no es propiedad de nadie: está en lo más profundo de cada uno. En Tseyor llamamos <em>religare</em> a ese encuentro con nuestra naturaleza espiritual, cuántica y divina.
                     </p>
                 </details>
                 <details class="group rounded-xl bg-base-100 border border-base-200 p-5 cursor-pointer [&_summary::-webkit-details-marker]:hidden hover:border-primary/20 transition-colors">
