@@ -208,6 +208,18 @@ class Handler extends ExceptionHandler
 
             $colecciones_404 = ['nodos', 'archivos', 'almacen'];
             if (in_array($coleccion, $colecciones_404)) {
+                // Una navegación Inertia (Link) necesita una respuesta Inertia válida;
+                // si devolvemos el 404 HTML plano, el cliente muestra su modal de error.
+                // Descargas directas y crawlers conservan el 404 HTTP real.
+                if ($request->header('X-Inertia')) {
+                    return Inertia::render('Error', [
+                        'codigo' => 404,
+                        'titulo' => 'Contenido no encontrado',
+                        'mensaje' => 'No se encuentra el recurso solicitado.',
+                        'alternativas' => collect([]),
+                    ])->withViewData(['noindex' => true])->toResponse($request);
+                }
+
                 return parent::render($request, $exception);
             }
 
