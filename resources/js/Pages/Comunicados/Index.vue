@@ -99,7 +99,7 @@
 
                 <div v-if="!vistaBusquedaCompleta || completo" class="flex justify-between items-center my-1">
 
-                    <SearchResultsHeader :results="listado" :arguments="busqueda"
+                    <SearchResultsHeader :results="listado" :arguments="busqueda" :category="categoriaActiva"
                         v-show="!vistaBusquedaCompleta || (vistaBusquedaCompleta && !buscando && (filtrado || (listado.data?.length && listado.data[0].extractos)))"
                         :class="listado.data?.length == 0 ? 'mb-64' : ''" :valid-search="busquedaValida" />
 
@@ -276,6 +276,13 @@ const resultadoQueryBusqueda = computed(() => {
         return `?resaltar=${props.filtrado}`
     }
     return ''
+})
+
+// Etiqueta de la categoria activa para SearchResultsHeader (null si es "todos"/sin filtro)
+const categoriaActiva = computed(() => {
+    const cat = props.categoria
+    if (!cat || cat === 'todos') return null
+    return categoriasBusqueda[cat] || null
 })
 
 const extractos_colapsado = ref({})

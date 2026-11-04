@@ -5,7 +5,8 @@ import "../css/app.css";
 //import { createApp, h } from "vue";
 import { createSSRApp, h, nextTick } from 'vue'
 import AppLayout from "@/Layouts/AppLayout.vue";
-import { createInertiaApp } from "@inertiajs/vue3";
+import { createInertiaApp, router } from "@inertiajs/vue3";
+import { handleInvalidResponse } from "@/utils/invalidResponse.js";
 import { resolvePageComponent } from "laravel-vite-plugin/inertia-helpers";
 // import { usePage } from "@inertiajs/vue3";
 import { ZiggyVue } from "ziggy";
@@ -33,6 +34,11 @@ if (typeof window !== 'undefined') {
       event.preventDefault()
     }
   })
+
+  // Ante respuestas no-Inertia (404, 502, etc.), cancelar el modal de error
+  // de Inertia y navegar como un link normal: el servidor mostrará su
+  // página de error con la URL solicitada en la barra de direcciones.
+  router.on('invalid', handleInvalidResponse)
 }
 
 // Deshabilitar restauración automática de scroll del navegador

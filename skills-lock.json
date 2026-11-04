@@ -1,6 +1,12 @@
 {
   "version": 1,
   "skills": {
+    "analytics": {
+      "source": "coreyhaines31/marketingskills",
+      "sourceType": "github",
+      "skillPath": "skills/analytics/SKILL.md",
+      "computedHash": "86adc6e6beee31bea552592035a818fd4ee844c1db92fac0f8cc46b24962a45a"
+    },
     "branding": {
       "source": "kostja94/marketing-skills",
       "sourceType": "github",
@@ -18,6 +24,18 @@
       "sourceType": "github",
       "skillPath": "skills/copywriting/SKILL.md",
       "computedHash": "20663e361c3b6767e1318de69111b75edc1fb19ded6369cffca677b8bd0c8696"
+    },
+    "cro": {
+      "source": "coreyhaines31/marketingskills",
+      "sourceType": "github",
+      "skillPath": "skills/cro/SKILL.md",
+      "computedHash": "8ae444a8e513c7eafbfcf9392c358ea8604fe414ac824e685c2f71905e0aa4a1"
+    },
+    "emails": {
+      "source": "coreyhaines31/marketingskills",
+      "sourceType": "github",
+      "skillPath": "skills/emails/SKILL.md",
+      "computedHash": "7bb6fb42af1287b8a569fc088c6c20e1ae66ed76bcdfdb9386d4bf35809383e8"
     },
     "frontend-design": {
       "source": "anthropics/skills",
@@ -48,6 +66,24 @@
       "sourceType": "github",
       "skillPath": "guides/design/landing-page-design/SKILL.md",
       "computedHash": "03240c924aac601d09fa583dffcbfa7e90e4aeb4881c0ca7739cb110e45e2244"
+    },
+    "lead-magnets": {
+      "source": "coreyhaines31/marketingskills",
+      "sourceType": "github",
+      "skillPath": "skills/lead-magnets/SKILL.md",
+      "computedHash": "268c83c38cc49d3e437042f5d4e3c31b822deb6012b9d5d7a1370ae500058018"
+    },
+    "marketing-psychology": {
+      "source": "coreyhaines31/marketingskills",
+      "sourceType": "github",
+      "skillPath": "skills/marketing-psychology/SKILL.md",
+      "computedHash": "50d735eb0f5c36f379ed2200f21aeacc9b9ad85667b5d33ec6111857352a1340"
+    },
+    "popups": {
+      "source": "coreyhaines31/marketingskills",
+      "sourceType": "github",
+      "skillPath": "skills/popups/SKILL.md",
+      "computedHash": "95c5cb45dcbb05362168255d97ee68d53a5916d8de779bd08f5f70c9b0cabd36"
     },
     "seo-audit": {
       "source": "coreyhaines31/marketingskills",

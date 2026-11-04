@@ -3,9 +3,12 @@
 namespace Tests\Unit;
 
 use App\Models\Evento;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 class EventoMiniaturaTest extends BaseTest
 {
+    use DatabaseTransactions;
+
     protected function makeEvento(array $overrides = []): Evento
     {
         return Evento::create(array_merge([

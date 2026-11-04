@@ -28,6 +28,10 @@ class Evento extends ContenidoBaseModel
         'fechas_evento',
         'pais',
         'hora_inicio',
+        'hora_fin',
+        'ciudad',
+        'lugar',
+        'contacto',
         'visibilidad',
         'centro_id',
         'sala_id',
@@ -65,6 +69,27 @@ class Evento extends ContenidoBaseModel
             $value = implode(',', array_values(array_filter($value)));
         }
         $this->attributes['imagenes'] = $value ?: null;
+    }
+
+    // MUTADORES: '' → null (campos opcionales)
+    public function setHoraFinAttribute($value): void
+    {
+        $this->attributes['hora_fin'] = $value ?: null;
+    }
+
+    public function setCiudadAttribute($value): void
+    {
+        $this->attributes['ciudad'] = $value ?: null;
+    }
+
+    public function setLugarAttribute($value): void
+    {
+        $this->attributes['lugar'] = $value ?: null;
+    }
+
+    public function setContactoAttribute($value): void
+    {
+        $this->attributes['contacto'] = $value ?: null;
     }
 
     // ACCESOR

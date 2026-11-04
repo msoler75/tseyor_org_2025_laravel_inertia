@@ -86,8 +86,8 @@ class CommandController extends Controller
                 Log::info('IP registrada automáticamente para acceso remoto', ['ip' => $clientIP]);
             }
         } else {
-            // Si no hay token, verificar que el usuario esté autenticado y sea admin (name == 'admin')
-            if (! auth()->check() || auth()->user()->name !== 'admin') {
+            // Si no hay token, solo el superadministrador del sitio (User::esSuperAdmin)
+            if (! auth()->check() || ! auth()->user()->esSuperAdmin()) {
                 return response()->json(['error' => 'Acceso denegado. Se requiere autenticación de administrador.'], 403);
             }
         }

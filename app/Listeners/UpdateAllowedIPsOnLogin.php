@@ -20,9 +20,9 @@ class UpdateAllowedIPsOnLogin
         try {
             Log::debug('UpdateAllowedIPsOnLogin listener invoked', ['user' => $user ? $user->email ?? null : null]);
 
-            // Verificar que sea instancia de User y que el nombre sea "admin"
-            if (! $user instanceof User || $user->name !== 'admin') {
-                Log::debug('UpdateAllowedIPsOnLogin: user is not admin (name != "admin")', ['user' => $user ? $user->name ?? null : null]);
+            // Solo el superadministrador del sitio (User::esSuperAdmin)
+            if (! $user instanceof User || ! $user->esSuperAdmin()) {
+                Log::debug('UpdateAllowedIPsOnLogin: user is not superadmin', ['user' => $user ? $user->name ?? null : null]);
 
                 return;
             }

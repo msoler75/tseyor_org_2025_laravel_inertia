@@ -12,6 +12,9 @@
                         </span>
                         <h1 class="text-4xl sm:text-5xl font-display font-black tracking-tight leading-tight mb-4">
                             Curso Holístico Tseyor
+                            <span class="block text-2xl sm:text-3xl font-bold text-primary tracking-normal mt-1">
+                                Las 12 esferas del universo
+                            </span>
                         </h1>
                         <p class="text-lg text-base-content/80 leading-relaxed mb-4">
                             La puerta de entrada a una filosofía viva, unas herramientas de autoconocimiento y una comunidad que te acompaña. Un curso tutelado por los <Referencia>Guías Estelares</Referencia>, donde todos aprendemos de todos.
@@ -168,7 +171,10 @@
                         </div>
                     </div>
                     <div class="md:text-left text-center">
-                        <h2 class="text-3xl sm:text-4xl font-display font-black tracking-tight mb-4">Curso Holístico Tseyor</h2>
+                        <h2 class="text-3xl sm:text-4xl font-display font-black tracking-tight mb-4">
+                            Curso Holístico Tseyor
+                            <span class="block text-xl sm:text-2xl font-bold text-primary tracking-normal mt-1">Las 12 esferas del universo</span>
+                        </h2>
                         <p class="text-base text-base-content/70 leading-relaxed mb-4">
                             El curso se basa en un libro de relatos y enseñanzas transmitidas por los Guías Estelares. Cada capítulo abre una puerta a la reflexión, el autoconocimiento y el diálogo compartido.
                         </p>

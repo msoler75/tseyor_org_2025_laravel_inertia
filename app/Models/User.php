@@ -220,6 +220,22 @@ class User extends Authenticatable implements MustVerifyEmail
     }
 
     /**
+     * ¿Es el superadministrador único del sitio (name === 'admin')?
+     *
+     * OJO con las tres nociones de "admin" que conviven en este proyecto:
+     * - User::esSuperAdmin(): solo el usuario name === 'admin' (dueño del sitio).
+     * - CheckIfAdmin (Backpack): acepta CUALQUIER rol editorial
+     *   (superadministrador, administrador, secretaria, comunicador, editor)
+     *   o permisos "administrar *"; protege el panel /admin.
+     * - can:admin: ability INEXISTENTE en los Gates; devuelve false para todos,
+     *   incluso para el superadministrador. No usar.
+     */
+    public function esSuperAdmin(): bool
+    {
+        return $this->name === 'admin';
+    }
+
+    /**
      * Obtiene el Access Control List, es una colección de permisos a ciertos nodos, para este usuario
      */
     public function accessControlList()

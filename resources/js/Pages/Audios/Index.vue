@@ -40,7 +40,7 @@
 
             <div class="w-full grow">
 
-                <SearchResultsHeader :results="listado" :loading="cargando"/>
+                <SearchResultsHeader :results="listado" :loading="cargando" :category="categoriaActiva" resource="audio"/>
 
                 <FadeOnNavigate>
 
