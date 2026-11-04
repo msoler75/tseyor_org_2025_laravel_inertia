@@ -42,6 +42,10 @@ Lista de tareas pendientes. Revisada contra el código el 07/10/2026: se elimina
 
 ## 🟡 P3 — Funcionalidades pendientes
 
+### Eventos
+- [ ] Corregir eventos en curso (ver eventos_en_curso.md)
+
+
 ### Equipos
 - [ ] Panel de EVENTOS relacionados con el equipo (`Evento.php:152` ya apunta a `Equipo`, falta la relación inversa y la vista)
 - [ ] Relación entre equipos y centros visible en ambas vistas (no existe ni la relación Eloquent `centros()`/`equipos()`)
