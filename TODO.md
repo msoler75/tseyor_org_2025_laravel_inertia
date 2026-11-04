@@ -25,7 +25,8 @@ Lista de tareas pendientes. Revisada contra el código el 07/10/2026: se elimina
   - `@tiptap/*` v2.27.3 → v3.31.4 (moderate, `mergeAttributes`) — migración **major** que afecta al editor de `texto` de comunicados/noticias
   - `showdown` 2.1.0 (moderate) — ya es la última versión, sin fix publicado
   - `md-editor-v3` v4 → v7 (moderate) — migración major
-  - 6 high **solo de build/dev** (`braces`, `chokidar`, `fast-glob`, `micromatch`, `unplugin-auto-import`, `unplugin-vue-components`) — solo se arreglan con `npm audit fix --force` (breaking changes en plugins de Vite)
+  - `deepmerge` 4.3.1 (low, alerta #270) — sin parche propio; el único camino es subir `vite-plugin-pwa` a v1.1.0 (major). Solo afecta a la toolchain de build (PWA), no llega a runtime.
+- [x] Los 6 high **solo de build/dev** que figuraban acá (`braces`, `chokidar`, `fast-glob`, `micromatch`, `unplugin-auto-import`, `unplugin-vue-components`) ya no existen: `npm audit` hoy reporta **0 high**. `unplugin-auto-import` y `unplugin-vue-components` quedan como *moderate* por `minimatch`.
 - [ ] Dependabot: https://github.com/msoler75/tseyor_org_2025_laravel_inertia/security/dependabot
 
 ---
