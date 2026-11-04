@@ -32,7 +32,7 @@ Lista de tareas pendientes. Revisada contra el código el 07/10/2026: se elimina
 
 ## 🟠 P2 — Deuda técnica
 
-- [ ] **Limpiar historial de Git con BFG Repo-Cleaner**: hay 10 copias de `laravel_inertia.sql` de ~82 MB cada una (~820 MB); `.env` nunca se subió. Requiere `push --force` (rompe los clones existentes) → coordinar antes de ejecutar
+- [x] **Limpiar historial de Git** (09/10/2026, con `git-filter-repo`): se eliminaron del historial 60 copias de `laravel_inertia.sql` + `comunicados.sql` + 16 backups `storage/backups/*.sql.zip` de producción, y un segundo pase eliminó también el usuario `dh_xjtdnz`, el correo `msgp753@gmail.com` (ahora configurable como `MAIL_BCC_ARCHIVO`) y el bcrypt por defecto de Laravel. `push --force` a las 4 ramas en ambos pases (rompe los clones existentes). `.env` nunca se subió. **Pendiente:** pedir a soporte de GitHub la purga de los objetos inalcanzables — siguen descargables por SHA (verificado vía API). Borrador del ticket en `limpieza-historial-sql.md`.
 - [ ] **Remover Sanctum**: `composer.json:23`, `routes/api.php:20,25` (`auth:sanctum`), `config/cors.php:18`
 - [ ] Instalar IP Abuser Middleware (https://github.com/rahulalam31/Laravel-Abuse-IP) + cron de actualización de IPs — hoy solo existe `CheckAllowedIP`, que es una allowlist de despliegue
 - [ ] Unificar diseño de vistas de correo: conviven `master-secretaria`, `master-usuario`, `notification` y `old-invitacion-equipo.blade.php` (plantilla vieja, borrar)
