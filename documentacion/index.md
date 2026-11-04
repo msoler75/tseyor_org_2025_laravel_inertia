@@ -7,6 +7,7 @@ Esta carpeta contiene la documentación técnica organizada del proyecto. A cont
 - [Arquitectura del Proyecto](./arquitectura.md): Descripción de la arquitectura general, patrones y convenciones.
 - [Planificación del Proyecto](./planificacion.md): Objetivos, alcance y planificación.
 - [Hoja de Ruta (Roadmap)](./hoja_de_ruta.md): Fases y entregables previstos.
+- [Embudo de Captación de Alumnos](./embudo.md): Estrategia y decisiones para aumentar matriculados y reducir la fricción del interesado en el curso.
 - [Tareas Pendientes y Sugerencias](./tareas_pendientes.md): Tareas pendientes y sugerencias de mejora.
 
 ## 🚀 Desarrollo y Despliegue
