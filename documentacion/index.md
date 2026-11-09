@@ -31,6 +31,7 @@ Esta carpeta contiene la documentación técnica organizada del proyecto. A cont
 
 - [Mantenimiento](./mantenimiento.md): Procedimientos, comandos y recomendaciones para el mantenimiento del sistema.
 - [Seguridad](./seguridad.md): Consideraciones y políticas de seguridad.
+- [Vulnerabilidades Aceptadas](./vulnerabilidades_aceptadas.md): Dependabot/npm audit aceptadas conscientemente, con justificación y plan de salida.
 - [Notas Técnicas](./notas_tecnicas.md): Notas técnicas varias y aclaraciones.
 
 ---

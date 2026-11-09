@@ -21,11 +21,7 @@ Lista de tareas pendientes. Revisada contra el código el 07/10/2026: se elimina
 - [x] PHP: `composer audit` limpio (0 vulnerabilidades) tras actualizar `league/commonmark`, `league/flysystem` y `laravel/framework`
 - [x] JS: `npm audit fix` sin `--force` — de 63 → 47 vulnerabilidades (quitó el critical de `proxy-addr` y 8 high)
 - [x] JS producción: `vue` y `@vue/server-renderer` a 3.5.43 — **producción sin high** (quedan 37 moderate)
-- [ ] **Riesgo conocido aceptado (no migrar ahora):**
-  - `@tiptap/*` v2.27.3 → v3.31.4 (moderate, `mergeAttributes`) — migración **major** que afecta al editor de `texto` de comunicados/noticias
-  - `showdown` 2.1.0 (moderate) — ya es la última versión, sin fix publicado
-  - `md-editor-v3` v4 → v7 (moderate) — migración major
-  - `deepmerge` 4.3.1 (low, alerta #270) — sin parche propio; el único camino es subir `vite-plugin-pwa` a v1.1.0 (major). Solo afecta a la toolchain de build (PWA), no llega a runtime.
+- [ ] **Riesgo conocido aceptado (no migrar ahora):** ver detalle, justificación y plan de salida en `documentacion/vulnerabilidades_aceptadas.md` (`@tiptap/*`, `md-editor-v3`, `deepmerge`, `showdown`).
 - [x] Los 6 high **solo de build/dev** que figuraban acá (`braces`, `chokidar`, `fast-glob`, `micromatch`, `unplugin-auto-import`, `unplugin-vue-components`) ya no existen: `npm audit` hoy reporta **0 high**. `unplugin-auto-import` y `unplugin-vue-components` quedan como *moderate* por `minimatch`.
 - [ ] Dependabot: https://github.com/msoler75/tseyor_org_2025_laravel_inertia/security/dependabot
 

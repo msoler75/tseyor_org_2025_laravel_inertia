@@ -33,6 +33,10 @@ Se pueden utilizar herramientas de análisis de seguridad para identificar vulne
 - OWASP ZAP
 - SonarQube
 
+## Vulnerabilidades de dependencias aceptadas
+
+Las vulnerabilidades de dependencias (Dependabot / `npm audit`) aceptadas conscientemente, con justificación y plan de salida, están documentadas en [Vulnerabilidades Aceptadas](./vulnerabilidades_aceptadas.md). Revisar ese documento antes de actualizar dependencias.
+
 ## Tareas Pendientes
 
 *   Instalar `Laravel-Abuse-IP`
