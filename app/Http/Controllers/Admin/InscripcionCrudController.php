@@ -539,6 +539,8 @@ class InscripcionCrudController extends CrudController
             } elseif ($estado === '_cerradas') {
                 $cerrados = ['finalizado', 'duplicada', 'nointeresado', 'abandonado', 'nocontesta', 'caducada'];
                 $this->crud->addClause('whereIn', 'estado', $cerrados);
+            } elseif ($estado === '_en_proceso') {
+                $this->crud->addClause('whereIn', 'estado', ['contactado', 'encurso']);
             } elseif ($estado !== '') {
                 $this->crud->addClause('where', 'estado', '=', $estado);
                 \Log::channel('inscripciones')->info('Filtrando por estado: ['.$estado.']');

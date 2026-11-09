@@ -8,12 +8,25 @@ $stats = [
     'no_contesta' => \App\Models\Inscripcion::where('estado', 'nocontesta')->count(),
     'no_interesado' => \App\Models\Inscripcion::where('estado', 'nointeresado')->count(),
 ];
+
+// URL base del listado (la misma página donde se renderiza este widget)
+$baseUrl = request()->url();
+
+// Mapa de cada tarjeta -> valor de filtro `estado` que debe aplicar al pulsarla
+$filtroPorTarjeta = [
+    'nuevas' => 'nueva',
+    'asignadas' => 'asignada',
+    'en_proceso' => '_en_proceso',
+    'finalizadas' => 'finalizado',
+    'no_contesta' => 'nocontesta',
+    'no_interesado' => 'nointeresado',
+];
 @endphp
 
 <div class="row mb-3">
     {{-- Nuevas --}}
     <div class="col-6 col-md-4 col-lg-2 mb-3">
-        <div class="card bg-warning h-100">
+        <a href="{{ $baseUrl }}?estado={{ $filtroPorTarjeta['nuevas'] }}" class="card bg-warning h-100 text-decoration-none" style="cursor:pointer;">
             <div class="card-body p-3">
                 <div class="d-flex align-items-center">
                     <i class="la la-user-plus fa-2x me-3"></i>
@@ -23,12 +36,12 @@ $stats = [
                     </div>
                 </div>
             </div>
-        </div>
+        </a>
     </div>
 
     {{-- Asignadas --}}
     <div class="col-6 col-md-4 col-lg-2 mb-3">
-        <div class="card text-white bg-danger h-100">
+        <a href="{{ $baseUrl }}?estado={{ $filtroPorTarjeta['asignadas'] }}" class="card text-white bg-danger h-100 text-decoration-none" style="cursor:pointer;">
             <div class="card-body p-3">
                 <div class="d-flex align-items-center">
                     <i class="la la-user-check fa-2x me-3"></i>
@@ -38,12 +51,12 @@ $stats = [
                     </div>
                 </div>
             </div>
-        </div>
+        </a>
     </div>
 
     {{-- En Proceso --}}
     <div class="col-6 col-md-4 col-lg-2 mb-3">
-        <div class="card text-white bg-info h-100">
+        <a href="{{ $baseUrl }}?estado={{ $filtroPorTarjeta['en_proceso'] }}" class="card text-white bg-info h-100 text-decoration-none" style="cursor:pointer;">
             <div class="card-body p-3">
                 <div class="d-flex align-items-center">
                     <i class="la la-comments fa-2x me-3"></i>
@@ -53,12 +66,12 @@ $stats = [
                     </div>
                 </div>
             </div>
-        </div>
+        </a>
     </div>
 
     {{-- Finalizadas --}}
     <div class="col-6 col-md-4 col-lg-2 mb-3">
-        <div class="card text-white bg-success h-100">
+        <a href="{{ $baseUrl }}?estado={{ $filtroPorTarjeta['finalizadas'] }}" class="card text-white bg-success h-100 text-decoration-none" style="cursor:pointer;">
             <div class="card-body p-3">
                 <div class="d-flex align-items-center">
                     <i class="la la-check-circle fa-2x me-3"></i>
@@ -68,12 +81,12 @@ $stats = [
                     </div>
                 </div>
             </div>
-        </div>
+        </a>
     </div>
 
     {{-- No Contesta --}}
     <div class="col-6 col-md-4 col-lg-2 mb-3">
-        <div class="card text-white bg-secondary h-100">
+        <a href="{{ $baseUrl }}?estado={{ $filtroPorTarjeta['no_contesta'] }}" class="card text-white bg-secondary h-100 text-decoration-none" style="cursor:pointer;">
             <div class="card-body p-3">
                 <div class="d-flex align-items-center">
                     <i class="la la-phone-slash fa-2x me-3"></i>
@@ -83,12 +96,12 @@ $stats = [
                     </div>
                 </div>
             </div>
-        </div>
+        </a>
     </div>
 
     {{-- No Interesado --}}
     <div class="col-6 col-md-4 col-lg-2 mb-3">
-        <div class="card text-white bg-dark h-100">
+        <a href="{{ $baseUrl }}?estado={{ $filtroPorTarjeta['no_interesado'] }}" class="card text-white bg-dark h-100 text-decoration-none" style="cursor:pointer;">
             <div class="card-body p-3">
                 <div class="d-flex align-items-center">
                     <i class="la la-times-circle fa-2x me-3"></i>
@@ -98,6 +111,6 @@ $stats = [
                     </div>
                 </div>
             </div>
-        </div>
+        </a>
     </div>
 </div>
