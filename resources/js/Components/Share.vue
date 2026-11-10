@@ -84,7 +84,7 @@ const originalUrl = ref('')
 const { copy, copied, isSupported } = useClipboard()
 
 const copyCurrentUrl = () => {
-    const texto = allUrls.value.length > 1 ? allUrls.value.join(' ') : currentUrl.value
+    const texto = allUrls.value.length > 1 ? allUrls.value.join('\n') : currentUrl.value
     copy(texto)
     alert('Se ha copiado ' + (allUrls.value.length > 1 ? allUrls.value.length + ' enlaces' : 'el enlace') + ' al portapapeles')
 }
