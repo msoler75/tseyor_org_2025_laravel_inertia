@@ -164,7 +164,6 @@ function cargarDatosUsuario() {
         return;
     }
     userStore.cargarPermisos();
-    userStore.cargarSaldo();
 }
 
 // si cambia el usuario (solo si el ID cambia para evitar llamadas innecesarias)

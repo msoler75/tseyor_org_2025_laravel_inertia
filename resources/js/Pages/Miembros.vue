@@ -9,14 +9,23 @@
             <FontSizeControls />
         </div>
 
+        <div class="flex justify-end mb-6 sm:mb-8">
+            <a href="/muular-electronico" class="inline-flex items-center gap-2 text-sm text-base-content/70 hover:text-secondary transition-colors" target="_blank">
+                <Icon icon="ph:currency-circle-dollar-duotone" class="text-lg" />
+                <span v-if="props.saldo === ''">Saldo: cargando...</span>
+                <span v-else-if="props.saldo === 'Error'">Saldo: no disponible</span>
+                <span v-else>Saldo: {{ props.saldo }} muulares</span>
+            </a>
+        </div>
+
         <VistaMosaicoCompactoNueva :sections="sections" :icon-classes="iconClasses" :user-settings="userSettings" />
     </div>
 </template>
 
 <script setup>
 import { computed } from 'vue'
-import { usePage } from '@inertiajs/vue3'
 import useUserStore from '@/Stores/user'
+import { usePage } from '@inertiajs/vue3'
 
 import VistaMosaicoCompactoNueva from './Miembros/VistaMosaicoCompactoNueva.vue'
 
@@ -29,7 +38,8 @@ const props = defineProps({
     esIniciado: { type: Boolean, default: false },
     inscripcionesPendientes: { type: Number, default: 0 },
     inscripcionesTotales: { type: Number, default: 0 },
-    userSettings: { type: Object, default: () => ({}) }
+    userSettings: { type: Object, default: () => ({}) },
+    saldo: { type: [String, Number], default: '' }
 })
 
 const iconClasses = (color) => {
@@ -47,7 +57,7 @@ const iconClasses = (color) => {
 
 const sections = computed(() => {
     const uid = page.props.auth.user.id
-    const hasMuular = userStore.saldo !== 'Error'
+    const hasMuular = props.saldo !== 'Error' && props.saldo !== ''
 
     const all = [
         {
@@ -68,7 +78,7 @@ const sections = computed(() => {
             titleIcon: 'ph:coin-duotone',
             titleColor: 'text-secondary',
             items: [
-                { label: 'Muulares',     icon: 'ph:currency-circle-dollar-duotone', color: 'secondary', to: '/muular-electronico', badge: userStore.saldo ?? '0', badgeClasses: 'text-info-content bg-info rounded-md p-1', badgeSummary: true, show: hasMuular, external: true, tooltip: 'Tu saldo de muulares' },
+                { label: 'Muulares',     icon: 'ph:currency-circle-dollar-duotone', color: 'secondary', to: '/muular-electronico', badge: props.saldo ?? '0', badgeClasses: 'text-info-content bg-info rounded-md p-1', badgeSummary: true, show: hasMuular, external: true, tooltip: 'Tu saldo de muulares' },
                 { label: 'Solicitar',  icon: 'ph:currency-circle-dollar-duotone', color: 'warning',   to: '/contactar',                                   show: !hasMuular, tooltip: 'Solicitar muulares electrónicos' },
                 { label: '¿Qué es?',   icon: 'ph:info-duotone',                   color: 'primary',   to: '/muular', tooltip: 'Información sobre el muular electrónico' },
             ]

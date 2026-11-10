@@ -381,6 +381,23 @@ Route::middleware([
             $inscripcionesTotales = Inscripcion::where('user_id', $user->id)->count();
         }
 
+        // Saldo del Muular Electrónico (cargado en servidor, sin AJAX)
+        $saldo = '';
+        if ($user) {
+            try {
+                $resp = \App\Services\MuularElectronico::saldo();
+                $data = $resp instanceof \Illuminate\Http\JsonResponse ? $resp->getData(true) : [];
+                if (isset($data['error'])) {
+                    $saldo = 'Error';
+                } else {
+                    $saldo = $data['saldo'] ?? '';
+                }
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::warning('MuularElectronico saldo (miembros): '.$e->getMessage());
+                $saldo = 'Error';
+            }
+        }
+
         return Inertia::render('Miembros', [
             'misEquipos' => $user ? $user->equipos()->count() : 0,
             'esMuul' => $user && $user->grupos()->where('slug', 'muul')->exists(),
@@ -388,6 +405,7 @@ Route::middleware([
             'inscripcionesPendientes' => $inscripcionesPendientes,
             'inscripcionesTotales' => $inscripcionesTotales,
             'userSettings' => $user->settings ?? [],
+            'saldo' => $saldo,
         ]);
     })->name('miembros');
 
