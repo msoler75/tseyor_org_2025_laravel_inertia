@@ -62,6 +62,12 @@
             </div>
         </Share>
 
+        <button v-if="store.itemsSeleccionados.length >= 2 && store.itemsSeleccionados.length <= 10 && store.itemsSeleccionados.every(i => i.tipo === 'archivo')"
+            class="btn btn-secondary flex gap-x items-center" @click.prevent="compartirEnlaces">
+            <Icon icon="ph:share-network-duotone" />
+            <span>Compartir enlaces ({{ store.itemsSeleccionados.length }})</span>
+        </button>
+
         <button v-if="store.seleccionando && store.itemsSeleccionados.length > 0" class="btn btn-secondary"
             @click.prevent="store.call('propiedades')">
             <Icon icon="ph:info-duotone" />
@@ -154,5 +160,21 @@ const archivoSeleccionadoNombre = computed(() => {
     const item = store.itemsSeleccionados[0]
     return item ? (item.nombre || '') : ''
 })
+
+function compartirEnlaces() {
+    const urls = store.itemsSeleccionados
+        .filter(i => i.tipo === 'archivo')
+        .map(i => (typeof window !== 'undefined' ? window.location.origin : '') + (i.url || ''))
+    const texto = urls.join(' ')
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(texto).then(() => {
+            alert('Se copiaron ' + urls.length + ' enlaces al portapapeles')
+        }).catch(() => {
+            prompt('Copia los enlaces:', texto)
+        })
+    } else {
+        prompt('Copia los enlaces:', texto)
+    }
+}
 
 </script>
