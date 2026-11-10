@@ -62,11 +62,13 @@
             </div>
         </Share>
 
-        <button v-if="store.itemsSeleccionados.length >= 1 && store.itemsSeleccionados.length <= 10 && (store.itemsSeleccionados.every(i => i.tipo === 'carpeta') || store.itemsSeleccionados.length >= 2)"
-            class="btn btn-secondary flex gap-x items-center" @click.prevent="compartirEnlaces">
-            <Icon icon="ph:share-network-duotone" />
-            <span>Compartir enlaces ({{ store.itemsSeleccionados.length }})</span>
-        </button>
+        <Share v-if="store.itemsSeleccionados.length >= 1 && store.itemsSeleccionados.length <= 10 && (store.itemsSeleccionados.every(i => i.tipo === 'carpeta') || store.itemsSeleccionados.length >= 2)"
+            :urls="archivosSeleccionadosUrls" :title="'Archivos seleccionados'">
+            <div class="btn btn-secondary flex gap-x items-center cursor-pointer">
+                <Icon icon="ph:share-network-duotone" />
+                <span>Compartir enlaces ({{ store.itemsSeleccionados.length }})</span>
+            </div>
+        </Share>
 
         <button v-if="store.seleccionando && store.itemsSeleccionados.length > 0" class="btn btn-secondary"
             @click.prevent="store.call('propiedades')">
@@ -161,20 +163,8 @@ const archivoSeleccionadoNombre = computed(() => {
     return item ? (item.nombre || '') : ''
 })
 
-function compartirEnlaces() {
-    const urls = store.itemsSeleccionados
-        .filter(i => i.tipo === 'archivo')
-        .map(i => (typeof window !== 'undefined' ? window.location.origin : '') + (i.url || ''))
-    const texto = urls.join(' ')
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(texto).then(() => {
-            alert('Se copiaron ' + urls.length + ' enlaces al portapapeles')
-        }).catch(() => {
-            prompt('Copia los enlaces:', texto)
-        })
-    } else {
-        prompt('Copia los enlaces:', texto)
-    }
-}
+const archivosSeleccionadosUrls = computed(() => {
+    return store.itemsSeleccionados.map(i => (typeof window !== 'undefined' ? window.location.origin : '') + (i.url || ''))
+})
 
 </script>

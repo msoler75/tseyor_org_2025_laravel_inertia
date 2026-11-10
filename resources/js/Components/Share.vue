@@ -18,6 +18,10 @@
                 &ldquo;<i>{{ sharing.title }}</i>&ldquo;
             </p>
 
+            <div v-if="allUrls.length > 1" class="mb-3 max-h-40 overflow-y-auto space-y-1">
+                <div v-for="(u, i) in allUrls" :key="i" class="text-xs break-all opacity-70">{{ u }}</div>
+            </div>
+
             <div class="flex flex-wrap justify-start items-center gap-3"
                 :style="{ color: '#eee', textShadow: '1px 1px black' }">
                 <ShareNetwork v-for="network in networks" :network="network.network" :key="network.network"
@@ -61,9 +65,11 @@
 <script setup>
 const props = defineProps({
     url: { type: String, default: '' },
+    urls: { type: Array, default: () => [] },
     title: { type: String, default: '' },
 })
 import { useClipboard } from '@vueuse/core'
+const allUrls = computed(() => (props.urls && props.urls.length) ? props.urls : (props.url ? [props.url] : []))
 const ShareNetwork = defineAsyncComponent(() => import('./ShareNetwork.vue'))
 
 const sharing = reactive({
@@ -80,8 +86,9 @@ const originalUrl = ref('')
 const { copy, copied, isSupported } = useClipboard()
 
 const copyCurrentUrl = () => {
-    copy(sharing.title + '\n' + currentUrl.value)
-    alert('Se ha copiado el título y enlace al portapapeles')
+    const texto = allUrls.value.length > 1 ? allUrls.value.join(' ') : (sharing.title + '\n' + currentUrl.value)
+    copy(texto)
+    alert('Se ha copiado ' + (allUrls.value.length > 1 ? allUrls.value.length + ' enlaces' : 'el enlace') + ' al portapapeles')
 }
 
 // mostrar Modal
@@ -107,7 +114,8 @@ const enlaceObtenido = ref(false)
 onMounted(() => {
     // Usar URL completa inicialmente (solo en cliente)
     if (typeof window !== 'undefined') {
-        const fullUrl = props.url ? props.url : window.location.href.replace(/\?.*/, '')
+        const primaryUrl = allUrls.value.length ? allUrls.value[0] : (typeof window !== 'undefined' ? window.location.href.replace(/\?.*/, '') : '')
+        const fullUrl = (props.url || (props.urls && props.urls.length)) ? primaryUrl : (typeof window !== 'undefined' ? window.location.href.replace(/\?.*/, '') : '')
         currentUrl.value = fullUrl
         originalUrl.value = fullUrl
     }
@@ -137,7 +145,8 @@ const prepararEnlaceCorto = async () => {
             return
         }
 
-        const fullUrl = props.url ? props.url : window.location.href.replace(/\?.*/, '')
+        if (allUrls.value.length !== 1) { procesandoEnlace.value = false; enlaceObtenido.value = true; return }
+        const fullUrl = allUrls.value[0]
         const urlCorta = await obtenerEnlaceCorto(fullUrl)
 
         // Actualizar URL (puede ser la misma si no cumple umbral)
