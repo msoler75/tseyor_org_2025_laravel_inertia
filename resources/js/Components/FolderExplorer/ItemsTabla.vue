@@ -1,5 +1,5 @@
 <template>
-    <table class="w-full max-w-full mx-auto overflow-hidden" :class="transitionActive ? 'animating' : ''">
+    <table class="w-full max-w-full mx-auto overflow-visible" :class="transitionActive ? 'animating' : ''">
         <thead class="hidden sm:table-header-group" :class="items.length ? '' : 'opacity-0'">
             <tr>
                 <th v-if="store.seleccionando" class="hidden md:table-cell"></th>

@@ -222,7 +222,7 @@
                     itemsMostrar.length ? 'mr-2' : '',
                     store.embed ? 'px-0' : '',
                 ]"
-                class="overflow-hidden"
+                class="overflow-visible"
             >
                 <ItemsTabla :items="itemsMostrar" />
             </div>
