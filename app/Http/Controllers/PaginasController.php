@@ -7,7 +7,6 @@ use App\Models\Centro;
 use App\Models\Contacto;
 use App\Models\Equipo;
 use App\Models\Experiencia;
-use App\Models\Lugar;
 use App\Models\Sala;
 use App\Models\Comunicado;
 use App\Models\Entrada;
@@ -246,8 +245,7 @@ class PaginasController extends Controller
                         'videos' => Video::publicado()->count(),
                         'meditaciones' => Meditacion::publicado()->count(),
                         'psicografias' => Psicografia::count(),
-                        'galerias' => Galeria::count(),
-                    ];
+                            ];
                 }),
             ]
         )
@@ -263,7 +261,6 @@ class PaginasController extends Controller
                 'equipos' => Equipo::count(),
                 'salas' => Sala::count(),
                 'centros' => Centro::count(),
-                'lugares' => Lugar::count(),
                 'eventos' => Evento::count(),
                 'usuarios' => User::count(),
                 'contactos' => Contacto::count(),

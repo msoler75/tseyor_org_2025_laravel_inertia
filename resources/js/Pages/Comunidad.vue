@@ -52,13 +52,6 @@ const props = defineProps({
 
 const secciones = ref([
     {
-        title: 'Galerías',
-        descripcion: 'Fotografías, arte y memoria visual de la comunidad.',
-        url: route('galerias'),
-        icon: "ph:image-duotone",
-        count: computed(() => props.stats ? props.stats.galerias : 0)
-    },
-    {
         title: 'Experiencias',
         descripcion: 'Sueños, meditaciones, extrapolaciones y trabajos grupales compartidos por la comunidad.',
         url: route('experiencias'),
@@ -91,27 +84,12 @@ const secciones = ref([
         collection: 'centros'
     },
     {
-        title: 'Lugares',
-        descripcion: 'Ubicaciones donde encontrar la comunidad Tseyor.',
-        url: route('lugares'),
-        icon: "ph:map-pin-line-duotone",
-        count: computed(() => props.stats ? props.stats.lugares : 0),
-        collection: 'lugares'
-    },
-    {
         title: 'Eventos',
         descripcion: 'Cursos, convivencias y encuentros de la comunidad.',
         url: route('eventos'),
         icon: "ph:calendar-duotone",
         count: computed(() => props.stats ? props.stats.eventos : 0),
         collection: 'eventos'
-    },
-    {
-        title: 'Trabajos de Arte',
-        url: '/trabajos-arte',
-        descripcion: 'Espacio para compartir y descubrir las creaciones artísticas de la comunidad.',
-        icon: "ph:palette-duotone",
-        count: 0
     },
     {
         title: 'Usuarios',
@@ -128,6 +106,20 @@ const secciones = ref([
         icon: "ph:map-pin-duotone",
         count: computed(() => props.stats ? props.stats.contactos : 0),
         collection: 'contactos'
+    },
+    {
+        title: 'Galerías',
+        descripcion: 'Fotografías, arte y memoria visual de la comunidad.',
+        url: route('galerias'),
+        icon: "ph:image-duotone",
+        count: computed(() => props.stats ? props.stats.galerias : 0)
+    },
+    {
+        title: 'Archivos',
+        descripcion: 'Zona de archivos para los usuarios: contenidos públicos y archivos de los equipos.',
+        url: '/archivos',
+        icon: "ph:folder-duotone",
+        count: 0
     },
 ])
 </script>
