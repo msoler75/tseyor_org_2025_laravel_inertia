@@ -14,13 +14,11 @@
 
         <div class="p-5">
 
-            <p class="font-bold text-base-content">Compartir
-                &ldquo;<i>{{ sharing.title }}</i>&ldquo;
+            <p class="font-bold text-base-content">
+                <template v-if="sharing.title">Compartir &ldquo;<i>{{ sharing.title }}</i>&rdquo;</template>
+                <template v-else-if="allUrls.length <= 1">Compartir enlace</template>
+                <template v-else>Compartir {{ allUrls.length }} enlaces</template>
             </p>
-
-            <div v-if="allUrls.length > 1" class="mb-3 max-h-40 overflow-y-auto space-y-1">
-                <div v-for="(u, i) in allUrls" :key="i" class="text-xs break-all opacity-70">{{ u }}</div>
-            </div>
 
             <div class="flex flex-wrap justify-start items-center gap-3"
                 :style="{ color: '#eee', textShadow: '1px 1px black' }">

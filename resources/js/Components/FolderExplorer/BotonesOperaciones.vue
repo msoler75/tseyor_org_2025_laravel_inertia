@@ -64,7 +64,7 @@
 
         <Share v-if="store.itemsSeleccionados.length >= 1 && store.itemsSeleccionados.length <= 10 && (store.itemsSeleccionados.every(i => i.tipo === 'carpeta') || store.itemsSeleccionados.length >= 2)"
             :urls="archivosSeleccionadosUrls" :title="''">
-            <div class="btn btn-secondary flex gap-x items-center cursor-pointer">
+            <div class="btn btn-secondary flex gap-x items-center cursor-pointer whitespace-nowrap">
                 <Icon icon="ph:share-network-duotone" />
                 <span>Compartir<span v-if="store.itemsSeleccionados.length >= 2"> ({{ store.itemsSeleccionados.length }})</span></span>
             </div>
