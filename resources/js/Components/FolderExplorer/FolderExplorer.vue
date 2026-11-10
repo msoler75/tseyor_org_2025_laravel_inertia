@@ -259,7 +259,7 @@
     <ClientOnly>
         <teleport to="body">
             <div
-                class="fixed bottom-0 left-0 right-0 z-40 bg-slate-200 dark:bg-slate-800/95 p-2 flex gap-4 select-none overflow-x-auto scrollbar-hidden shadow-lg"
+                class="operations-bar fixed bottom-0 left-0 right-0 z-40 bg-slate-200 dark:bg-slate-800/95 p-2 flex gap-4 select-none overflow-x-auto scrollbar-hidden shadow-lg"
                 v-if="
                     store.itemsSeleccionados.length ||
                     store.isMovingFiles ||
@@ -571,6 +571,7 @@ watch(info_archivos, () => {
 const touchable = ref(true);
 
 onMounted(() => {
+    document.addEventListener('click', handleDocumentClickForBar)
 
     // obtenemos parámetro de URL "vista"
     if ("URLSearchParams" in window) {
@@ -596,7 +597,17 @@ onMounted(() => {
         breadcrumb.value.scrollTo(breadcrumb.value.scrollWidth, 0);
 });
 
+function handleDocumentClickForBar(e) {
+    if (!store.seleccionando) return
+    const t = e.target
+    if (!t) return
+    // No cancelar si el clic es sobre la barra, un botón, enlace, fila de archivo o menú desplegable
+    if (t.closest && t.closest('.operations-bar, button, a, tr, [role="menu"], .dropdown-menu')) return
+    store.cancelarSeleccion()
+}
+
 onBeforeUnmount(() => {
+    document.removeEventListener('click', handleDocumentClickForBar)
     document.removeEventListener("keydown", onKeyDown);
 });
 
