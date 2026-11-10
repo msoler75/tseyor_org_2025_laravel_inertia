@@ -588,7 +588,6 @@ onMounted(() => {
     cargarInfo(); // .then(() => cargarVisorImagenes())
 
     document.addEventListener("keydown", onKeyDown);
-    document.addEventListener("click", handleDocumentClickForBar);
 
     calcBreadcrumbHeight();
 
@@ -598,17 +597,7 @@ onMounted(() => {
 });
 
 
-function handleDocumentClickForBar(e) {
-    if (!store.seleccionando) return;
-    const t = e.target;
-    if (!t) return;
-    // No cancelar si el clic es sobre la barra, botones, enlaces, filas, celdas o el menu "Seleccionar"
-    if (t.closest && t.closest('.operations-bar, button, a, tr, td, th, [role="menu"], .dropdown-menu, [data-action="seleccionar"]')) return;
-    store.cancelarSeleccion();
-}
-
 onBeforeUnmount(() => {
-    document.removeEventListener('click', handleDocumentClickForBar);
     document.removeEventListener("keydown", onKeyDown);
 });
 
