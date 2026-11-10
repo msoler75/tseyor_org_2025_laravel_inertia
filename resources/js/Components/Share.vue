@@ -66,7 +66,7 @@
 const props = defineProps({
     url: { type: String, default: '' },
     urls: { type: Array, default: () => [] },
-    title: { type: String, default: '' },
+    title: { type: String, default: null },
 })
 import { useClipboard } from '@vueuse/core'
 const allUrls = computed(() => (props.urls && props.urls.length) ? props.urls : (props.url ? [props.url] : []))
@@ -86,7 +86,7 @@ const originalUrl = ref('')
 const { copy, copied, isSupported } = useClipboard()
 
 const copyCurrentUrl = () => {
-    const texto = allUrls.value.length > 1 ? allUrls.value.join(' ') : (sharing.title + '\n' + currentUrl.value)
+    const texto = allUrls.value.length > 1 ? allUrls.value.join(' ') : currentUrl.value
     copy(texto)
     alert('Se ha copiado ' + (allUrls.value.length > 1 ? allUrls.value.length + ' enlaces' : 'el enlace') + ' al portapapeles')
 }
@@ -102,7 +102,7 @@ const toggleSocialShow = () => {
 
 
 function updateMeta() {
-    sharing.title = props.title ? props.title : document.title.replace(/(Tseyor)? - TSEYOR\.org$/i, ' - TSEYOR') // removemos sufijo .org
+    sharing.title = (props.title !== null) ? props.title : document.title.replace(/(Tseyor)? - TSEYOR\.org$/i, ' - TSEYOR') // removemos sufijo .org
     const metaDescription = document.querySelector('meta[name="description"]')
     sharing.description = metaDescription ? metaDescription.getAttribute('content') : ''
 }

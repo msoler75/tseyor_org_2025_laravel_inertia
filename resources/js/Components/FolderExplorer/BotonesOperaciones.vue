@@ -55,7 +55,7 @@
         </button>
 
         <Share v-if="store.itemsSeleccionados.length == 1 && store.itemsSeleccionados[0].tipo === 'archivo'"
-            :url="archivoSeleccionadoUrl" :title="archivoSeleccionadoNombre">
+            :url="archivoSeleccionadoUrl" :title="''">
             <div class="btn btn-secondary flex gap-x items-center cursor-pointer">
                 <Icon icon="ph:share-network-duotone" />
                 <span>Compartir</span>
@@ -63,10 +63,10 @@
         </Share>
 
         <Share v-if="store.itemsSeleccionados.length >= 1 && store.itemsSeleccionados.length <= 10 && (store.itemsSeleccionados.every(i => i.tipo === 'carpeta') || store.itemsSeleccionados.length >= 2)"
-            :urls="archivosSeleccionadosUrls" :title="'Archivos seleccionados'">
+            :urls="archivosSeleccionadosUrls" :title="''">
             <div class="btn btn-secondary flex gap-x items-center cursor-pointer">
                 <Icon icon="ph:share-network-duotone" />
-                <span>Compartir enlaces ({{ store.itemsSeleccionados.length }})</span>
+                <span>Compartir<span v-if="store.itemsSeleccionados.length >= 2"> ({{ store.itemsSeleccionados.length }})</span></span>
             </div>
         </Share>
 
@@ -158,11 +158,6 @@ const archivoSeleccionadoUrl = computed(() => {
     if (!item) return ''
     return (typeof window !== 'undefined' ? window.location.origin : '') + (item.url || '')
 })
-const archivoSeleccionadoNombre = computed(() => {
-    const item = store.itemsSeleccionados[0]
-    return item ? (item.nombre || '') : ''
-})
-
 const archivosSeleccionadosUrls = computed(() => {
     return store.itemsSeleccionados.map(i => (typeof window !== 'undefined' ? window.location.origin : '') + (i.url || ''))
 })
