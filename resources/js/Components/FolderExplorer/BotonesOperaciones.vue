@@ -62,7 +62,7 @@
             </div>
         </Share>
 
-        <button v-if="store.itemsSeleccionados.length >= 2 && store.itemsSeleccionados.length <= 10 && store.itemsSeleccionados.every(i => i.tipo === 'archivo')"
+        <button v-if="store.itemsSeleccionados.length >= 1 && store.itemsSeleccionados.length <= 10 && (store.itemsSeleccionados.every(i => i.tipo === 'carpeta') || store.itemsSeleccionados.length >= 2)"
             class="btn btn-secondary flex gap-x items-center" @click.prevent="compartirEnlaces">
             <Icon icon="ph:share-network-duotone" />
             <span>Compartir enlaces ({{ store.itemsSeleccionados.length }})</span>
