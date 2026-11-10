@@ -256,28 +256,32 @@
 
     <!--  Barra de operaciones -->
 
-    <div
-        class="sticky bottom-0 left-0 right-0 bg-slate-200 dark:bg-slate-800/95 p-2 flex gap-4 select-none overflow-x-auto scrollbar-hidden"
-        v-if="
-            store.itemsSeleccionados.length ||
-            store.isMovingFiles ||
-            store.isCopyingFiles
-        "
-        :class="
-            store.seleccionando || store.isMovingFiles || store.isCopyingFiles
-                ? 'justify-start sm:justify-center'
-                : 'justify-end'
-        "
-    >
-        <div
-            class="h-12 font-bold flex items-center px-2 rounded-lg"
-            v-if="store.buscandoCarpetaDestino"
-        >
-            Elige Destino
-        </div>
+    <ClientOnly>
+        <teleport to="body">
+            <div
+                class="fixed bottom-0 left-0 right-0 z-40 bg-slate-200 dark:bg-slate-800/95 p-2 flex gap-4 select-none overflow-x-auto scrollbar-hidden shadow-lg"
+                v-if="
+                    store.itemsSeleccionados.length ||
+                    store.isMovingFiles ||
+                    store.isCopyingFiles
+                "
+                :class="
+                    store.seleccionando || store.isMovingFiles || store.isCopyingFiles
+                        ? 'justify-start sm:justify-center'
+                        : 'justify-end'
+                "
+            >
+                <div
+                    class="h-12 font-bold flex items-center px-2 rounded-lg"
+                    v-if="store.buscandoCarpetaDestino"
+                >
+                    Elige Destino
+                </div>
 
-        <BotonesOperaciones />
-    </div>
+                <BotonesOperaciones />
+            </div>
+        </teleport>
+    </ClientOnly>
 
     <ClientOnly>
         <ImagesViewer
