@@ -571,7 +571,6 @@ watch(info_archivos, () => {
 const touchable = ref(true);
 
 onMounted(() => {
-    document.addEventListener('click', handleDocumentClickForBar)
 
     // obtenemos parámetro de URL "vista"
     if ("URLSearchParams" in window) {
@@ -589,6 +588,7 @@ onMounted(() => {
     cargarInfo(); // .then(() => cargarVisorImagenes())
 
     document.addEventListener("keydown", onKeyDown);
+    document.addEventListener("click", handleDocumentClickForBar);
 
     calcBreadcrumbHeight();
 
@@ -597,17 +597,18 @@ onMounted(() => {
         breadcrumb.value.scrollTo(breadcrumb.value.scrollWidth, 0);
 });
 
+
 function handleDocumentClickForBar(e) {
-    if (!store.seleccionando) return
-    const t = e.target
-    if (!t) return
-    // No cancelar si el clic es sobre la barra, un botón, enlace, fila de archivo o menú desplegable
-    if (t.closest && t.closest('.operations-bar, button, a, tr, [role="menu"], .dropdown-menu')) return
-    store.cancelarSeleccion()
+    if (!store.seleccionando) return;
+    const t = e.target;
+    if (!t) return;
+    // No cancelar si el clic es sobre la barra, botones, enlaces, filas, celdas o el menu "Seleccionar"
+    if (t.closest && t.closest('.operations-bar, button, a, tr, td, th, [role="menu"], .dropdown-menu, [data-action="seleccionar"]')) return;
+    store.cancelarSeleccion();
 }
 
 onBeforeUnmount(() => {
-    document.removeEventListener('click', handleDocumentClickForBar)
+    document.removeEventListener('click', handleDocumentClickForBar);
     document.removeEventListener("keydown", onKeyDown);
 });
 
@@ -615,6 +616,21 @@ function onKeyDown(event) {
     //Si es Ctrl+I
     if (event.ctrlKey && event.key === "i")
         selectors.mostrarPermisos = !selectors.mostrarPermisos;
+
+    // ESC cancela la selección (y operaciones de mover/copiar) en PC
+    if (event.key === "Escape" && !event.ctrlKey && !event.metaKey && !event.altKey) {
+        if (store.seleccionando) {
+            store.cancelarSeleccion();
+            event.preventDefault();
+        } else if (store.isMovingFiles || store.isCopyingFiles) {
+            store.isMovingFiles = false;
+            store.isCopyingFiles = false;
+            store.filesToMove = [];
+            store.filesToCopy = [];
+            store.itemsShow.forEach((item) => { item.seleccionado = false });
+            event.preventDefault();
+        }
+    }
 }
 
 // otros datos

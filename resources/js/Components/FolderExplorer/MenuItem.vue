@@ -27,7 +27,8 @@
 
                 <div v-if="(store.esAdministrador || item.puedeLeer) && !store.buscandoCarpetaDestino && !item.padre"
                     class="flex gap-x  items-center px-4 py-2  hover:bg-base-100 cursor-pointer"
-                    @click="store.seleccionando = true; item.seleccionado = !item.seleccionado">
+                    data-action="seleccionar"
+    @click="store.seleccionando = true; item.seleccionado = !item.seleccionado">
                     <template v-if="!item.seleccionado">
                         <Icon icon="ph:check-fat-duotone" />
                         <span>Seleccionar</span>
