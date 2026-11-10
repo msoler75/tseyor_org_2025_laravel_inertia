@@ -118,6 +118,7 @@
                     <div
                         v-if="$page.props.auth?.user"
                         class="flex sm:items-center"
+                        @click="nav.sideBarShow = false"
                     >
                         <div class="relative">
                             <UserMenu />
