@@ -78,7 +78,7 @@ const sections = computed(() => {
             titleIcon: 'ph:coin-duotone',
             titleColor: 'text-secondary',
             items: [
-                { label: 'Muulares',     icon: 'ph:currency-circle-dollar-duotone', color: 'secondary', to: '/muular-electronico', badge: props.saldo ?? '0', badgeClasses: 'text-info-content bg-info rounded-md p-1', badgeSummary: true, show: hasMuular, external: true, tooltip: 'Tu saldo de muulares' },
+                { label: 'Entrar al Muular Electrónico', icon: 'ph:arrow-square-out-duotone', color: 'secondary', to: '/muular-electronico', badge: props.saldo ?? '0', badgeClasses: 'text-info-content bg-info rounded-md p-1', badgeSummary: true, show: hasMuular, external: true, tooltip: 'Abrir el portal del Muular Electrónico' },
                 { label: 'Solicitar',  icon: 'ph:currency-circle-dollar-duotone', color: 'warning',   to: '/contactar',                                   show: !hasMuular, tooltip: 'Solicitar muulares electrónicos' },
                 { label: '¿Qué es?',   icon: 'ph:info-duotone',                   color: 'primary',   to: '/muular', tooltip: 'Información sobre el muular electrónico' },
             ]
