@@ -54,6 +54,12 @@
             <span>Renombrar</span>
         </button>
 
+        <button v-if="store.itemsSeleccionados.length == 1 && store.itemsSeleccionados[0].tipo === 'archivo'"
+            class="btn btn-secondary flex gap-x items-center" @click.prevent="compartirArchivo">
+            <Icon icon="ph:share-network-duotone" />
+            <span>Compartir</span>
+        </button>
+
         <button v-if="store.seleccionando && store.itemsSeleccionados.length > 0" class="btn btn-secondary"
             @click.prevent="store.call('propiedades')">
             <Icon icon="ph:info-duotone" />
@@ -135,5 +141,21 @@ function cancelarOperacion() {
     store.itemsShow.forEach(item => { item.seleccionado = false })
 }
 
+
+
+function compartirArchivo() {
+    const item = store.itemsSeleccionados[0]
+    if (!item) return
+    const url = (typeof window !== 'undefined' ? window.location.origin : '') + (item.url || '')
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(url).then(() => {
+            alert('Enlace copiado al portapapeles:\n' + url)
+        }).catch(() => {
+            prompt('Copia el enlace:', url)
+        })
+    } else {
+        prompt('Copia el enlace:', url)
+    }
+}
 
 </script>

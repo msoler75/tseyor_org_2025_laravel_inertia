@@ -76,7 +76,7 @@
                         :is-link="!store.seleccionando && !store.embed && item.puedeLeer" />
                 </td>
                 <td class="sm:hidden py-3">
-                    <div class="flex flex-col min-w-0">
+                    <div class="flex flex-col min-w-0" style="overflow-wrap: anywhere">
                         <ConditionalLink v-if="item.tipo === 'disco'" :href="item.url" v-html="store.nombreItem(item)"
                             class="cursor-pointer break-all" @click="store.clickDisk(item, $event)"
                             :is-link="!store.seleccionando && !store.embed" />
