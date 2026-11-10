@@ -30,11 +30,10 @@ class MuularElectronico
         $from = $_GET['from'] ?? '';
 
         $jwt = self::jwt();
-        // si no ha iniciado sesión, debe redirigir a login
+        // si no ha iniciado sesión o el servicio no está configurado, avisar y volver
         if (! $jwt) {
-            return redirect()->route('login', [
-                'to' => 'muular-electronico'.($from ? '?from='.$from : ''),
-            ]);
+            \Illuminate\Support\Facades\Log::warning('MuularElectronico: no disponible (JWT no configurado o clave inválida)');
+            return redirect()->route('miembros')->with('message', 'Muular electrónico no disponible en este momento.');
         }
 
         $auth_url = config('app.muular_electronico.auth_url');
@@ -59,7 +58,8 @@ class MuularElectronico
         $jwt = self::jwt();
 
         if (! $jwt) {
-            return response()->json(['error' => 'Servicio de muular no configurado']);
+            \Illuminate\Support\Facades\Log::warning('MuularElectronico: saldo no disponible (JWT no configurado o clave inválida)');
+            return response()->json(['error' => 'Muular electrónico no disponible']);
         }
 
         $url = config('app.muular_electronico.saldo_url');
@@ -76,12 +76,25 @@ class MuularElectronico
         curl_setopt($ch, CURLOPT_POST, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, ['token' => $jwt]);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 10);
         $result = curl_exec($ch);
+        $curlError = curl_error($ch);
+        curl_close($ch);
+
+        if ($result === false || $curlError) {
+            Log::warning('MuularElectronico: error de conexión al obtener saldo', ['url' => $url, 'error' => $curlError]);
+            return response()->json(['error' => 'Muular electrónico no disponible']);
+        }
 
         Log::info('Llamada a MuularElectronico:saldo', ['url' => $url, 'respuesta' => $result]);
         // decodificamos la respuesta
 
         $json = json_decode($result, true);
+
+        if (! is_array($json)) {
+            Log::warning('MuularElectronico: respuesta inválida', ['url' => $url, 'respuesta' => $result]);
+            return response()->json(['error' => 'Muular electrónico no disponible']);
+        }
 
         return response()->json($json);
     }
@@ -110,6 +123,12 @@ class MuularElectronico
             return null;
         }
 
+        // Firebase JWT requiere al menos 32 bytes para HS256
+        if (strlen($key) < 32) {
+            Log::warning('MuularElectronico: JWT key demasiado corta ('.strlen($key).' bytes; mínimo 32)');
+            return null;
+        }
+
         $payload = [
             'id' => $user->id,
             'user' => $user->name,
@@ -121,7 +140,12 @@ class MuularElectronico
             $payload = array_merge($payload, $extra);
         }
 
-        $jwt = JWT::encode($payload, $key, 'HS256');
+        try {
+            $jwt = JWT::encode($payload, $key, 'HS256');
+        } catch (\Throwable $e) {
+            Log::warning('MuularElectronico: error al generar JWT: '.$e->getMessage());
+            return null;
+        }
 
         return $jwt;
     }
