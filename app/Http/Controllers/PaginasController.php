@@ -4,6 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Audio;
 use App\Models\Centro;
+use App\Models\Contacto;
+use App\Models\Equipo;
+use App\Models\Experiencia;
+use App\Models\Lugar;
+use App\Models\Sala;
 use App\Models\Comunicado;
 use App\Models\Entrada;
 use App\Models\Evento;
@@ -247,5 +252,26 @@ class PaginasController extends Controller
             ]
         )
             ->withViewData(SEO::get('biblioteca'));
+    }
+
+    public function comunidad()
+    {
+        $stats = Cache::remember('stats_comunidad', now()->addDay(), function () {
+            return [
+                'galerias' => Galeria::count(),
+                'experiencias' => Experiencia::count(),
+                'equipos' => Equipo::count(),
+                'salas' => Sala::count(),
+                'centros' => Centro::count(),
+                'lugares' => Lugar::count(),
+                'eventos' => Evento::count(),
+                'usuarios' => User::count(),
+                'contactos' => Contacto::count(),
+            ];
+        });
+
+        return Inertia::render('Comunidad', [
+            'stats' => $stats,
+        ]);
     }
 }

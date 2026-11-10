@@ -148,6 +148,7 @@ Route::get('test', function () {
 })->name('test');
 
 Route::get('biblioteca', [PaginasController::class, 'biblioteca'])->name('biblioteca');
+Route::get('comunidad', [PaginasController::class, 'comunidad'])->name('comunidad');
 
 Route::get('', function (Request $request) {
     // Solo redirigir a /novedades en la carga inicial de la página

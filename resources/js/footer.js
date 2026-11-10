@@ -33,6 +33,16 @@ export const sections = [
         ],
     },
     {
+        title: "Comunidad",
+        items: [
+            { label: "Comunidad Tseyor", route: 'comunidad' },
+            { label: "Experiencias", route: 'experiencias' },
+            { label: "Equipos", route: 'equipos' },
+            { label: "Eventos", route: 'eventos' },
+            { label: "Galerías", route: 'galerias' },
+        ],
+    },
+    {
         title: "Aprender",
         items: [
             { label: "Curso Holístico", route: 'cursos' },
