@@ -59,6 +59,10 @@
 </template>
 
 <script setup>
+const props = defineProps({
+    url: { type: String, default: '' },
+    title: { type: String, default: '' },
+})
 import { useClipboard } from '@vueuse/core'
 const ShareNetwork = defineAsyncComponent(() => import('./ShareNetwork.vue'))
 
@@ -91,7 +95,7 @@ const toggleSocialShow = () => {
 
 
 function updateMeta() {
-    sharing.title = document.title.replace(/(Tseyor)? - TSEYOR\.org$/i, ' - TSEYOR') // removemos sufijo .org
+    sharing.title = props.title ? props.title : document.title.replace(/(Tseyor)? - TSEYOR\.org$/i, ' - TSEYOR') // removemos sufijo .org
     const metaDescription = document.querySelector('meta[name="description"]')
     sharing.description = metaDescription ? metaDescription.getAttribute('content') : ''
 }
@@ -103,7 +107,7 @@ const enlaceObtenido = ref(false)
 onMounted(() => {
     // Usar URL completa inicialmente (solo en cliente)
     if (typeof window !== 'undefined') {
-        const fullUrl = window.location.href.replace(/\?.*/, '')
+        const fullUrl = props.url ? props.url : window.location.href.replace(/\?.*/, '')
         currentUrl.value = fullUrl
         originalUrl.value = fullUrl
     }
@@ -133,7 +137,7 @@ const prepararEnlaceCorto = async () => {
             return
         }
 
-        const fullUrl = window.location.href.replace(/\?.*/, '')
+        const fullUrl = props.url ? props.url : window.location.href.replace(/\?.*/, '')
         const urlCorta = await obtenerEnlaceCorto(fullUrl)
 
         // Actualizar URL (puede ser la misma si no cumple umbral)

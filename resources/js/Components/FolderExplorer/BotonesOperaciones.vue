@@ -54,11 +54,13 @@
             <span>Renombrar</span>
         </button>
 
-        <button v-if="store.itemsSeleccionados.length == 1 && store.itemsSeleccionados[0].tipo === 'archivo'"
-            class="btn btn-secondary flex gap-x items-center" @click.prevent="compartirArchivo">
-            <Icon icon="ph:share-network-duotone" />
-            <span>Compartir</span>
-        </button>
+        <Share v-if="store.itemsSeleccionados.length == 1 && store.itemsSeleccionados[0].tipo === 'archivo'"
+            :url="archivoSeleccionadoUrl" :title="archivoSeleccionadoNombre">
+            <div class="btn btn-secondary flex gap-x items-center cursor-pointer">
+                <Icon icon="ph:share-network-duotone" />
+                <span>Compartir</span>
+            </div>
+        </Share>
 
         <button v-if="store.seleccionando && store.itemsSeleccionados.length > 0" class="btn btn-secondary"
             @click.prevent="store.call('propiedades')">
@@ -143,19 +145,14 @@ function cancelarOperacion() {
 
 
 
-function compartirArchivo() {
+const archivoSeleccionadoUrl = computed(() => {
     const item = store.itemsSeleccionados[0]
-    if (!item) return
-    const url = (typeof window !== 'undefined' ? window.location.origin : '') + (item.url || '')
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(url).then(() => {
-            alert('Enlace copiado al portapapeles:\n' + url)
-        }).catch(() => {
-            prompt('Copia el enlace:', url)
-        })
-    } else {
-        prompt('Copia el enlace:', url)
-    }
-}
+    if (!item) return ''
+    return (typeof window !== 'undefined' ? window.location.origin : '') + (item.url || '')
+})
+const archivoSeleccionadoNombre = computed(() => {
+    const item = store.itemsSeleccionados[0]
+    return item ? (item.nombre || '') : ''
+})
 
 </script>
