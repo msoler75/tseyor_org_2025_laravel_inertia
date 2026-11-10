@@ -10,6 +10,7 @@ export const sections = [
             { label: "Centros TSEYOR", route: 'centros' },
             { label: "Área de miembros", url: '/miembros' },
             { label: "Contactar", route: 'contactar' },
+            { label: "Donar", url: '/donar' },
         ],
     },
     {
@@ -69,7 +70,6 @@ export const sections = [
             { label: "Aviso legal", url: '/informacion-legal' },
             { label: "Política de privacidad", url: '/informacion-legal#Política de privacidad' },
             { label: "Política de cookies", url: '/informacion-legal#Política de Cookies' },
-            { label: "Donar", url: '/donar' },
         ],
     },
 ];
