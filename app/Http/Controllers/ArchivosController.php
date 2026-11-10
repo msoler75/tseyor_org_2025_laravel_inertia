@@ -1185,10 +1185,9 @@ class ArchivosController extends Controller
         $folder = $request->folder;
         $name = $request->name;
 
-        if (! $folder || $folder == '/') {
-            return response()->json([
-                'error' => 'noFolderGiven',
-            ], 400);
+        // Si no se indica carpeta (raíz virtual), se crea dentro del disco 'archivos'
+        if (! $folder || $folder == '/' || $folder == 'archivos_raiz') {
+            $folder = 'archivos';
         }
 
         if (strpos($folder, '..') !== false) {
