@@ -14,7 +14,7 @@
         <h1>Experiencias Interdimensionales</h1>
         <p>Sueños, meditaciones, extrapolaciones y trabajos grupales.</p>
 
-        <Link :href="route('experiencia.nueva')" class="btn btn-primary">
+        <Link :href="route('experiencia.nueva')" class="btn btn-primary mb-4">
         <Icon icon="ph:plus-square-duotone" /> Envía tu experiencia
         </Link>
 
@@ -112,7 +112,7 @@ const props = defineProps({
     box-shadow: none;
 }
 
-.dark .cloud {
+[data-theme="night"] .cloud {
     background-image: radial-gradient(black 70%, transparent 30%);
 }
 
@@ -128,7 +128,7 @@ const props = defineProps({
     z-index: -1;
 }
 
-.dark .cloud::before {
+[data-theme="night"] .cloud::before {
     background-color: rgb(0, 0, 0);
 }
 
