@@ -127,6 +127,20 @@
                       <Icon icon="ic:round-update" class="w-3 h-3" />
                       <span class="hidden sm:inline">ACTUALIZADA</span>
                     </div>
+
+                    <!-- Indicador de duplicado -->
+                    <div v-if="inscripcion.estado === 'duplicada'"
+                         class="flex items-center gap-1 bg-amber-100 dark:bg-amber-900 text-amber-800 dark:text-amber-200 px-2 py-1 rounded-full text-xs font-bold">
+                      <Icon icon="ic:round-content-copy" class="w-3 h-3" />
+                      <span class="hidden sm:inline">DUPLICADA</span>
+                    </div>
+
+                    <!-- Indicador de duplicados relacionados -->
+                    <div v-if="inscripcion.duplicados && inscripcion.duplicados.length > 0"
+                         class="flex items-center gap-1 bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 px-2 py-1 rounded-full text-xs font-bold">
+                      <Icon icon="ic:round-content-copy" class="w-3 h-3" />
+                      <span>{{ inscripcion.duplicados.length }} duplicado{{ inscripcion.duplicados.length > 1 ? 's' : '' }}</span>
+                    </div>
                   </div>
 
                   <!-- Información de contacto y ubicación -->
@@ -249,6 +263,23 @@
                 <div v-if="inscripcion.notas" class="text-sm text-gray-600 dark:text-gray-400">
                   <div class="font-medium mb-1">Notas de seguimiento:</div>
                   <div class="bg-base-100 dark:bg-gray-700 p-2 rounded border max-h-32 overflow-y-auto" v-html="inscripcion.notas.replace(/\n/g, '<br>')"></div>
+                </div>
+              </div>
+
+              <!-- Duplicados relacionados -->
+              <div v-if="inscripcion.duplicados && inscripcion.duplicados.length > 0" class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-600">
+                <div class="font-medium mb-2 text-sm flex items-center gap-2">
+                  <Icon icon="ic:round-content-copy" class="w-4 h-4 text-purple-500" />
+                  Inscripciones duplicadas (contactos alternativos):
+                </div>
+                <div class="space-y-2">
+                  <div v-for="dup in inscripcion.duplicados" :key="dup.id" class="bg-base-100 dark:bg-gray-700 p-2 rounded border text-sm">
+                    <div class="font-medium">#{{ dup.id }} — {{ dup.nombre }}</div>
+                    <div v-if="dup.email" class="text-xs opacity-80">Email: {{ dup.email }}</div>
+                    <div v-if="dup.telefono" class="text-xs opacity-80">Tel: {{ dup.telefono }}</div>
+                    <div v-if="dup.ciudad" class="text-xs opacity-80">Ciudad: {{ dup.ciudad }}</div>
+                    <div class="text-xs opacity-60 mt-1">{{ dup.created_at }} — {{ dup.estado }}</div>
+                  </div>
                 </div>
               </div>
 

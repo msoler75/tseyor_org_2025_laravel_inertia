@@ -59,6 +59,15 @@ class InscripcionesController extends Controller
 
         // Crear una nueva instancia de Inscripcion y guardarla en la base de datos
         $inscripcion = Inscripcion::create($data);
+
+        // Detectar duplicados (mismo email o nombre+apellidos dentro del mismo mes)
+        try {
+            Inscripcion::procesarDuplicado($inscripcion);
+            $inscripcion->refresh();
+        } catch (\Throwable $e) {
+            Log::channel('inscripciones')->error('Error al procesar duplicado: '.$e->getMessage());
+        }
+
         $destinatario = 'secretaria@tseyor.org';
 
         Log::channel('inscripciones')->info("Nueva inscripción creada: {$inscripcion->id} - {$data['nombre']} ({$data['email']})");
@@ -262,7 +271,20 @@ class InscripcionesController extends Controller
         $resultados = $query->paginate(self::$ITEMS_POR_PAGINA, ['*'], 'page', $page)
             ->appends($request->except('page'));
 
-        // $inscripciones = $query->orderBy('created_at', 'desc')->paginate(10)->withQueryString();
+        // Adjuntar duplicados a cada inscripción (para que el tutor vea contactos alternativos)
+        foreach ($resultados as $insc) {
+            $insc->setAttribute('duplicados', $insc->duplicados()->map(function ($d) {
+                return [
+                    'id' => $d->id,
+                    'nombre' => $d->nombre,
+                    'email' => $d->email,
+                    'telefono' => $d->telefono,
+                    'ciudad' => $d->ciudad,
+                    'estado' => $d->estado,
+                    'created_at' => $d->created_at?->format('d/m/Y'),
+                ];
+            })->values()->all());
+        }
 
         return Inertia::render('Inscripciones/MisAsignaciones', [
             'listado' => $resultados,

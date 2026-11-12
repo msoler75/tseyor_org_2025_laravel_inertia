@@ -229,6 +229,87 @@ class Inscripcion extends Model
     /**
      * Verifica si necesita seguimiento automático
      */
+    /**
+     * Devuelve las inscripciones duplicadas de esta (mismo email o nombre+apellidos,
+     * creadas en el mismo mes), excluyendo la propia.
+     */
+    public function duplicados(): \Illuminate\Support\Collection
+    {
+        if (! $this->created_at) {
+            return collect();
+        }
+
+        return self::where('id', '!=', $this->id)
+            ->where(function ($q) {
+                $q->where('email', $this->email)
+                    ->orWhere('nombre', $this->nombre);
+            })
+            ->whereYear('created_at', $this->created_at->year)
+            ->whereMonth('created_at', $this->created_at->month)
+            ->orderBy('created_at')
+            ->get();
+    }
+
+    /**
+     * Detecta si una inscripción recién creada es duplicada de otra existente
+     * (mismo email o nombre+apellidos, mismo mes). Si lo es, la marca como
+     * 'duplicada' y acumula los datos de contacto en la inscripción maestra.
+     */
+    public static function procesarDuplicado(self $nueva): void
+    {
+        if (! $nueva->created_at) {
+            $nueva->created_at = now();
+        }
+
+        $candidatos = self::where('id', '!=', $nueva->id)
+            ->where(function ($q) use ($nueva) {
+                $q->where('email', $nueva->email)
+                    ->orWhere('nombre', $nueva->nombre);
+            })
+            ->whereYear('created_at', $nueva->created_at->year)
+            ->whereMonth('created_at', $nueva->created_at->month)
+            ->orderBy('created_at')
+            ->get();
+
+        if ($candidatos->isEmpty()) {
+            return;
+        }
+
+        // La maestra es la primera no duplicada; si todas lo son, la más antigua
+        $maestra = $candidatos->firstWhere('estado', '!=', 'duplicada') ?? $candidatos->first();
+
+        // Acumular datos de contacto que la maestra no tenga
+        $extras = [];
+        if ($nueva->telefono && $nueva->telefono !== $maestra->telefono) {
+            $extras[] = 'Tel: '.$nueva->telefono;
+        }
+        if ($nueva->email && $nueva->email !== $maestra->email) {
+            $extras[] = 'Email: '.$nueva->email;
+        }
+        if ($nueva->comentario && $nueva->comentario !== $maestra->comentario) {
+            $extras[] = 'Comentario: '.$nueva->comentario;
+        }
+        if ($nueva->telefono && ! $maestra->telefono) {
+            $maestra->telefono = $nueva->telefono;
+        }
+        if ($nueva->email && ! $maestra->email) {
+            $maestra->email = $nueva->email;
+        }
+        if ($extras) {
+            $nota = '[Duplicado #'.$nueva->id.'] '.implode('; ', $extras);
+            $maestra->notas = trim(($maestra->notas ? $maestra->notas."\n" : '').$nota);
+        }
+        $maestra->saveQuietly();
+
+        // Marcar la nueva como duplicada
+        $nueva->estado = 'duplicada';
+        $nueva->saveQuietly();
+
+        \Illuminate\Support\Facades\Log::channel('inscripciones')->info(
+            "Inscripción {$nueva->id} marcada como duplicada de {$maestra->id}"
+        );
+    }
+
     public function necesitaSeguimiento(): bool
     {
         $estadosSeguimiento = config('inscripciones.notificaciones.estados_seguimiento');
