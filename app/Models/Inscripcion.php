@@ -233,21 +233,134 @@ class Inscripcion extends Model
      * Devuelve las inscripciones duplicadas de esta (mismo email o nombre+apellidos,
      * creadas en el mismo mes), excluyendo la propia.
      */
+    /**
+     * Normaliza un nombre para comparación: minúsculas, sin acentos/ñ,
+     * espacios colapsados y sin puntos.
+     */
+    public static function normalizarNombre(string $nombre): string
+    {
+        $nombre = mb_strtolower(trim($nombre), 'UTF-8');
+
+        $map = [
+            'á' => 'a', 'à' => 'a', 'ä' => 'a', 'â' => 'a',
+            'é' => 'e', 'è' => 'e', 'ë' => 'e', 'ê' => 'e',
+            'í' => 'i', 'ì' => 'i', 'ï' => 'i', 'î' => 'i',
+            'ó' => 'o', 'ò' => 'o', 'ö' => 'o', 'ô' => 'o',
+            'ú' => 'u', 'ù' => 'u', 'ü' => 'u', 'û' => 'u',
+            'ñ' => 'n', 'ç' => 'c',
+        ];
+        $nombre = strtr($nombre, $map);
+
+        // quitar puntos (iniciales tipo "M.")
+        $nombre = str_replace('.', ' ', $nombre);
+
+        // colapsar espacios
+        $nombre = preg_replace('/\s+/', ' ', $nombre);
+        $nombre = trim($nombre);
+
+        return $nombre;
+    }
+
+    /**
+     * Versión compacta (sin espacios) de un nombre normalizado.
+     */
+    public static function nombreCompacto(string $nombre): string
+    {
+        return str_replace(' ', '', self::normalizarNombre($nombre));
+    }
+
+    /**
+     * Determina si dos nombres son "equivalentes" (mismo nombre, posibles
+     * acentos, espacios extra, iniciales o pequeños typos).
+     */
+    public static function nombresEquivalentes(string $a, string $b): bool
+    {
+        $na = self::normalizarNombre($a);
+        $nb = self::normalizarNombre($b);
+
+        if ($na === '' || $nb === '') {
+            return false;
+        }
+
+        // compacto (sin espacios): cubre "Maria Perez" vs "MariaPerez"
+        $ca = str_replace(' ', '', $na);
+        $cb = str_replace(' ', '', $nb);
+        if ($ca === $cb) {
+            return true;
+        }
+
+        $ta = explode(' ', $na);
+        $tb = explode(' ', $nb);
+
+        // comparación token a token con iniciales
+        if (count($ta) === count($tb)) {
+            $ok = true;
+            foreach ($ta as $i => $tokA) {
+                $tokB = $tb[$i];
+                if ($tokA === $tokB) continue;
+                // inicial: un token es prefijo del otro
+                if (strlen($tokA) === 1 && str_starts_with($tokB, $tokA)) continue;
+                if (strlen($tokB) === 1 && str_starts_with($tokA, $tokB)) continue;
+                // typo tolerance: levenshtein pequeño
+                if (levenshtein($tokA, $tokB) <= 2 && strlen($tokA) >= 4) continue;
+                $ok = false;
+                break;
+            }
+            if ($ok) return true;
+        }
+
+        // número de tokens distinto: intentar emparejar iniciales
+        if (count($ta) !== count($tb)) {
+            $short = count($ta) < count($tb) ? $ta : $tb;
+            $long  = count($ta) < count($tb) ? $tb : $ta;
+            // cada token corto debe ser prefijo de algún token largo en orden
+            $li = 0;
+            $matched = true;
+            foreach ($short as $tok) {
+                while ($li < count($long) && ! str_starts_with($long[$li], $tok)) {
+                    $li++;
+                }
+                if ($li >= count($long)) { $matched = false; break; }
+                $li++;
+            }
+            if ($matched && count($short) >= 1) {
+                // además, la parte "larga" restante no debe diferir mucho
+                return true;
+            }
+        }
+
+        // fuzzy global: similar_text sobre compacto
+        similar_text($ca, $cb, $pct);
+        if ($pct >= 88) {
+            return true;
+        }
+
+        // levenshtein global (tolerancia a typos) sobre compacto
+        if (strlen($ca) >= 6 && levenshtein($ca, $cb) <= 3) {
+            return true;
+        }
+
+        return false;
+    }
+
     public function duplicados(): \Illuminate\Support\Collection
     {
         if (! $this->created_at) {
             return collect();
         }
 
-        return self::where('id', '!=', $this->id)
-            ->where(function ($q) {
-                $q->where('email', $this->email)
-                    ->orWhere('nombre', $this->nombre);
-            })
-            ->whereYear('created_at', $this->created_at->year)
-            ->whereMonth('created_at', $this->created_at->month)
+        $mes = $this->created_at;
+        $candidatos = self::where('id', '!=', $this->id)
+            ->whereYear('created_at', $mes->year)
+            ->whereMonth('created_at', $mes->month)
             ->orderBy('created_at')
             ->get();
+
+        return $candidatos->filter(function ($c) {
+            $emailMatch = $this->email && $c->email
+                && mb_strtolower(trim($this->email)) === mb_strtolower(trim($c->email));
+            return $emailMatch || self::nombresEquivalentes($this->nombre, $c->nombre);
+        })->values();
     }
 
     /**
@@ -262,14 +375,15 @@ class Inscripcion extends Model
         }
 
         $candidatos = self::where('id', '!=', $nueva->id)
-            ->where(function ($q) use ($nueva) {
-                $q->where('email', $nueva->email)
-                    ->orWhere('nombre', $nueva->nombre);
-            })
             ->whereYear('created_at', $nueva->created_at->year)
             ->whereMonth('created_at', $nueva->created_at->month)
             ->orderBy('created_at')
-            ->get();
+            ->get()
+            ->filter(function ($c) use ($nueva) {
+                $emailMatch = $nueva->email && $c->email
+                    && mb_strtolower(trim($nueva->email)) === mb_strtolower(trim($c->email));
+                return $emailMatch || self::nombresEquivalentes($nueva->nombre, $c->nombre);
+            })->values();
 
         if ($candidatos->isEmpty()) {
             return;
@@ -283,7 +397,7 @@ class Inscripcion extends Model
         if ($nueva->telefono && $nueva->telefono !== $maestra->telefono) {
             $extras[] = 'Tel: '.$nueva->telefono;
         }
-        if ($nueva->email && $nueva->email !== $maestra->email) {
+        if ($nueva->email && mb_strtolower(trim($nueva->email)) !== mb_strtolower(trim((string) $maestra->email))) {
             $extras[] = 'Email: '.$nueva->email;
         }
         if ($nueva->comentario && $nueva->comentario !== $maestra->comentario) {
